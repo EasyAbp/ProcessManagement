@@ -1,0 +1,111 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "EasyAbp.ProcessManagement.Domain.Shared": {
+      "path": "src/EasyAbp.ProcessManagement.Domain.Shared/EasyAbp.ProcessManagement.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.Domain": {
+      "path": "src/EasyAbp.ProcessManagement.Domain/EasyAbp.ProcessManagement.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.Application.Contracts": {
+      "path": "src/EasyAbp.ProcessManagement.Application.Contracts/EasyAbp.ProcessManagement.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.Application": {
+      "path": "src/EasyAbp.ProcessManagement.Application/EasyAbp.ProcessManagement.Application.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.EntityFrameworkCore": {
+      "path": "src/EasyAbp.ProcessManagement.EntityFrameworkCore/EasyAbp.ProcessManagement.EntityFrameworkCore.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.MongoDB": {
+      "path": "src/EasyAbp.ProcessManagement.MongoDB/EasyAbp.ProcessManagement.MongoDB.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.HttpApi": {
+      "path": "src/EasyAbp.ProcessManagement.HttpApi/EasyAbp.ProcessManagement.HttpApi.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.HttpApi.Client": {
+      "path": "src/EasyAbp.ProcessManagement.HttpApi.Client/EasyAbp.ProcessManagement.HttpApi.Client.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.TestBase": {
+      "path": "test/EasyAbp.ProcessManagement.TestBase/EasyAbp.ProcessManagement.TestBase.abppkg.json",
+      "folder": "test"
+    },
+    "EasyAbp.ProcessManagement.EntityFrameworkCore.Tests": {
+      "path": "test/EasyAbp.ProcessManagement.EntityFrameworkCore.Tests/EasyAbp.ProcessManagement.EntityFrameworkCore.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EasyAbp.ProcessManagement.MongoDB.Tests": {
+      "path": "test/EasyAbp.ProcessManagement.MongoDB.Tests/EasyAbp.ProcessManagement.MongoDB.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EasyAbp.ProcessManagement.Domain.Tests": {
+      "path": "test/EasyAbp.ProcessManagement.Domain.Tests/EasyAbp.ProcessManagement.Domain.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EasyAbp.ProcessManagement.Application.Tests": {
+      "path": "test/EasyAbp.ProcessManagement.Application.Tests/EasyAbp.ProcessManagement.Application.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "EasyAbp.ProcessManagement.HttpApi.Host": {
+      "path": "host/EasyAbp.ProcessManagement.HttpApi.Host/EasyAbp.ProcessManagement.HttpApi.Host.abppkg.json",
+      "folder": "host"
+    },
+    "EasyAbp.ProcessManagement.Web": {
+      "path": "src/EasyAbp.ProcessManagement.Web/EasyAbp.ProcessManagement.Web.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/EasyAbp.ProcessManagement.HttpApi.Client.ConsoleTestApp/EasyAbp.ProcessManagement.HttpApi.Client.ConsoleTestApp.abppkg.json",
+      "folder": "test"
+    },
+    "EasyAbp.ProcessManagement.Web.Host": {
+      "path": "host/EasyAbp.ProcessManagement.Web.Host/EasyAbp.ProcessManagement.Web.Host.abppkg.json",
+      "folder": "host"
+    },
+    "EasyAbp.ProcessManagement.AuthServer": {
+      "path": "host/EasyAbp.ProcessManagement.AuthServer/EasyAbp.ProcessManagement.AuthServer.abppkg.json",
+      "folder": "host"
+    },
+    "EasyAbp.ProcessManagement.Host.Shared": {
+      "path": "host/EasyAbp.ProcessManagement.Host.Shared/EasyAbp.ProcessManagement.Host.Shared.abppkg.json",
+      "folder": "host"
+    },
+    "EasyAbp.ProcessManagement.Web.Unified": {
+      "path": "host/EasyAbp.ProcessManagement.Web.Unified/EasyAbp.ProcessManagement.Web.Unified.abppkg.json",
+      "folder": "host"
+    },
+    "EasyAbp.ProcessManagement.Blazor": {
+      "path": "src/EasyAbp.ProcessManagement.Blazor/EasyAbp.ProcessManagement.Blazor.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.Blazor.Host": {
+      "path": "host/EasyAbp.ProcessManagement.Blazor.Host/EasyAbp.ProcessManagement.Blazor.Host.abppkg.json",
+      "folder": "host"
+    },
+    "EasyAbp.ProcessManagement.Blazor.Server": {
+      "path": "src/EasyAbp.ProcessManagement.Blazor.Server/EasyAbp.ProcessManagement.Blazor.Server.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.Blazor.WebAssembly": {
+      "path": "src/EasyAbp.ProcessManagement.Blazor.WebAssembly/EasyAbp.ProcessManagement.Blazor.WebAssembly.abppkg.json",
+      "folder": "src"
+    },
+    "EasyAbp.ProcessManagement.Blazor.Server.Host": {
+      "path": "host/EasyAbp.ProcessManagement.Blazor.Server.Host/EasyAbp.ProcessManagement.Blazor.Server.Host.abppkg.json",
+      "folder": "host"
+    }
+  }
+}

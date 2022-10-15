@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.prod.json",
+  "compilerOptions": {
+    "paths": {
+      "@easy-abp/process-management": [
+        "projects/process-management/src/public-api.ts"
+      ],
+      "@easy-abp/process-management/config": [
+        "projects/process-management/config/src/public-api.ts"
+      ],
+      "@proxy": ["projects/process-management/src/lib/proxy/index.ts"],
+      "@proxy/*": ["projects/process-management/src/lib/proxy/*"]
+    }
+  }
+}

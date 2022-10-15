@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "EasyAbp.ProcessManagement": {
+      "path": "EasyAbp.ProcessManagement.abpmdl.json"
+    }
+  }
+}
