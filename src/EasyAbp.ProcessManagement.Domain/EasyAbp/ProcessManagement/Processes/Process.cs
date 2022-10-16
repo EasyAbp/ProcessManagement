@@ -69,9 +69,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IMultiTenant
         CheckProcessDefinition(processDefinition);
         CheckIsNotCompleted();
 
-        IsCompleted = true;
-        CompletionTime = now;
-
         CurrentStateName = stateName;
         StateHistories.Add(new ProcessStateHistory(Id, StateHistories.Count, stateName, now));
     }
