@@ -27,15 +27,15 @@ public class ProcessManagementTestBaseModule : AbpModule
     private void ConfigureDemoProcessDefinitions(ServiceConfigurationContext context)
     {
         var processDefinition = new ProcessDefinition("MyDemoProcess", "My Demo Process")
-            .AddState(new ProcessStateDefinition("Startup"))
-            .AddState(new ProcessStateDefinition("Step1"))
-            .AddState(new ProcessStateDefinition("Step2"))
-            .AddState(new ProcessStateDefinition("Step3"))
-            .AddState(new ProcessStateDefinition("Step4"))
-            .AddState(new ProcessStateDefinition("Step5"))
-            .AddState(new ProcessStateDefinition("Step6"))
-            .AddState(new ProcessStateDefinition("Step7"))
-            .AddState(new ProcessStateDefinition("Step8"));
+            .AddState(new ProcessStateDefinition("Startup", "Startup"))
+            .AddState(new ProcessStateDefinition("Step1", "Step1"))
+            .AddState(new ProcessStateDefinition("Step2", "Step2"))
+            .AddState(new ProcessStateDefinition("Step3", "Step3"))
+            .AddState(new ProcessStateDefinition("Step4", "Step4"))
+            .AddState(new ProcessStateDefinition("Step5", "Step5"))
+            .AddState(new ProcessStateDefinition("Step6", "Step6"))
+            .AddState(new ProcessStateDefinition("Step7", "Step7"))
+            .AddState(new ProcessStateDefinition("Step8", "Step8"));
 
         processDefinition.SetInitialState("Startup");
         processDefinition.SetNextStates("Startup", new[] { "Step1", "Step2" });
