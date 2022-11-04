@@ -19,7 +19,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IMultiTenant
     public virtual string ProcessName { get; protected set; }
 
     /// <summary>
-    /// A custom tag. It can be used for auth.
+    /// A custom tag. It can be used for auth and filter.
     /// </summary>
     /// <example>
     /// {OrganizationUnitId}+{UserId}
