@@ -16,7 +16,8 @@ public class ProcessManagementMenuContributor : IMenuContributor
     private Task ConfigureMainMenuAsync(MenuConfigurationContext context)
     {
         //Add main menu items.
-        context.Menu.AddItem(new ApplicationMenuItem(ProcessManagementMenus.Prefix, displayName: "ProcessManagement", icon: "fa fa-list"));
+        context.Menu.GetAdministration().AddItem(new ApplicationMenuItem(ProcessManagementMenus.Prefix,
+            displayName: "ProcessManagement", icon: "fa fa-list"));
 
         return Task.CompletedTask;
     }
