@@ -14,9 +14,9 @@ public class ProcessManagementEntityFrameworkCoreModule : AbpModule
     {
         context.Services.AddAbpDbContext<ProcessManagementDbContext>(options =>
         {
-                /* Add custom repositories here. Example:
-                 * options.AddRepository<Question, EfCoreQuestionRepository>();
-                 */
+            /* Add custom repositories here. Example:
+             * options.AddRepository<Question, EfCoreQuestionRepository>();
+             */
         });
     }
 }

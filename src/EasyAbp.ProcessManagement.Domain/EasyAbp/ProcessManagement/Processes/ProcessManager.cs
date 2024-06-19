@@ -25,21 +25,21 @@ public class ProcessManager : DomainService
             new Process(GuidGenerator.Create(), CurrentTenant.Id, processDefinition, Clock.Now, customTag));
     }
 
-    public virtual Task ProgressToStateAsync(Process process, string nextStateName, bool isFinalState)
+    public virtual Task UpdateStateAsync(Process process, IProcessState nextState, bool completeProcess)
     {
         var processDefinition = Options.GetProcessDefinition(process.ProcessName);
 
-        var nextStates = processDefinition.GetNextStateNames(process.CurrentStateName);
+        var nextStates = processDefinition.GetNextStateNames(process.StateName);
 
-        if (!nextStates.Contains(nextStateName))
+        if (!nextStates.Contains(nextState.StateName))
         {
             throw new AbpException(
-                $"The specified state `{nextStateName}` is not valid for process `{process.ProcessName}`");
+                $"The specified state `{nextState}` is invalid for the process `{process.ProcessName}`");
         }
 
-        process.SetState(processDefinition, nextStateName, Clock.Now);
+        process.SetState(processDefinition, nextState);
 
-        if (isFinalState)
+        if (completeProcess)
         {
             process.CompleteProcess(Clock.Now);
         }

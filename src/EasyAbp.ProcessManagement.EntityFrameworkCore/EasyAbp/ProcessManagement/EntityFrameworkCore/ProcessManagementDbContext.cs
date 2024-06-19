@@ -14,7 +14,6 @@ public class ProcessManagementDbContext : AbpDbContext<ProcessManagementDbContex
     public ProcessManagementDbContext(DbContextOptions<ProcessManagementDbContext> options)
         : base(options)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
