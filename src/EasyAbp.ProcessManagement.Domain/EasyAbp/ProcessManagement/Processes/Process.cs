@@ -8,30 +8,41 @@ using Volo.Abp.MultiTenancy;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
-public class Process : FullAuditedAggregateRoot<Guid>, IMultiTenant
+public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTenant
 {
     public virtual Guid? TenantId { get; protected set; }
 
     /// <summary>
-    /// Record the Name value of <see cref="ProcessDefinition"/>.
+    /// The hardcoded Name value from <see cref="ProcessDefinition"/>.
     /// </summary>
     [NotNull]
     public virtual string ProcessName { get; protected set; }
 
     /// <summary>
+    /// An unique correlation ID.
+    /// </summary>
+    public virtual string CorrelationId { get; protected set; }
+
+    /// <summary>
     /// A custom tag. It can be used for auth and filter.
     /// </summary>
     /// <example>
-    /// {OrganizationUnitId}+{UserId}
+    /// {OrganizationUnitId}
     /// </example>
     [CanBeNull]
     public virtual string CustomTag { get; protected set; }
 
-    /// <summary>
-    /// Name of the current state. It can be used for search.
-    /// </summary>
-    [NotNull]
-    public virtual string CurrentStateName { get; protected set; }
+    /// <inheritdoc/>
+    public virtual string StateName { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual string SubStateName { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual string DetailsText { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual DateTime StateUpdateTime { get; protected set; }
 
     /// <summary>
     /// History collection of state changes.
@@ -61,16 +72,32 @@ public class Process : FullAuditedAggregateRoot<Guid>, IMultiTenant
 
         StateHistories = new List<ProcessStateHistory>();
 
-        SetState(processDefinition, processDefinition.InitialStateName, now);
+        SetState(processDefinition, new ProcessStateInfoModel(processDefinition.InitialStateName, null, null, now));
     }
 
-    internal void SetState(ProcessDefinition processDefinition, string stateName, DateTime now)
+    public Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, IProcessState processState,
+        [CanBeNull] string customTag = null) : base(id)
+    {
+        TenantId = tenantId;
+        CustomTag = customTag;
+        ProcessName = processDefinition.Name;
+
+        StateHistories = new List<ProcessStateHistory>();
+
+        SetState(processDefinition, processState);
+    }
+
+    internal void SetState(ProcessDefinition processDefinition, IProcessState processState)
     {
         CheckProcessDefinition(processDefinition);
         CheckIsNotCompleted();
 
-        CurrentStateName = stateName;
-        StateHistories.Add(new ProcessStateHistory(Id, StateHistories.Count, stateName, now));
+        StateHistories.Add(new ProcessStateHistory(Id, this));
+
+        StateName = processState.StateName;
+        SubStateName = processState.SubStateName;
+        DetailsText = processState.DetailsText;
+        StateUpdateTime = processState.StateUpdateTime;
     }
 
     internal void CompleteProcess(DateTime now)

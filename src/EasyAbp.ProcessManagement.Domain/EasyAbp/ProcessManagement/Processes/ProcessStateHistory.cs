@@ -1,52 +1,46 @@
 ﻿using System;
-using EasyAbp.ProcessManagement.Options;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
-public class ProcessStateHistory : Entity, IHasExtraProperties
+public class ProcessStateHistory : Entity, IProcessState, IHasExtraProperties
 {
-    /// <summary>
-    /// <see cref="Process"/> Id.
-    /// </summary>
     public virtual Guid ProcessId { get; protected set; }
 
-    /// <summary>
-    /// The sequence of state changes.
-    /// </summary>
-    public virtual int Order { get; protected set; }
-
-    /// <summary>
-    /// Record the Name value of <see cref="ProcessStateDefinition"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public virtual string StateName { get; protected set; }
 
-    /// <summary>
-    /// The time when the process changed to this state.
-    /// </summary>
-    public virtual DateTime TimeToGetState { get; protected set; }
+    /// <inheritdoc/>
+    public virtual string SubStateName { get; protected set; }
 
-    /// <summary>
-    /// ABP extra properties. It can be used to record such as `DepartmentManagerId` and `CustomerRemark`.
-    /// </summary>
+    /// <inheritdoc/>
+    public virtual string DetailsText { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual DateTime StateUpdateTime { get; protected set; }
+
     public virtual ExtraPropertyDictionary ExtraProperties { get; protected set; }
 
     public override object[] GetKeys()
     {
-        return new object[] { ProcessId, Order };
+        return [ProcessId, StateUpdateTime];
     }
 
     protected ProcessStateHistory()
     {
+        ExtraProperties = new ExtraPropertyDictionary();
+        this.SetDefaultsForExtraProperties();
     }
 
-    public ProcessStateHistory(Guid processId, int order, string stateName, DateTime timeToGetState)
+    public ProcessStateHistory(Guid processId, IProcessState processState)
     {
         ProcessId = processId;
-        Order = order;
-        StateName = stateName;
-        TimeToGetState = timeToGetState;
+
+        StateName = processState.StateName;
+        SubStateName = processState.SubStateName;
+        DetailsText = processState.DetailsText;
+        StateUpdateTime = processState.StateUpdateTime;
 
         ExtraProperties = new ExtraPropertyDictionary();
         this.SetDefaultsForExtraProperties();
