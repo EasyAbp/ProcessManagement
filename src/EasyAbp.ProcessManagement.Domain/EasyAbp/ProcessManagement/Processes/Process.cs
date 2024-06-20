@@ -19,8 +19,9 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
     public virtual string ProcessName { get; protected set; }
 
     /// <summary>
-    /// An unique correlation ID.
+    /// An unique correlation ID. If not set, this value will be auto-set to the value of the Id property.
     /// </summary>
+    [NotNull]
     public virtual string CorrelationId { get; protected set; }
 
     /// <summary>
@@ -64,9 +65,10 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
     }
 
     public Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, DateTime now,
-        [CanBeNull] string customTag = null) : base(id)
+        [CanBeNull] string correlationId = null, [CanBeNull] string customTag = null) : base(id)
     {
         TenantId = tenantId;
+        CorrelationId = correlationId ?? id.ToString();
         CustomTag = customTag;
         ProcessName = processDefinition.Name;
 
@@ -76,9 +78,10 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
     }
 
     public Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, IProcessState processState,
-        [CanBeNull] string customTag = null) : base(id)
+        [CanBeNull] string correlationId = null, [CanBeNull] string customTag = null) : base(id)
     {
         TenantId = tenantId;
+        CorrelationId = correlationId ?? id.ToString();
         CustomTag = customTag;
         ProcessName = processDefinition.Name;
 
