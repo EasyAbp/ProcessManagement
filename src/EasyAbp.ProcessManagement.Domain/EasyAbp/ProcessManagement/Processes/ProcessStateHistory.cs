@@ -15,7 +15,7 @@ public class ProcessStateHistory : Entity, IProcessState, IHasExtraProperties
     public virtual string SubStateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string DetailsText { get; protected set; }
+    public virtual string StateDetailsText { get; protected set; }
 
     /// <inheritdoc/>
     public virtual DateTime StateUpdateTime { get; protected set; }
@@ -39,7 +39,7 @@ public class ProcessStateHistory : Entity, IProcessState, IHasExtraProperties
 
         StateName = processState.StateName;
         SubStateName = processState.SubStateName;
-        DetailsText = processState.DetailsText;
+        StateDetailsText = processState.StateDetailsText;
         StateUpdateTime = processState.StateUpdateTime;
 
         ExtraProperties = new ExtraPropertyDictionary();

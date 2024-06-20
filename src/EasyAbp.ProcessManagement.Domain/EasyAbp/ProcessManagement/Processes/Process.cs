@@ -8,30 +8,27 @@ using Volo.Abp.MultiTenancy;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
-public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTenant
+public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, IMultiTenant
 {
     public virtual Guid? TenantId { get; protected set; }
 
-    /// <summary>
-    /// The hardcoded Name value from <see cref="ProcessDefinition"/>.
-    /// </summary>
-    [NotNull]
+    /// <inheritdoc/>
     public virtual string ProcessName { get; protected set; }
 
-    /// <summary>
-    /// An unique correlation ID. If not set, this value will be auto-set to the value of the Id property.
-    /// </summary>
-    [NotNull]
+    /// <inheritdoc/>
     public virtual string CorrelationId { get; protected set; }
 
-    /// <summary>
-    /// A custom tag. It can be used for auth and filter.
-    /// </summary>
-    /// <example>
-    /// {OrganizationUnitId}
-    /// </example>
-    [CanBeNull]
+    /// <inheritdoc/>
     public virtual string CustomTag { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual bool IsCompleted { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual DateTime? CompletionTime { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual DateTime StateUpdateTime { get; protected set; }
 
     /// <inheritdoc/>
     public virtual string StateName { get; protected set; }
@@ -40,25 +37,12 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
     public virtual string SubStateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string DetailsText { get; protected set; }
-
-    /// <inheritdoc/>
-    public virtual DateTime StateUpdateTime { get; protected set; }
+    public virtual string StateDetailsText { get; protected set; }
 
     /// <summary>
     /// History collection of state changes.
     /// </summary>
     public virtual List<ProcessStateHistory> StateHistories { get; protected set; }
-
-    /// <summary>
-    /// Record whether this process changed into a final state.
-    /// </summary>
-    public virtual bool IsCompleted { get; protected set; }
-
-    /// <summary>
-    /// Time of this process completed.
-    /// </summary>
-    public virtual DateTime CompletionTime { get; protected set; }
 
     protected Process()
     {
@@ -74,7 +58,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
 
         StateHistories = new List<ProcessStateHistory>();
 
-        SetState(processDefinition, new ProcessStateInfoModel(processDefinition.InitialStateName, null, null, now));
+        SetState(processDefinition, new ProcessStateInfoModel(now, processDefinition.InitialStateName, null, null));
     }
 
     public Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, IProcessState processState,
@@ -85,7 +69,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
         CustomTag = customTag;
         ProcessName = processDefinition.Name;
 
-        StateHistories = new List<ProcessStateHistory>();
+        StateHistories = [];
 
         SetState(processDefinition, processState);
     }
@@ -99,7 +83,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcessState, IMultiTena
 
         StateName = processState.StateName;
         SubStateName = processState.SubStateName;
-        DetailsText = processState.DetailsText;
+        StateDetailsText = processState.StateDetailsText;
         StateUpdateTime = processState.StateUpdateTime;
     }
 
