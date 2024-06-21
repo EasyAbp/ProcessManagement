@@ -3,13 +3,19 @@ using EasyAbp.ProcessManagement.Processes;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
 
-namespace EasyAbp.ProcessManagement.UserProcesses;
+namespace EasyAbp.ProcessManagement.Notifications;
 
-public class UserProcess : CreationAuditedAggregateRoot<Guid>, IProcess, IProcessStateBase, IMultiTenant
+public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMultiTenant
 {
     public virtual Guid? TenantId { get; protected set; }
 
     public virtual Guid UserId { get; protected set; }
+
+    public virtual bool Read { get; protected set; }
+
+    public virtual bool Dismissed { get; protected set; }
+
+    #region Process information
 
     /// <inheritdoc/>
     public virtual string ProcessName { get; protected set; }
@@ -18,7 +24,7 @@ public class UserProcess : CreationAuditedAggregateRoot<Guid>, IProcess, IProces
     public virtual string CorrelationId { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string CustomTag { get; protected set; }
+    public virtual string GroupKey { get; protected set; }
 
     /// <inheritdoc/>
     public virtual bool IsCompleted { get; protected set; }
@@ -35,24 +41,36 @@ public class UserProcess : CreationAuditedAggregateRoot<Guid>, IProcess, IProces
     /// <inheritdoc/>
     public virtual string SubStateName { get; protected set; }
 
-    public UserProcess(Guid id, Process process, Guid userId) : base(id)
+    /// <inheritdoc/>
+    public virtual ProcessStateFlag StateFlag { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual string StateSummaryText { get; protected set; }
+
+    #endregion
+
+    public Notification(Guid id, Process process, Guid userId) : base(id)
     {
         TenantId = process.TenantId;
         UserId = userId;
 
-        Update(process);
-    }
-
-    public void Update(Process process)
-    {
         ProcessName = process.ProcessName;
+
         CorrelationId = process.CorrelationId;
-        CustomTag = process.CustomTag;
+        GroupKey = process.GroupKey;
         IsCompleted = process.IsCompleted;
         CompletionTime = process.CompletionTime;
 
         StateUpdateTime = process.StateUpdateTime;
         StateName = process.StateName;
         SubStateName = process.SubStateName;
+        StateFlag = process.StateFlag;
+        StateSummaryText = process.StateSummaryText;
+    }
+
+    public void SetAsRead(bool dismissed)
+    {
+        Read = true;
+        Dismissed = dismissed;
     }
 }

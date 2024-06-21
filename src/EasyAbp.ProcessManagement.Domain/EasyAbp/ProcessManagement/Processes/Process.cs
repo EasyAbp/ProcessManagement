@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EasyAbp.ProcessManagement.Options;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
 using JetBrains.Annotations;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
@@ -19,7 +20,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     public virtual string CorrelationId { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string CustomTag { get; protected set; }
+    public virtual string GroupKey { get; protected set; }
 
     /// <inheritdoc/>
     public virtual bool IsCompleted { get; protected set; }
@@ -37,39 +38,25 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     public virtual string SubStateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string StateDetailsText { get; protected set; }
+    public virtual ProcessStateFlag StateFlag { get; protected set; }
 
-    /// <summary>
-    /// History collection of state changes.
-    /// </summary>
-    public virtual List<ProcessStateHistory> StateHistories { get; protected set; }
+    /// <inheritdoc/>
+    public virtual string StateSummaryText { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual string StateDetailsText { get; protected set; }
 
     protected Process()
     {
     }
 
-    public Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, DateTime now,
-        [CanBeNull] string correlationId = null, [CanBeNull] string customTag = null) : base(id)
+    internal Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, IProcessState processState,
+        [CanBeNull] string correlationId = null, [CanBeNull] string groupKey = null) : base(id)
     {
         TenantId = tenantId;
         CorrelationId = correlationId ?? id.ToString();
-        CustomTag = customTag;
-        ProcessName = processDefinition.Name;
-
-        StateHistories = new List<ProcessStateHistory>();
-
-        SetState(processDefinition, new ProcessStateInfoModel(now, processDefinition.InitialStateName, null, null));
-    }
-
-    public Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, IProcessState processState,
-        [CanBeNull] string correlationId = null, [CanBeNull] string customTag = null) : base(id)
-    {
-        TenantId = tenantId;
-        CorrelationId = correlationId ?? id.ToString();
-        CustomTag = customTag;
-        ProcessName = processDefinition.Name;
-
-        StateHistories = [];
+        GroupKey = groupKey;
+        ProcessName = Check.NotNullOrWhiteSpace(processDefinition.Name, nameof(ProcessName));
 
         SetState(processDefinition, processState);
     }
@@ -79,12 +66,22 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
         CheckProcessDefinition(processDefinition);
         CheckIsNotCompleted();
 
-        StateHistories.Add(new ProcessStateHistory(Id, this));
+        var oldState = ToStateInfoModel();
 
-        StateName = processState.StateName;
-        SubStateName = processState.SubStateName;
-        StateDetailsText = processState.StateDetailsText;
         StateUpdateTime = processState.StateUpdateTime;
+        StateName = Check.NotNullOrWhiteSpace(processState.StateName, nameof(processState.StateName));
+        SubStateName = processState.SubStateName;
+        StateFlag = processState.StateFlag;
+        StateSummaryText = processState.StateSummaryText;
+        StateDetailsText = processState.StateDetailsText;
+
+        AddLocalEvent(new ProcessStateChangedEto(oldState, this));
+    }
+
+    public ProcessStateInfoModel ToStateInfoModel()
+    {
+        return new ProcessStateInfoModel(
+            StateUpdateTime, StateName, SubStateName, StateFlag, StateSummaryText, StateDetailsText);
     }
 
     internal void CompleteProcess(DateTime now)

@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using Volo.Abp;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
@@ -16,6 +17,12 @@ public class ProcessStateInfoModel : IProcessState
     public virtual string SubStateName { get; protected set; }
 
     /// <inheritdoc/>
+    public virtual ProcessStateFlag StateFlag { get; protected set; }
+
+    /// <inheritdoc/>
+    public virtual string StateSummaryText { get; protected set; }
+
+    /// <inheritdoc/>
     public virtual string StateDetailsText { get; protected set; }
 
     public ProcessStateInfoModel()
@@ -23,11 +30,13 @@ public class ProcessStateInfoModel : IProcessState
     }
 
     public ProcessStateInfoModel(DateTime stateUpdateTime, [NotNull] string stateName, [CanBeNull] string subStateName,
-        [CanBeNull] string detailsText)
+        ProcessStateFlag stateFlag, [CanBeNull] string stateSummaryText, [CanBeNull] string stateDetailsText)
     {
         StateUpdateTime = stateUpdateTime;
-        StateName = stateName;
+        StateName = Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
         SubStateName = subStateName;
-        StateDetailsText = detailsText;
+        StateFlag = stateFlag;
+        StateSummaryText = stateSummaryText;
+        StateDetailsText = stateDetailsText;
     }
 }

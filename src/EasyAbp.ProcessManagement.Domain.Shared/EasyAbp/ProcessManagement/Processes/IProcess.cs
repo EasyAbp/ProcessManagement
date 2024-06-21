@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
-public interface IProcess
+public interface IProcess : IProcessStateBase
 {
     /// <summary>
     /// The hardcoded Name value from ProcessDefinition.
@@ -12,19 +12,19 @@ public interface IProcess
     string ProcessName { get; }
 
     /// <summary>
-    /// An unique correlation ID. If not set, this value will be auto-set to the value of the Id property.
+    /// A unique correlation ID. If not set, this value will be auto-set to the value of the Id property.
     /// </summary>
     [NotNull]
     string CorrelationId { get; }
 
     /// <summary>
-    /// A custom tag. It can be used for auth and filter.
+    /// A custom user group key. It can be used for auth and filter.
     /// </summary>
     /// <example>
-    /// {OrganizationUnitId}
+    /// OU:{OrganizationUnitId}
     /// </example>
     [CanBeNull]
-    string CustomTag { get; }
+    string GroupKey { get; }
 
     /// <summary>
     /// Record whether this process changed into a final state.

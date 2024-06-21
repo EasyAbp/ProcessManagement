@@ -17,12 +17,13 @@ public class ProcessManager : DomainService
         Options = options.Value;
     }
 
-    public virtual Task<Process> CreateAsync(string processName, [CanBeNull] string customTag = null)
+    public virtual Task<Process> CreateAsync(string processName, IProcessState initialState,
+        [CanBeNull] string correlationId = null, [CanBeNull] string groupKey = null)
     {
         var processDefinition = Options.GetProcessDefinition(processName);
 
-        return Task.FromResult(
-            new Process(GuidGenerator.Create(), CurrentTenant.Id, processDefinition, Clock.Now, customTag));
+        return Task.FromResult(new Process(GuidGenerator.Create(), CurrentTenant.Id, processDefinition, initialState,
+            correlationId, groupKey));
     }
 
     public virtual Task UpdateStateAsync(Process process, IProcessState nextState, bool completeProcess)
