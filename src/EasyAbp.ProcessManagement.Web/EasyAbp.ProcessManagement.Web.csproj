@@ -7,6 +7,7 @@
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <IsPackable>true</IsPackable>
     <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
     <RootNamespace>EasyAbp.ProcessManagement.Web</RootNamespace>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
@@ -39,6 +40,12 @@
 
   <ItemGroup>
     <Folder Include="Pages\ProcessManagement" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\ProcessManagement\ProcessStateHistories\ProcessStateHistory\CreateModal.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\ProcessManagement\ProcessStateHistories\ProcessStateHistory\EditModal.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\ProcessManagement\ProcessStateHistories\ProcessStateHistory\Index.cshtml" />
   </ItemGroup>
 
 </Project>

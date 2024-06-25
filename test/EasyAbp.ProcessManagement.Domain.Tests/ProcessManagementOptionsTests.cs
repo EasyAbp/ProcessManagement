@@ -31,14 +31,14 @@ public class ProcessManagementOptionsTests : ProcessManagementDomainTestBase
         Should.Throw<KeyNotFoundException>(() => processDefinition.GetState("Step10000"));
 
         processDefinition.InitialStateName.ShouldBe("Startup");
-        processDefinition.GetNextStateNames("Startup").ToArray().ShouldBeEquivalentTo(new[] { "Step1", "Step2" });
-        processDefinition.GetNextStateNames("Step1").ToArray().ShouldBeEquivalentTo(new[] { "Step3" });
-        processDefinition.GetNextStateNames("Step2").ToArray().ShouldBeEquivalentTo(new[] { "Step3" });
-        processDefinition.GetNextStateNames("Step3").ToArray().ShouldBeEquivalentTo(new[] { "Step4", "Step5" });
-        processDefinition.GetNextStateNames("Step4").ToArray().ShouldBeEquivalentTo(new[] { "Step6" });
-        processDefinition.GetNextStateNames("Step5").ToArray().ShouldBeEquivalentTo(new[] { "Step7" });
-        processDefinition.GetNextStateNames("Step6").ToArray().ShouldBeEquivalentTo(new[] { "Step4" });
-        processDefinition.GetNextStateNames("Step7").ToArray().ShouldBeEquivalentTo(new[] { "Step8" });
-        processDefinition.GetNextStateNames("Step8").ToArray().ShouldBeEquivalentTo(new[] { "Step5" });
+        processDefinition.GetChildStateNames("Startup").ToArray().ShouldBeEquivalentTo(new[] { "Step1", "Step2" });
+        processDefinition.GetChildStateNames("Step1").ToArray().ShouldBeEquivalentTo(new[] { "Step3" });
+        processDefinition.GetChildStateNames("Step2").ToArray().ShouldBeEquivalentTo(new[] { "Step3" });
+        processDefinition.GetChildStateNames("Step3").ToArray().ShouldBeEquivalentTo(new[] { "Step4", "Step5" });
+        processDefinition.GetChildStateNames("Step4").ToArray().ShouldBeEquivalentTo(new[] { "Step6" });
+        processDefinition.GetChildStateNames("Step5").ToArray().ShouldBeEquivalentTo(new[] { "Step7" });
+        processDefinition.GetChildStateNames("Step6").ToArray().ShouldBeEquivalentTo(new[] { "Step4" });
+        processDefinition.GetChildStateNames("Step7").ToArray().ShouldBeEquivalentTo(new[] { "Step8" });
+        processDefinition.GetChildStateNames("Step8").ToArray().ShouldBeEquivalentTo(new[] { "Step5" });
     }
 }

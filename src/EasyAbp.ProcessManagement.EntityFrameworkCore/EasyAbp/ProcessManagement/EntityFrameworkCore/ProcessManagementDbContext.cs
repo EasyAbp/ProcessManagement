@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
+using EasyAbp.ProcessManagement.Processes;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
 
 namespace EasyAbp.ProcessManagement.EntityFrameworkCore;
 
@@ -10,6 +12,8 @@ public class ProcessManagementDbContext : AbpDbContext<ProcessManagementDbContex
     /* Add DbSet for each Aggregate Root here. Example:
      * public DbSet<Question> Questions { get; set; }
      */
+    public DbSet<Process> Processes { get; set; }
+    public DbSet<ProcessStateHistory> ProcessStateHistories { get; set; }
 
     public ProcessManagementDbContext(DbContextOptions<ProcessManagementDbContext> options)
         : base(options)

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using EasyAbp.ProcessManagement.Options;
-using EasyAbp.ProcessManagement.ProcessStateHistories;
-using JetBrains.Annotations;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.MultiTenancy;
@@ -23,9 +20,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     public virtual string GroupKey { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual bool IsCompleted { get; protected set; }
-
-    /// <inheritdoc/>
     public virtual DateTime? CompletionTime { get; protected set; }
 
     /// <inheritdoc/>
@@ -35,30 +29,30 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string SubStateName { get; protected set; }
+    public virtual string? SubStateName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string StateSummaryText { get; protected set; }
+    public virtual string? StateSummaryText { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string StateDetailsText { get; protected set; }
+    public virtual string? StateDetailsText { get; protected set; }
 
     protected Process()
     {
     }
 
-    internal Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, IProcessState processState,
-        [CanBeNull] string correlationId = null, [CanBeNull] string groupKey = null) : base(id)
+    internal Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, DateTime now, string groupKey,
+        IProcessStateCustom? stateCustom = null, string? correlationId = null) : base(id)
     {
         TenantId = tenantId;
         CorrelationId = correlationId ?? id.ToString();
         GroupKey = groupKey;
         ProcessName = Check.NotNullOrWhiteSpace(processDefinition.Name, nameof(ProcessName));
 
-        SetState(processDefinition, processState);
+        SetState(processDefinition, new ProcessStateInfoModel(now, processDefinition.InitialStateName, stateCustom));
     }
 
     internal void SetState(ProcessDefinition processDefinition, IProcessState processState)
@@ -88,7 +82,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     {
         CheckIsNotCompleted();
 
-        IsCompleted = true;
         CompletionTime = now;
     }
 
@@ -102,7 +95,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
 
     private void CheckIsNotCompleted()
     {
-        if (IsCompleted)
+        if (CompletionTime.HasValue)
         {
             throw new AbpException(
                 $"The operation failed since process `{ProcessName}` (id: {Id}) had already been completed.");
