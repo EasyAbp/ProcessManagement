@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EasyAbp.ProcessManagement.Migrations
 {
+    /// <inheritdoc />
     public partial class Initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -35,8 +37,8 @@ namespace EasyAbp.ProcessManagement.Migrations
                     Exceptions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     HttpStatusCode = table.Column<int>(type: "int", nullable: true),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,12 +57,48 @@ namespace EasyAbp.ProcessManagement.Migrations
                     RegexDescription = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ValueType = table.Column<int>(type: "int", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpClaimTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpFeatureGroups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpFeatureGroups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpFeatures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GroupName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ParentName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    DisplayName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    DefaultValue = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    IsVisibleToClients = table.Column<bool>(type: "bit", nullable: false),
+                    IsAvailableToHost = table.Column<bool>(type: "bit", nullable: false),
+                    AllowedProviders = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ValueType = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpFeatures", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,8 +140,9 @@ namespace EasyAbp.ProcessManagement.Migrations
                     ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(95)", maxLength: 95, nullable: false),
                     DisplayName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    EntityVersion = table.Column<int>(type: "int", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -138,6 +177,40 @@ namespace EasyAbp.ProcessManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AbpPermissionGroups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpPermissionGroups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpPermissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GroupName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ParentName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    DisplayName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    MultiTenancySide = table.Column<byte>(type: "tinyint", nullable: false),
+                    Providers = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    StateCheckers = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpPermissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AbpRoles",
                 columns: table => new
                 {
@@ -148,8 +221,9 @@ namespace EasyAbp.ProcessManagement.Migrations
                     IsDefault = table.Column<bool>(type: "bit", nullable: false),
                     IsStatic = table.Column<bool>(type: "bit", nullable: false),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true)
+                    EntityVersion = table.Column<int>(type: "int", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -173,12 +247,32 @@ namespace EasyAbp.ProcessManagement.Migrations
                     ClientIpAddress = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     BrowserInfo = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true)
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpSecurityLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpSettingDefinitions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    DefaultValue = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    IsVisibleToClients = table.Column<bool>(type: "bit", nullable: false),
+                    Providers = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
+                    IsInherited = table.Column<bool>(type: "bit", nullable: false),
+                    IsEncrypted = table.Column<bool>(type: "bit", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpSettingDefinitions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,8 +296,10 @@ namespace EasyAbp.ProcessManagement.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    EntityVersion = table.Column<int>(type: "int", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -215,6 +311,22 @@ namespace EasyAbp.ProcessManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpTenants", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpUserDelegations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    SourceUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TargetUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpUserDelegations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,8 +352,11 @@ namespace EasyAbp.ProcessManagement.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    ShouldChangePasswordOnNextLogin = table.Column<bool>(type: "bit", nullable: false),
+                    EntityVersion = table.Column<int>(type: "int", nullable: false),
+                    LastPasswordChangeTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -253,6 +368,58 @@ namespace EasyAbp.ProcessManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EasyAbpProcessManagementProcesses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProcessName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CorrelationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GroupKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CompletionTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StateUpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StateName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubStateName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StateFlag = table.Column<int>(type: "int", nullable: false),
+                    StateSummaryText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StateDetailsText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EasyAbpProcessManagementProcesses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EasyAbpProcessManagementProcessStateHistories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProcessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StateName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubStateName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StateFlag = table.Column<int>(type: "int", nullable: false),
+                    StateSummaryText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StateDetailsText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StateUpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EasyAbpProcessManagementProcessStateHistories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,7 +457,7 @@ namespace EasyAbp.ProcessManagement.Migrations
                     ChangeTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ChangeType = table.Column<byte>(type: "tinyint", nullable: false),
                     EntityTenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EntityId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    EntityId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     EntityTypeFullName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -546,6 +713,23 @@ namespace EasyAbp.ProcessManagement.Migrations
                 column: "EntityChangeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AbpFeatureGroups_Name",
+                table: "AbpFeatureGroups",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbpFeatures_GroupName",
+                table: "AbpFeatures",
+                column: "GroupName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbpFeatures_Name",
+                table: "AbpFeatures",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AbpFeatureValues_Name_ProviderName_ProviderKey",
                 table: "AbpFeatureValues",
                 columns: new[] { "Name", "ProviderName", "ProviderKey" },
@@ -582,6 +766,23 @@ namespace EasyAbp.ProcessManagement.Migrations
                 filter: "[TenantId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AbpPermissionGroups_Name",
+                table: "AbpPermissionGroups",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbpPermissions_GroupName",
+                table: "AbpPermissions",
+                column: "GroupName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbpPermissions_Name",
+                table: "AbpPermissions",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AbpRoleClaims_RoleId",
                 table: "AbpRoleClaims",
                 column: "RoleId");
@@ -612,6 +813,12 @@ namespace EasyAbp.ProcessManagement.Migrations
                 columns: new[] { "TenantId", "UserId" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AbpSettingDefinitions_Name",
+                table: "AbpSettingDefinitions",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AbpSettings_Name_ProviderName_ProviderKey",
                 table: "AbpSettings",
                 columns: new[] { "Name", "ProviderName", "ProviderKey" },
@@ -622,6 +829,11 @@ namespace EasyAbp.ProcessManagement.Migrations
                 name: "IX_AbpTenants_Name",
                 table: "AbpTenants",
                 column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AbpTenants_NormalizedName",
+                table: "AbpTenants",
+                column: "NormalizedName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AbpUserClaims_UserId",
@@ -662,8 +874,24 @@ namespace EasyAbp.ProcessManagement.Migrations
                 name: "IX_AbpUsers_UserName",
                 table: "AbpUsers",
                 column: "UserName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementProcesses_CorrelationId",
+                table: "EasyAbpProcessManagementProcesses",
+                column: "CorrelationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementProcesses_GroupKey_ProcessName",
+                table: "EasyAbpProcessManagementProcesses",
+                columns: new[] { "GroupKey", "ProcessName" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementProcessStateHistories_ProcessId_StateUpdateTime",
+                table: "EasyAbpProcessManagementProcessStateHistories",
+                columns: new[] { "ProcessId", "StateUpdateTime" });
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -674,6 +902,12 @@ namespace EasyAbp.ProcessManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpEntityPropertyChanges");
+
+            migrationBuilder.DropTable(
+                name: "AbpFeatureGroups");
+
+            migrationBuilder.DropTable(
+                name: "AbpFeatures");
 
             migrationBuilder.DropTable(
                 name: "AbpFeatureValues");
@@ -688,10 +922,19 @@ namespace EasyAbp.ProcessManagement.Migrations
                 name: "AbpPermissionGrants");
 
             migrationBuilder.DropTable(
+                name: "AbpPermissionGroups");
+
+            migrationBuilder.DropTable(
+                name: "AbpPermissions");
+
+            migrationBuilder.DropTable(
                 name: "AbpRoleClaims");
 
             migrationBuilder.DropTable(
                 name: "AbpSecurityLogs");
+
+            migrationBuilder.DropTable(
+                name: "AbpSettingDefinitions");
 
             migrationBuilder.DropTable(
                 name: "AbpSettings");
@@ -701,6 +944,9 @@ namespace EasyAbp.ProcessManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AbpUserDelegations");
 
             migrationBuilder.DropTable(
                 name: "AbpUserLogins");
@@ -713,6 +959,12 @@ namespace EasyAbp.ProcessManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "EasyAbpProcessManagementProcesses");
+
+            migrationBuilder.DropTable(
+                name: "EasyAbpProcessManagementProcessStateHistories");
 
             migrationBuilder.DropTable(
                 name: "AbpEntityChanges");

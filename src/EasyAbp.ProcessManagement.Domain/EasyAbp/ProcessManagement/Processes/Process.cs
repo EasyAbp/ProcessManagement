@@ -60,7 +60,8 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
         CheckProcessDefinition(processDefinition);
         CheckIsNotCompleted();
 
-        var oldState = ToStateInfoModel();
+
+        var oldState = StateName.IsNullOrEmpty() ? null : ToStateInfoModel();
 
         StateUpdateTime = processState.StateUpdateTime;
         StateName = Check.NotNullOrWhiteSpace(processState.StateName, nameof(processState.StateName));

@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EasyAbp.ProcessManagement.EntityFrameworkCore;
+using EasyAbp.ProcessManagement.Processes;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 
-namespace EasyAbp.ProcessManagement.Processes;
+namespace EasyAbp.ProcessManagement.EntityFrameworkCore.Processes;
 
 public class ProcessRepository : EfCoreRepository<IProcessManagementDbContext, Process, Guid>, IProcessRepository
 {

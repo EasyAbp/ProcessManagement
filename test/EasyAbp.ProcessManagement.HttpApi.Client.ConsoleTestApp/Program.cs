@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyAbp.ProcessManagement.HttpApi.Client.ConsoleTestApp;
+namespace EasyAbp.ProcessManagement;
 
 class Program
 {

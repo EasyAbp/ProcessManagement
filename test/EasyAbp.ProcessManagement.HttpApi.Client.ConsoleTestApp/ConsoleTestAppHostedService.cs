@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Hosting;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Volo.Abp;
 
-namespace EasyAbp.ProcessManagement.HttpApi.Client.ConsoleTestApp;
+namespace EasyAbp.ProcessManagement;
 
 public class ConsoleTestAppHostedService : IHostedService
 {

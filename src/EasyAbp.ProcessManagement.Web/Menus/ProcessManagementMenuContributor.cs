@@ -18,18 +18,16 @@ public class ProcessManagementMenuContributor : IMenuContributor
     private async Task ConfigureMainMenuAsync(MenuConfigurationContext context)
     {
         var l = context.GetLocalizer<ProcessManagementResource>();
-         //Add main menu items.
+        //Add main menu items.
         context.Menu.GetAdministration().AddItem(new ApplicationMenuItem(ProcessManagementMenus.Prefix,
             displayName: "ProcessManagement", icon: "fa fa-list", url: "~/ProcessManagement"));
 
-        if (await context.IsGrantedAsync(ProcessManagementPermissions.Process.Default))
+        if (await context.IsGrantedAsync(ProcessManagementPermissions.Process.Manage))
         {
             context.Menu.GetAdministration().AddItem(
-                new ApplicationMenuItem(ProcessManagementMenus.Process, l["Menu:Process"], "/ProcessManagement/Processes/Process")
+                new ApplicationMenuItem(ProcessManagementMenus.Process, l["Menu:Process"],
+                    "/ProcessManagement/Processes/Process")
             );
         }
-        context.Menu.GetAdministration().AddItem(
-            new ApplicationMenuItem(ProcessManagementMenus.ProcessStateHistory, l["Menu:ProcessStateHistory"], "/ProcessManagement/ProcessStateHistories/ProcessStateHistory")
-        );
     }
 }

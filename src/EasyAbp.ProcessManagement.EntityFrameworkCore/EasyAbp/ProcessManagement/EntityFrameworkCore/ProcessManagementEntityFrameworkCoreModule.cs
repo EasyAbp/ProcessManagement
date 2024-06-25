@@ -1,3 +1,5 @@
+using EasyAbp.ProcessManagement.EntityFrameworkCore.Processes;
+using EasyAbp.ProcessManagement.EntityFrameworkCore.ProcessStateHistories;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
 using EasyAbp.ProcessManagement.Processes;
 using Microsoft.Extensions.DependencyInjection;
