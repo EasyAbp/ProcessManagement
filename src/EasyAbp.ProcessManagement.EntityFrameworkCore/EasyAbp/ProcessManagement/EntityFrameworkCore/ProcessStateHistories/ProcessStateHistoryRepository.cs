@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EasyAbp.ProcessManagement.EntityFrameworkCore;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 
-namespace EasyAbp.ProcessManagement.ProcessStateHistories;
+namespace EasyAbp.ProcessManagement.EntityFrameworkCore.ProcessStateHistories;
 
 public class ProcessStateHistoryRepository : EfCoreRepository<IProcessManagementDbContext, ProcessStateHistory, Guid>, IProcessStateHistoryRepository
 {

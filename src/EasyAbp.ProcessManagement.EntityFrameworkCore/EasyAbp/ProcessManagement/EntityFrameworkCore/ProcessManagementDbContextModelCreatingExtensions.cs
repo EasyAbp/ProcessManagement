@@ -36,21 +36,24 @@ public static class ProcessManagementDbContextModelCreatingExtensions
 
         builder.Entity<Process>(b =>
         {
-            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "Processes", ProcessManagementDbProperties.DbSchema);
-            b.ConfigureByConvention(); 
-            
+            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "Processes",
+                ProcessManagementDbProperties.DbSchema);
+            b.ConfigureByConvention();
 
             /* Configure more properties here */
+            b.HasIndex(x => new { x.GroupKey, x.ProcessName });
+            b.HasIndex(x => x.CorrelationId);
         });
 
 
         builder.Entity<ProcessStateHistory>(b =>
         {
-            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "ProcessStateHistories", ProcessManagementDbProperties.DbSchema);
-            b.ConfigureByConvention(); 
-            
+            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "ProcessStateHistories",
+                ProcessManagementDbProperties.DbSchema);
+            b.ConfigureByConvention();
 
             /* Configure more properties here */
+            b.HasIndex(x => new { x.ProcessId, x.StateUpdateTime });
         });
     }
 }

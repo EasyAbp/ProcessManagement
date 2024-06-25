@@ -1,6 +1,7 @@
 using System.Linq;
+using EasyAbp.ProcessManagement.Processes;
 
-namespace EasyAbp.ProcessManagement.Processes;
+namespace EasyAbp.ProcessManagement.EntityFrameworkCore.Processes;
 
 public static class ProcessEfCoreQueryableExtensions
 {

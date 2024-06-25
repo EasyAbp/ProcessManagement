@@ -1,6 +1,7 @@
 using System.Linq;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
 
-namespace EasyAbp.ProcessManagement.ProcessStateHistories;
+namespace EasyAbp.ProcessManagement.EntityFrameworkCore.ProcessStateHistories;
 
 public static class ProcessStateHistoryEfCoreQueryableExtensions
 {
