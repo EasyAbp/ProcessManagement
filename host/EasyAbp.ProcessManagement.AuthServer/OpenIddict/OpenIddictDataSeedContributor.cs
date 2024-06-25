@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using OpenIddict.Abstractions;
@@ -171,9 +170,9 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
     }
 
     private async Task CreateApplicationAsync(
-        [NotNull] string name,
-        [NotNull] string type,
-        [NotNull] string consentType,
+        string name,
+        string type,
+        string consentType,
         string displayName,
         string secret,
         List<string> grantTypes,

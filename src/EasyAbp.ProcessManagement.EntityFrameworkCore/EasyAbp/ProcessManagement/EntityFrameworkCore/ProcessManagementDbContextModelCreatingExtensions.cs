@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
+using EasyAbp.ProcessManagement.Processes;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace EasyAbp.ProcessManagement.EntityFrameworkCore;
 
@@ -29,5 +32,25 @@ public static class ProcessManagementDbContextModelCreatingExtensions
             b.HasIndex(q => q.CreationTime);
         });
         */
+
+
+        builder.Entity<Process>(b =>
+        {
+            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "Processes", ProcessManagementDbProperties.DbSchema);
+            b.ConfigureByConvention(); 
+            
+
+            /* Configure more properties here */
+        });
+
+
+        builder.Entity<ProcessStateHistory>(b =>
+        {
+            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "ProcessStateHistories", ProcessManagementDbProperties.DbSchema);
+            b.ConfigureByConvention(); 
+            
+
+            /* Configure more properties here */
+        });
     }
 }

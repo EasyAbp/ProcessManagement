@@ -9,9 +9,9 @@ namespace EasyAbp.ProcessManagement.UserGroups;
 
 public class UserIdUserGroupContributor : UserGroupContributorBase, IDistributedEventHandler<EntityCreatedEto<UserEto>>
 {
-    public static string GroupKeyPrefix { get; set; } = "U:";
+    public override string GroupKeyPrefix => "U:";
 
-    protected override Task<List<string>> GetUserGroupKeysAsync(Guid userId)
+    protected override Task<List<string>> GetGroupKeysForUserAsync(Guid userId)
     {
         return Task.FromResult<List<string>>([$"{GroupKeyPrefix}{userId}"]);
     }

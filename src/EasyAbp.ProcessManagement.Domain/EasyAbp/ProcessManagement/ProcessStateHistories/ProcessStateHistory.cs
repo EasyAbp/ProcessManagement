@@ -15,16 +15,16 @@ public class ProcessStateHistory : AggregateRoot<Guid>, IProcessState, IMultiTen
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string SubStateName { get; protected set; }
+    public virtual string? SubStateName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
 
     /// <inheritdoc/>
-    public string StateSummaryText { get; protected set; }
+    public string? StateSummaryText { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string StateDetailsText { get; protected set; }
+    public virtual string? StateDetailsText { get; protected set; }
 
     /// <inheritdoc/>
     public virtual DateTime StateUpdateTime { get; protected set; }

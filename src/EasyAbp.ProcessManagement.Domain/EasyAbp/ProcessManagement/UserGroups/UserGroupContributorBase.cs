@@ -10,13 +10,19 @@ public abstract class UserGroupContributorBase : IUserGroupContributor, ITransie
 {
     public IAbpLazyServiceProvider LazyServiceProvider { get; set; } = null!;
 
-    protected abstract Task<List<string>> GetUserGroupKeysAsync(Guid userId);
+    protected abstract Task<List<string>> GetGroupKeysForUserAsync(Guid userId);
+
+    public abstract string GroupKeyPrefix { get; }
 
     [UnitOfWork(true)]
     public virtual async Task UpdateAsync(Guid userId)
     {
-        await InternalUpdateAsync(userId, await GetUserGroupKeysAsync(userId));
+        await InternalUpdateAsync(userId, await GetGroupKeysForUserAsync(userId));
     }
+
+    public virtual Task<string> CreateGroupKeyAsync(string originalKey) =>
+        Task.FromResult<string>($"{GroupKeyPrefix}{originalKey}");
+
 
     protected virtual async Task InternalUpdateAsync(Guid userId, List<string> userGroupKeys)
     {

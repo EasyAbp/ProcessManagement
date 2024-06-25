@@ -9,6 +9,10 @@ public class ProcessManagementPermissionDefinitionProvider : PermissionDefinitio
     public override void Define(IPermissionDefinitionContext context)
     {
         var myGroup = context.AddGroup(ProcessManagementPermissions.GroupName, L("Permission:ProcessManagement"));
+
+        var processPermission =
+            myGroup.AddPermission(ProcessManagementPermissions.Process.Default, L("Permission:Process"));
+        processPermission.AddChild(ProcessManagementPermissions.Process.Manage, L("Permission:Manage"));
     }
 
     private static LocalizableString L(string name)

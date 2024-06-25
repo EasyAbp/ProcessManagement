@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
+using EasyAbp.ProcessManagement.Processes;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Modularity;
 
@@ -17,6 +19,8 @@ public class ProcessManagementEntityFrameworkCoreModule : AbpModule
             /* Add custom repositories here. Example:
              * options.AddRepository<Question, EfCoreQuestionRepository>();
              */
+            options.AddRepository<Process, ProcessRepository>();
+            options.AddRepository<ProcessStateHistory, ProcessStateHistoryRepository>();
         });
     }
 }

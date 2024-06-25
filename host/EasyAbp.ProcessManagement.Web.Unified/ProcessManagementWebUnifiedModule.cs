@@ -1,5 +1,4 @@
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using EasyAbp.ProcessManagement.EntityFrameworkCore;
 using EasyAbp.ProcessManagement.MultiTenancy;
+using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Web;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
@@ -41,7 +40,6 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement.Web;
-using Volo.Abp.Threading;
 using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.ProcessManagement;
@@ -80,7 +78,7 @@ namespace EasyAbp.ProcessManagement;
     typeof(AbpAspNetCoreMvcUiBasicThemeModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule)
-    )]
+)]
 public class ProcessManagementWebUnifiedModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -88,20 +86,41 @@ public class ProcessManagementWebUnifiedModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
-        Configure<AbpDbContextOptions>(options =>
+        Configure<ProcessManagementOptions>(options =>
         {
-            options.UseSqlServer();
+            var definition = new ProcessDefinition("FakeExport", "Fake export")
+                .AddState(new ProcessStateDefinition("Started", "Started"), null)
+                .AddState(new ProcessStateDefinition("Failed", "Failed"), "Started")
+                .AddState(new ProcessStateDefinition("Succeeded", "Succeeded"), "Started");
+
+            options.AddOrUpdateProcessDefinition(definition);
         });
+
+        Configure<AbpDbContextOptions>(options => { options.UseSqlServer(); });
 
         if (hostingEnvironment.IsDevelopment())
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Domain.Shared", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementDomainModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Domain", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Application.Contracts", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementApplicationModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Application", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementWebModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Web", Path.DirectorySeparatorChar)));
+                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementDomainSharedModule>(
+                    Path.Combine(hostingEnvironment.ContentRootPath,
+                        string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Domain.Shared",
+                            Path.DirectorySeparatorChar)));
+                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementDomainModule>(
+                    Path.Combine(hostingEnvironment.ContentRootPath,
+                        string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Domain",
+                            Path.DirectorySeparatorChar)));
+                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementApplicationContractsModule>(
+                    Path.Combine(hostingEnvironment.ContentRootPath,
+                        string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Application.Contracts",
+                            Path.DirectorySeparatorChar)));
+                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementApplicationModule>(
+                    Path.Combine(hostingEnvironment.ContentRootPath,
+                        string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Application",
+                            Path.DirectorySeparatorChar)));
+                options.FileSets.ReplaceEmbeddedByPhysical<ProcessManagementWebModule>(
+                    Path.Combine(hostingEnvironment.ContentRootPath,
+                        string.Format("..{0}..{0}src{0}EasyAbp.ProcessManagement.Web", Path.DirectorySeparatorChar)));
             });
         }
 
@@ -137,10 +156,7 @@ public class ProcessManagementWebUnifiedModule : AbpModule
             options.Languages.Add(new LanguageInfo("el", "el", "Ελληνικά"));
         });
 
-        Configure<AbpMultiTenancyOptions>(options =>
-        {
-            options.IsEnabled = MultiTenancyConsts.IsEnabled;
-        });
+        Configure<AbpMultiTenancyOptions>(options => { options.IsEnabled = MultiTenancyConsts.IsEnabled; });
 
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
@@ -176,10 +192,7 @@ public class ProcessManagementWebUnifiedModule : AbpModule
         app.UseAuthorization();
 
         app.UseSwagger();
-        app.UseAbpSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Support APP API");
-        });
+        app.UseAbpSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "Support APP API"); });
 
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();

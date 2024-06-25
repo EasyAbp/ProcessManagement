@@ -27,9 +27,6 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
     public virtual string GroupKey { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual bool IsCompleted { get; protected set; }
-
-    /// <inheritdoc/>
     public virtual DateTime? CompletionTime { get; protected set; }
 
     /// <inheritdoc/>
@@ -39,13 +36,13 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string SubStateName { get; protected set; }
+    public virtual string? SubStateName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string StateSummaryText { get; protected set; }
+    public virtual string? StateSummaryText { get; protected set; }
 
     #endregion
 
@@ -58,7 +55,6 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
 
         CorrelationId = process.CorrelationId;
         GroupKey = process.GroupKey;
-        IsCompleted = process.IsCompleted;
         CompletionTime = process.CompletionTime;
 
         StateUpdateTime = process.StateUpdateTime;
