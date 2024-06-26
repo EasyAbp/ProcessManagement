@@ -7,12 +7,30 @@
 @{
     Layout = null;
 }
-<abp-dynamic-form abp-model="ViewModel" data-ajaxForm="true" asp-page="DetailsModal">
-    <abp-modal>
-        <abp-modal-header title="@L["Details"].Value"></abp-modal-header>
-        <abp-modal-body>
-            <abp-form-content/>
-        </abp-modal-body>
-        <abp-modal-footer buttons="@(AbpModalButtons.Close)"></abp-modal-footer>
-    </abp-modal>
-</abp-dynamic-form>
+<abp-modal>
+    <abp-modal-header title="@Model.ViewModel.State"></abp-modal-header>
+    <abp-modal-body>
+        <div class="mb-3">
+            <div id="ViewModel_StateDetailsText" contenteditable="false">@Html.Raw(Model.ViewModel.StateDetailsText)</div>
+        </div>
+        <abp-collapse-body id="ProcessDetailsModalMoreInfo">
+            <hr>
+            <abp-input asp-for="ViewModel.ProcessDisplayName"/>
+            <abp-input asp-for="ViewModel.State"/>
+            <abp-input asp-for="ViewModel.Histories"/>
+            <abp-input asp-for="ViewModel.CreationTime"/>
+            <abp-input asp-for="ViewModel.CompletionTime"/>
+            <abp-input asp-for="ViewModel.CorrelationId"/>
+        </abp-collapse-body>
+    </abp-modal-body>
+    <abp-modal-footer>
+        <abp-button button-type="Primary" abp-collapse-id="ProcessDetailsModalMoreInfo">@L["More"]</abp-button>
+        <abp-button button-type="Secondary" data-bs-dismiss="modal">@L["Close"]</abp-button>
+    </abp-modal-footer>
+</abp-modal>
+
+<style>
+    #ViewModel_StateDetailsText {
+
+    }
+</style>

@@ -1,6 +1,7 @@
 {
   "culture": "zh-Hant",
   "texts": {
+    "More": "More",
     "Permission:ProcessManagement": "Process management",
     "Permission:Process": "Process",
     "Permission:Manage": "Manage",
@@ -14,6 +15,7 @@
     "ProcessStateName": "ProcessStateName",
     "ProcessSubStateName": "ProcessSubStateName",
     "ProcessStateFlag": "ProcessStateFlag",
+    "ProcessCreationTime": "ProcessCreationTime",
     "ProcessStateSummaryText": "ProcessStateSummaryText",
     "ProcessStateDetailsText": "ProcessStateDetailsText",
     "CreateProcess": "CreateProcess",

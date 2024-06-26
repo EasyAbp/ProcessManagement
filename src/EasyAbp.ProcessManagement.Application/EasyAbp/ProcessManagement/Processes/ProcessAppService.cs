@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Permissions;
 using EasyAbp.ProcessManagement.Processes.Dtos;
+using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Services;
 
 namespace EasyAbp.ProcessManagement.Processes;
-
 
 public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, ProcessGetListInput>,
     IProcessAppService
@@ -23,7 +24,6 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
 
     protected override async Task<IQueryable<Process>> CreateFilteredQueryAsync(ProcessGetListInput input)
     {
-        // TODO: AbpHelper generated
         return (await base.CreateFilteredQueryAsync(input))
             .WhereIf(!input.ProcessName.IsNullOrWhiteSpace(), x => x.ProcessName.Contains(input.ProcessName))
             .WhereIf(!input.CorrelationId.IsNullOrWhiteSpace(), x => x.CorrelationId.Contains(input.CorrelationId))
@@ -33,8 +33,28 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
             .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))
             .WhereIf(!input.SubStateName.IsNullOrWhiteSpace(), x => x.SubStateName.Contains(input.SubStateName))
             .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
-            .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(), x => x.StateSummaryText.Contains(input.StateSummaryText))
-            .WhereIf(!input.StateDetailsText.IsNullOrWhiteSpace(), x => x.StateDetailsText.Contains(input.StateDetailsText))
+            .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(),
+                x => x.StateSummaryText.Contains(input.StateSummaryText))
+            .WhereIf(!input.StateDetailsText.IsNullOrWhiteSpace(),
+                x => x.StateDetailsText.Contains(input.StateDetailsText))
             ;
+    }
+
+    protected override ProcessDto MapToGetOutputDto(Process entity)
+    {
+        var options = LazyServiceProvider.LazyGetRequiredService<IOptions<ProcessManagementOptions>>();
+
+        var processDefinition = options.Value.GetProcessDefinition(entity.ProcessName);
+
+        var dto = base.MapToGetOutputDto(entity);
+
+        dto.ProcessDisplayName = processDefinition.DisplayName;
+
+        return dto;
+    }
+
+    protected override ProcessDto MapToGetListOutputDto(Process entity)
+    {
+        return MapToGetOutputDto(entity);
     }
 }

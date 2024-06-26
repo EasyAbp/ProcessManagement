@@ -28,18 +28,7 @@ public class ProcessStateInfoModel : IProcessState
     {
     }
 
-    public ProcessStateInfoModel(DateTime stateUpdateTime, string stateName, string? subStateName,
-        ProcessStateFlag stateFlag, string? stateSummaryText, string? stateDetailsText)
-    {
-        StateUpdateTime = stateUpdateTime;
-        StateName = Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
-        SubStateName = subStateName;
-        StateFlag = stateFlag;
-        StateSummaryText = stateSummaryText;
-        StateDetailsText = stateDetailsText;
-    }
-
-    public ProcessStateInfoModel(DateTime stateUpdateTime, string stateName, IProcessStateCustom? stateCustom)
+    public ProcessStateInfoModel(DateTime stateUpdateTime, string stateName, IProcessStateCustom? stateCustom = null)
     {
         StateUpdateTime = stateUpdateTime;
         StateName = Check.NotNullOrWhiteSpace(stateName, nameof(stateName));

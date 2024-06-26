@@ -24,7 +24,6 @@ public class ProcessStateHistoryAppService : ReadOnlyAppService<ProcessStateHist
     protected override async Task<IQueryable<ProcessStateHistory>> CreateFilteredQueryAsync(
         ProcessStateHistoryGetListInput input)
     {
-        // TODO: AbpHelper generated
         return (await base.CreateFilteredQueryAsync(input))
             .WhereIf(input.ProcessId != null, x => x.ProcessId == input.ProcessId)
             .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))

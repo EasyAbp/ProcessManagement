@@ -21,7 +21,7 @@ public class ProcessStateHistory : AggregateRoot<Guid>, IProcessState, IMultiTen
     public virtual ProcessStateFlag StateFlag { get; protected set; }
 
     /// <inheritdoc/>
-    public string? StateSummaryText { get; protected set; }
+    public virtual string? StateSummaryText { get; protected set; }
 
     /// <inheritdoc/>
     public virtual string? StateDetailsText { get; protected set; }
@@ -33,17 +33,17 @@ public class ProcessStateHistory : AggregateRoot<Guid>, IProcessState, IMultiTen
     {
     }
 
-    public ProcessStateHistory(Guid id, Process process) : base(id)
+    public ProcessStateHistory(Guid id, Guid? tenantId, Guid processId, IProcessState state) : base(id)
     {
-        TenantId = process.TenantId;
+        TenantId = tenantId;
 
-        ProcessId = process.Id;
+        ProcessId = processId;
 
-        StateUpdateTime = process.StateUpdateTime;
-        StateName = process.StateName;
-        SubStateName = process.SubStateName;
-        StateFlag = process.StateFlag;
-        StateSummaryText = process.StateSummaryText;
-        StateDetailsText = process.StateDetailsText;
+        StateUpdateTime = state.StateUpdateTime;
+        StateName = state.StateName;
+        SubStateName = state.SubStateName;
+        StateFlag = state.StateFlag;
+        StateSummaryText = state.StateSummaryText;
+        StateDetailsText = state.StateDetailsText;
     }
 }
