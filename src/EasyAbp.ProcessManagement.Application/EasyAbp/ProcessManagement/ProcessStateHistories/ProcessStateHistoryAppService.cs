@@ -27,7 +27,7 @@ public class ProcessStateHistoryAppService : ReadOnlyAppService<ProcessStateHist
         return (await base.CreateFilteredQueryAsync(input))
             .WhereIf(input.ProcessId != null, x => x.ProcessId == input.ProcessId)
             .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))
-            .WhereIf(!input.SubStateName.IsNullOrWhiteSpace(), x => x.SubStateName.Contains(input.SubStateName))
+            .WhereIf(!input.ActionName.IsNullOrWhiteSpace(), x => x.ActionName.Contains(input.ActionName))
             .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
             .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(),
                 x => x.StateSummaryText.Contains(input.StateSummaryText))

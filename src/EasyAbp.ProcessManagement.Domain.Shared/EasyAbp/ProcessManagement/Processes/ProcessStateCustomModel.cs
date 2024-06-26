@@ -6,7 +6,7 @@ namespace EasyAbp.ProcessManagement.Processes;
 [Serializable]
 public class ProcessStateCustomModel : IProcessStateCustom
 {
-    public string? SubStateName { get; set; }
+    public string? ActionName { get; set; }
 
     public ProcessStateFlag StateFlag { get; set; }
 
@@ -18,10 +18,10 @@ public class ProcessStateCustomModel : IProcessStateCustom
     {
     }
 
-    public ProcessStateCustomModel(string? subStateName, ProcessStateFlag stateFlag, string? stateSummaryText,
+    public ProcessStateCustomModel(string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText,
         string? stateDetailsText)
     {
-        SubStateName = subStateName;
+        ActionName = actionName;
         StateFlag = stateFlag;
         StateSummaryText = stateSummaryText;
         StateDetailsText = stateDetailsText;

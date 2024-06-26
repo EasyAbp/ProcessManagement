@@ -29,7 +29,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string? SubStateName { get; protected set; }
+    public virtual string? ActionName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
@@ -64,7 +64,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
 
         StateUpdateTime = processState.StateUpdateTime;
         StateName = Check.NotNullOrWhiteSpace(processState.StateName, nameof(processState.StateName));
-        SubStateName = processState.SubStateName;
+        ActionName = processState.ActionName;
         StateFlag = processState.StateFlag;
         StateSummaryText = processState.StateSummaryText;
         StateDetailsText = processState.StateDetailsText;

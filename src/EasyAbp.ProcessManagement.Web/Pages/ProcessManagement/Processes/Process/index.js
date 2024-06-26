@@ -63,7 +63,7 @@ $(function () {
                 title: l('ProcessStateName'),
                 data: "processDisplayName",
                 render: function (data, type, row) {
-                    return row.subStateName ? data + ' (' + row.subStateName + ')' : data;
+                    return row.actionName ? data + ' (' + row.actionName + ')' : data;
                 }
             },
             {

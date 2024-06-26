@@ -15,7 +15,7 @@ public class ProcessStateHistory : AggregateRoot<Guid>, IProcessState, IMultiTen
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string? SubStateName { get; protected set; }
+    public virtual string? ActionName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
@@ -41,7 +41,7 @@ public class ProcessStateHistory : AggregateRoot<Guid>, IProcessState, IMultiTen
 
         StateUpdateTime = state.StateUpdateTime;
         StateName = state.StateName;
-        SubStateName = state.SubStateName;
+        ActionName = state.ActionName;
         StateFlag = state.StateFlag;
         StateSummaryText = state.StateSummaryText;
         StateDetailsText = state.StateDetailsText;

@@ -43,8 +43,8 @@ public class ProcessFilterInput
     public string? StateName { get; set; }
 
     [FormControlSize(AbpFormControlSize.Small)]
-    [Display(Name = "ProcessSubStateName")]
-    public string? SubStateName { get; set; }
+    [Display(Name = "ProcessActionName")]
+    public string? ActionName { get; set; }
 
     [FormControlSize(AbpFormControlSize.Small)]
     [Display(Name = "ProcessStateFlag")]
