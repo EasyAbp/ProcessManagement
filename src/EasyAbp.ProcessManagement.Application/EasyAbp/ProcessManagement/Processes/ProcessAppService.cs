@@ -31,7 +31,7 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
             .WhereIf(input.CompletionTime != null, x => x.CompletionTime == input.CompletionTime)
             .WhereIf(input.StateUpdateTime != null, x => x.StateUpdateTime == input.StateUpdateTime)
             .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))
-            .WhereIf(!input.SubStateName.IsNullOrWhiteSpace(), x => x.SubStateName.Contains(input.SubStateName))
+            .WhereIf(!input.ActionName.IsNullOrWhiteSpace(), x => x.ActionName.Contains(input.ActionName))
             .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
             .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(),
                 x => x.StateSummaryText.Contains(input.StateSummaryText))

@@ -43,13 +43,13 @@ public class DetailsModalModel : ProcessManagementPageModel
             ProcessId = Id,
         });
 
-        var stateString = dto.SubStateName is null ? dto.StateName : $"{dto.StateName} ({dto.SubStateName})";
+        var stateString = dto.ActionName is null ? dto.StateName : $"{dto.StateName} ({dto.ActionName})";
 
         var historiesString = histories.Items
             .Select(x =>
-                x.SubStateName is null
+                x.ActionName is null
                     ? $"{x.StateUpdateTime}: {x.StateName}"
-                    : $"{x.StateUpdateTime}: {x.StateName} ({x.SubStateName})")
+                    : $"{x.StateUpdateTime}: {x.StateName} ({x.ActionName})")
             .JoinAsString(Environment.NewLine);
 
         ViewModel = new ProcessDetailViewModel(dto.CorrelationId, dto.ProcessDisplayName, stateString,

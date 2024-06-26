@@ -64,7 +64,7 @@ namespace EasyAbp.ProcessManagement.Migrations
                     b.Property<DateTime>("StateUpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SubStateName")
+                    b.Property<string>("ActionName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("TenantId")
@@ -157,7 +157,7 @@ namespace EasyAbp.ProcessManagement.Migrations
                     b.Property<DateTime>("StateUpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SubStateName")
+                    b.Property<string>("ActionName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("TenantId")

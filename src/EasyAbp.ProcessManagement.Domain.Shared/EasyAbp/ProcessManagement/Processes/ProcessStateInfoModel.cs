@@ -13,7 +13,7 @@ public class ProcessStateInfoModel : IProcessState
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string? SubStateName { get; protected set; }
+    public virtual string? ActionName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
@@ -32,7 +32,7 @@ public class ProcessStateInfoModel : IProcessState
     {
         StateUpdateTime = stateUpdateTime;
         StateName = Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
-        SubStateName = stateCustom?.SubStateName;
+        ActionName = stateCustom?.ActionName;
         StateFlag = stateCustom?.StateFlag ?? default;
         StateSummaryText = stateCustom?.StateSummaryText;
         StateDetailsText = stateCustom?.StateDetailsText;

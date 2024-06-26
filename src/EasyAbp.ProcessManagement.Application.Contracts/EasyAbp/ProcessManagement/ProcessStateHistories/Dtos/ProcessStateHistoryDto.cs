@@ -11,7 +11,7 @@ public class ProcessStateHistoryDto : EntityDto<Guid>, IProcessState
 
     public string StateName { get; set; }
 
-    public string? SubStateName { get; set; }
+    public string? ActionName { get; set; }
 
     public ProcessStateFlag StateFlag { get; set; }
 

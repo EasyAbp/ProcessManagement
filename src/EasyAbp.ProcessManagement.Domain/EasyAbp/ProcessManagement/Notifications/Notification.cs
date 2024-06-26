@@ -36,7 +36,7 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
     public virtual string StateName { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual string? SubStateName { get; protected set; }
+    public virtual string? ActionName { get; protected set; }
 
     /// <inheritdoc/>
     public virtual ProcessStateFlag StateFlag { get; protected set; }
@@ -59,7 +59,7 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
 
         StateUpdateTime = process.StateUpdateTime;
         StateName = process.StateName;
-        SubStateName = process.SubStateName;
+        ActionName = process.ActionName;
         StateFlag = process.StateFlag;
         StateSummaryText = process.StateSummaryText;
     }
