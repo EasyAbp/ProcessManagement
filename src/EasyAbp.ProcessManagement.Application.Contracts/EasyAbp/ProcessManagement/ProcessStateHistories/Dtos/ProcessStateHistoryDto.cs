@@ -5,7 +5,7 @@ using Volo.Abp.Application.Dtos;
 namespace EasyAbp.ProcessManagement.ProcessStateHistories.Dtos;
 
 [Serializable]
-public class ProcessStateHistoryDto : EntityDto<Guid>
+public class ProcessStateHistoryDto : EntityDto<Guid>, IProcessState
 {
     public Guid ProcessId { get; set; }
 

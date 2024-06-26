@@ -32,7 +32,7 @@ $(function () {
         autoWidth: false,
         scrollCollapse: true,
         order: [[0, "asc"]],
-        ajax: abp.libs.datatables.createAjax(service.getList,getFilter),
+        ajax: abp.libs.datatables.createAjax(service.getList, getFilter),
         columnDefs: [
             {
                 rowAction: {
@@ -41,7 +41,7 @@ $(function () {
                             {
                                 text: l('Details'),
                                 action: function (data) {
-                                    detailsModal.open({ id: data.record.id });
+                                    detailsModal.open({id: data.record.id});
                                 }
                             }
                         ]
@@ -52,32 +52,23 @@ $(function () {
                 data: "stateFlag"
             },
             {
+                title: l('ProcessCreationTime'),
+                data: "creationTime"
+            },
+            {
                 title: l('ProcessProcessName'),
                 data: "processName"
             },
             {
                 title: l('ProcessStateName'),
-                data: "stateName"
-            },
-            {
-                title: l('ProcessSubStateName'),
-                data: "subStateName"
+                data: "processDisplayName",
+                render: function (data, type, row) {
+                    return row.subStateName ? data + ' (' + row.subStateName + ')' : data;
+                }
             },
             {
                 title: l('ProcessStateSummaryText'),
                 data: "stateSummaryText"
-            },
-            {
-                title: l('ProcessStateDetailsText'),
-                data: "stateDetailsText"
-            },
-            {
-                title: l('ProcessStateUpdateTime'),
-                data: "stateUpdateTime"
-            },
-            {
-                title: l('ProcessCompletionTime'),
-                data: "completionTime"
             },
         ]
     }));

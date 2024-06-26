@@ -8,8 +8,7 @@ namespace EasyAbp.ProcessManagement.Notifications;
 
 public class ProcessChangedEventHandler : ITransientDependency,
     ILocalEventHandler<EntityCreatedEventData<Process>>,
-    ILocalEventHandler<EntityUpdatedEventData<Process>>,
-    ILocalEventHandler<EntityDeletedEventData<Process>>
+    ILocalEventHandler<EntityUpdatedEventData<Process>>
 {
     public virtual async Task HandleEventAsync(EntityCreatedEventData<Process> eventData)
     {
@@ -19,10 +18,5 @@ public class ProcessChangedEventHandler : ITransientDependency,
     public virtual async Task HandleEventAsync(EntityUpdatedEventData<Process> eventData)
     {
         // todo: create notifications.
-    }
-
-    public virtual async Task HandleEventAsync(EntityDeletedEventData<Process> eventData)
-    {
-        // todo: delete notifications.
     }
 }

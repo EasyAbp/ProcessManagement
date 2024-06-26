@@ -89,9 +89,10 @@ public class ProcessManagementWebUnifiedModule : AbpModule
         Configure<ProcessManagementOptions>(options =>
         {
             var definition = new ProcessDefinition("FakeExport", "Fake export")
-                .AddState(new ProcessStateDefinition("Started", "Started"), null)
-                .AddState(new ProcessStateDefinition("Failed", "Failed"), "Started")
-                .AddState(new ProcessStateDefinition("Succeeded", "Succeeded"), "Started");
+                .AddState(new ProcessStateDefinition("Ready", "Ready"), null)
+                .AddState(new ProcessStateDefinition("Exporting", "Exporting"), ["Ready", "Exporting"])
+                .AddState(new ProcessStateDefinition("Failed", "Failed"), ["Ready", "Exporting"])
+                .AddState(new ProcessStateDefinition("Succeeded", "Succeeded"), "Exporting");
 
             options.AddOrUpdateProcessDefinition(definition);
         });

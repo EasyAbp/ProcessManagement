@@ -35,7 +35,7 @@ public class ProcessManager : DomainService
         if (!nextStates.Contains(nextState.StateName))
         {
             throw new AbpException(
-                $"The specified state `{nextState}` is invalid for the process `{process.ProcessName}`");
+                $"The specified state `{nextState.StateName}` is invalid for the process `{process.ProcessName}`");
         }
 
         process.SetState(processDefinition, nextState);

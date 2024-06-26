@@ -60,7 +60,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
         CheckProcessDefinition(processDefinition);
         CheckIsNotCompleted();
 
-
         var oldState = StateName.IsNullOrEmpty() ? null : ToStateInfoModel();
 
         StateUpdateTime = processState.StateUpdateTime;
@@ -70,13 +69,13 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
         StateSummaryText = processState.StateSummaryText;
         StateDetailsText = processState.StateDetailsText;
 
-        AddLocalEvent(new ProcessStateChangedEto(oldState, this));
+        AddLocalEvent(new ProcessStateChangedEto(TenantId, Id, ProcessName, CorrelationId, GroupKey, CompletionTime,
+            oldState, ToStateInfoModel()));
     }
 
     public ProcessStateInfoModel ToStateInfoModel()
     {
-        return new ProcessStateInfoModel(
-            StateUpdateTime, StateName, SubStateName, StateFlag, StateSummaryText, StateDetailsText);
+        return new ProcessStateInfoModel(StateUpdateTime, StateName, this);
     }
 
     internal void CompleteProcess(DateTime now)
