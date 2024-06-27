@@ -3,6 +3,8 @@ using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 using EasyAbp.ProcessManagement.Processes;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
+using EasyAbp.ProcessManagement.UserGroups;
+using EasyAbp.ProcessManagement.Notifications;
 
 namespace EasyAbp.ProcessManagement.EntityFrameworkCore;
 
@@ -14,6 +16,8 @@ public class ProcessManagementDbContext : AbpDbContext<ProcessManagementDbContex
      */
     public DbSet<Process> Processes { get; set; }
     public DbSet<ProcessStateHistory> ProcessStateHistories { get; set; }
+    public DbSet<UserGroup> UserGroups { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     public ProcessManagementDbContext(DbContextOptions<ProcessManagementDbContext> options)
         : base(options)

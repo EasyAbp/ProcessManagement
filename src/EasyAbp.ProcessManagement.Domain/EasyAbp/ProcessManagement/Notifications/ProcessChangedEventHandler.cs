@@ -1,22 +1,66 @@
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Processes;
+using EasyAbp.ProcessManagement.UserGroups;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Domain.Entities.Events;
-using Volo.Abp.EventBus;
+using Volo.Abp.Domain.Entities.Events.Distributed;
+using Volo.Abp.EventBus.Distributed;
+using Volo.Abp.Guids;
+using Volo.Abp.Uow;
 
 namespace EasyAbp.ProcessManagement.Notifications;
 
 public class ProcessChangedEventHandler : ITransientDependency,
-    ILocalEventHandler<EntityCreatedEventData<Process>>,
-    ILocalEventHandler<EntityUpdatedEventData<Process>>
+    IDistributedEventHandler<EntityCreatedEto<ProcessEto>>,
+    IDistributedEventHandler<EntityUpdatedEto<ProcessEto>>
 {
-    public virtual async Task HandleEventAsync(EntityCreatedEventData<Process> eventData)
+    private readonly IGuidGenerator _guidGenerator;
+    private readonly IUserGroupManager _userGroupManager;
+    private readonly INotificationRepository _notificationRepository;
+
+    public ProcessChangedEventHandler(
+        IGuidGenerator guidGenerator,
+        IUserGroupManager userGroupManager,
+        INotificationRepository notificationRepository)
     {
-        // todo: create notifications.
+        _guidGenerator = guidGenerator;
+        _userGroupManager = userGroupManager;
+        _notificationRepository = notificationRepository;
     }
 
-    public virtual async Task HandleEventAsync(EntityUpdatedEventData<Process> eventData)
+    [UnitOfWork]
+    public virtual async Task HandleEventAsync(EntityCreatedEto<ProcessEto> eventData)
     {
-        // todo: create notifications.
+        var userIds = await _userGroupManager.GetUserIdsAsync(eventData.Entity.GroupKey);
+
+        foreach (var userId in userIds)
+        {
+            await _notificationRepository.InsertAsync(
+                new Notification(_guidGenerator.Create(), eventData.Entity, userId), true);
+        }
+    }
+
+    [UnitOfWork]
+    public virtual async Task HandleEventAsync(EntityUpdatedEto<ProcessEto> eventData)
+    {
+        var userIds = await _userGroupManager.GetUserIdsAsync(eventData.Entity.GroupKey);
+
+        var oldNotifications = await _notificationRepository.GetListAsync(x => x.ProcessId == eventData.Entity.Id);
+
+        foreach (var oldNotification in oldNotifications)
+        {
+            if (oldNotification.Dismissed)
+            {
+                continue;
+            }
+
+            oldNotification.SetDismissed(true);
+            await _notificationRepository.UpdateAsync(oldNotification);
+        }
+
+        foreach (var userId in userIds)
+        {
+            await _notificationRepository.InsertAsync(
+                new Notification(_guidGenerator.Create(), eventData.Entity, userId), true);
+        }
     }
 }

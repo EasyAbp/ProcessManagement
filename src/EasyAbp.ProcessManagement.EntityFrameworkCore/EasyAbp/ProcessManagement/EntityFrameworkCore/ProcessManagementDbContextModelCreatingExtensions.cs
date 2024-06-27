@@ -1,3 +1,5 @@
+using EasyAbp.ProcessManagement.Notifications;
+using EasyAbp.ProcessManagement.UserGroups;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
 using EasyAbp.ProcessManagement.Processes;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +56,28 @@ public static class ProcessManagementDbContextModelCreatingExtensions
 
             /* Configure more properties here */
             b.HasIndex(x => new { x.ProcessId, x.StateUpdateTime });
+        });
+
+        builder.Entity<UserGroup>(b =>
+        {
+            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "UserGroups",
+                ProcessManagementDbProperties.DbSchema);
+            b.ConfigureByConvention();
+
+            /* Configure more properties here */
+            b.HasIndex(x => x.UserId);
+            b.HasIndex(x => x.GroupKey);
+        });
+
+        builder.Entity<Notification>(b =>
+        {
+            b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "Notifications",
+                ProcessManagementDbProperties.DbSchema);
+            b.ConfigureByConvention();
+
+            /* Configure more properties here */
+            b.HasIndex(x => x.ProcessId);
+            b.HasIndex(x => new { x.CreationTime, x.UserId });
         });
     }
 }

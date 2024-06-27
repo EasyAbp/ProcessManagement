@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EasyAbp.ProcessManagement.UserGroups;
@@ -21,4 +22,9 @@ public interface IUserGroupContributor
     /// <param name="originalKey">e.g. the userId value (054BD4FC-835B-48EC-8472-087FFD6D6C95) is an originalKey for the <see cref="UserIdUserGroupContributor"/>.</param>
     /// <returns>e.g. <see cref="UserIdUserGroupContributor"/> creates a key: U:054BD4FC-835B-48EC-8472-087FFD6D6C95</returns>
     Task<string> CreateGroupKeyAsync(string originalKey);
+
+    /// <summary>
+    /// Get user IDs by groupKey.
+    /// </summary>
+    Task<List<Guid>> GetUserIdsAsync(string groupKey);
 }

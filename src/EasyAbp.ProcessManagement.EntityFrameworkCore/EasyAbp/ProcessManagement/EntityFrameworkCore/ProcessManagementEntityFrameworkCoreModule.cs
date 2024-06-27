@@ -1,5 +1,9 @@
+using EasyAbp.ProcessManagement.EntityFrameworkCore.Notifications;
+using EasyAbp.ProcessManagement.Notifications;
+using EasyAbp.ProcessManagement.UserGroups;
 using EasyAbp.ProcessManagement.EntityFrameworkCore.Processes;
 using EasyAbp.ProcessManagement.EntityFrameworkCore.ProcessStateHistories;
+using EasyAbp.ProcessManagement.EntityFrameworkCore.UserGroups;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
 using EasyAbp.ProcessManagement.Processes;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +27,8 @@ public class ProcessManagementEntityFrameworkCoreModule : AbpModule
              */
             options.AddRepository<Process, ProcessRepository>();
             options.AddRepository<ProcessStateHistory, ProcessStateHistoryRepository>();
+            options.AddRepository<UserGroup, UserGroupRepository>();
+            options.AddRepository<Notification, NotificationRepository>();
         });
     }
 }

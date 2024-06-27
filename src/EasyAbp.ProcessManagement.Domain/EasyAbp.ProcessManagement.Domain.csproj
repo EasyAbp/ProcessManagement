@@ -3,12 +3,13 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace />
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="$(AbpVersion)" />
     <PackageReference Include="Volo.Abp.Ddd.Domain" Version="$(AbpVersion)" />
     <PackageReference Include="Volo.Abp.Users.Abstractions" Version="$(AbpVersion)" />
     <ProjectReference Include="..\EasyAbp.ProcessManagement.Domain.Shared\EasyAbp.ProcessManagement.Domain.Shared.csproj" />

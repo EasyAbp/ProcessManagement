@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace EasyAbp.ProcessManagement.Migrations
 {
     [DbContext(typeof(UnifiedDbContext))]
-    [Migration("20240625102556_Initial")]
+    [Migration("20240627131853_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,11 +27,96 @@ namespace EasyAbp.ProcessManagement.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EasyAbp.ProcessManagement.Notifications.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CompletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<bool>("Dismissed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("GroupKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProcessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProcessName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StateFlag")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StateSummaryText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StateUpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessId");
+
+                    b.HasIndex("CreationTime", "UserId");
+
+                    b.ToTable("EasyAbpProcessManagementNotifications", (string)null);
+                });
+
             modelBuilder.Entity("EasyAbp.ProcessManagement.ProcessStateHistories.ProcessStateHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActionName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -64,9 +149,6 @@ namespace EasyAbp.ProcessManagement.Migrations
                     b.Property<DateTime>("StateUpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ActionName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TenantId");
@@ -83,6 +165,9 @@ namespace EasyAbp.ProcessManagement.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActionName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CompletionTime")
                         .HasColumnType("datetime2");
@@ -157,9 +242,6 @@ namespace EasyAbp.ProcessManagement.Migrations
                     b.Property<DateTime>("StateUpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ActionName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TenantId");
@@ -171,6 +253,52 @@ namespace EasyAbp.ProcessManagement.Migrations
                     b.HasIndex("GroupKey", "ProcessName");
 
                     b.ToTable("EasyAbpProcessManagementProcesses", (string)null);
+                });
+
+            modelBuilder.Entity("EasyAbp.ProcessManagement.UserGroups.UserGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("GroupKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EasyAbpProcessManagementUserGroups", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>

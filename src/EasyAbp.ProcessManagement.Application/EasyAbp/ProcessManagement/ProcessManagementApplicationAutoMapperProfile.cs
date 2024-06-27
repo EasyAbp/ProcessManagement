@@ -3,6 +3,8 @@ using EasyAbp.ProcessManagement.Processes.Dtos;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
 using EasyAbp.ProcessManagement.ProcessStateHistories.Dtos;
 using AutoMapper;
+using EasyAbp.ProcessManagement.Notifications;
+using EasyAbp.ProcessManagement.Notifications.Dtos;
 using Volo.Abp.AutoMapper;
 
 namespace EasyAbp.ProcessManagement;
@@ -16,5 +18,6 @@ public class ProcessManagementApplicationAutoMapperProfile : Profile
          * into multiple profile classes for a better organization. */
         CreateMap<Process, ProcessDto>().Ignore(x => x.ProcessDisplayName);
         CreateMap<ProcessStateHistory, ProcessStateHistoryDto>();
+        CreateMap<Notification, NotificationDto>();
     }
 }

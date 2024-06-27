@@ -34,6 +34,24 @@
     "ProcessStateHistoryStateUpdateTime": "ProcessStateHistoryStateUpdateTime",
     "CreateProcessStateHistory": "CreateProcessStateHistory",
     "EditProcessStateHistory": "EditProcessStateHistory",
-    "ProcessStateHistoryDeletionConfirmationMessage": "Are you sure to delete the processStateHistory {0}?"
+    "ProcessStateHistoryDeletionConfirmationMessage": "Are you sure to delete the processStateHistory {0}?",
+    "Menu:Notification": "MenuNotification",
+    "Notification": "Notification",
+    "NotificationUserId": "NotificationUserId",
+    "NotificationProcessId": "NotificationProcessId",
+    "NotificationRead": "NotificationRead",
+    "NotificationDismissed": "NotificationDismissed",
+    "NotificationProcessName": "NotificationProcessName",
+    "NotificationCorrelationId": "NotificationCorrelationId",
+    "NotificationGroupKey": "NotificationGroupKey",
+    "NotificationCompletionTime": "NotificationCompletionTime",
+    "NotificationStateUpdateTime": "NotificationStateUpdateTime",
+    "NotificationStateName": "NotificationStateName",
+    "NotificationActionName": "NotificationActionName",
+    "NotificationStateFlag": "NotificationStateFlag",
+    "NotificationStateSummaryText": "NotificationStateSummaryText",
+    "CreateNotification": "CreateNotification",
+    "EditNotification": "EditNotification",
+    "NotificationDeletionConfirmationMessage": "Are you sure to delete the notification {0}?"
   }
 }

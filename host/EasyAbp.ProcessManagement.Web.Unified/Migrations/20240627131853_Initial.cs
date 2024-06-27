@@ -371,6 +371,35 @@ namespace EasyAbp.ProcessManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EasyAbpProcessManagementNotifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProcessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Read = table.Column<bool>(type: "bit", nullable: false),
+                    Dismissed = table.Column<bool>(type: "bit", nullable: false),
+                    ProcessName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrelationId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GroupKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CompletionTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StateUpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StateName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActionName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StateFlag = table.Column<int>(type: "int", nullable: false),
+                    StateSummaryText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EasyAbpProcessManagementNotifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EasyAbpProcessManagementProcesses",
                 columns: table => new
                 {
@@ -420,6 +449,24 @@ namespace EasyAbp.ProcessManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EasyAbpProcessManagementProcessStateHistories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EasyAbpProcessManagementUserGroups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GroupKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EasyAbpProcessManagementUserGroups", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -876,6 +923,16 @@ namespace EasyAbp.ProcessManagement.Migrations
                 column: "UserName");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementNotifications_CreationTime_UserId",
+                table: "EasyAbpProcessManagementNotifications",
+                columns: new[] { "CreationTime", "UserId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementNotifications_ProcessId",
+                table: "EasyAbpProcessManagementNotifications",
+                column: "ProcessId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EasyAbpProcessManagementProcesses_CorrelationId",
                 table: "EasyAbpProcessManagementProcesses",
                 column: "CorrelationId");
@@ -889,6 +946,16 @@ namespace EasyAbp.ProcessManagement.Migrations
                 name: "IX_EasyAbpProcessManagementProcessStateHistories_ProcessId_StateUpdateTime",
                 table: "EasyAbpProcessManagementProcessStateHistories",
                 columns: new[] { "ProcessId", "StateUpdateTime" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementUserGroups_GroupKey",
+                table: "EasyAbpProcessManagementUserGroups",
+                column: "GroupKey");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpProcessManagementUserGroups_UserId",
+                table: "EasyAbpProcessManagementUserGroups",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -961,10 +1028,16 @@ namespace EasyAbp.ProcessManagement.Migrations
                 name: "AbpUserTokens");
 
             migrationBuilder.DropTable(
+                name: "EasyAbpProcessManagementNotifications");
+
+            migrationBuilder.DropTable(
                 name: "EasyAbpProcessManagementProcesses");
 
             migrationBuilder.DropTable(
                 name: "EasyAbpProcessManagementProcessStateHistories");
+
+            migrationBuilder.DropTable(
+                name: "EasyAbpProcessManagementUserGroups");
 
             migrationBuilder.DropTable(
                 name: "AbpEntityChanges");

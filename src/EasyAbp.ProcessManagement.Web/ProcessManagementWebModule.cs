@@ -2,8 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using EasyAbp.ProcessManagement.Localization;
 using EasyAbp.ProcessManagement.Web.Menus;
+using EasyAbp.ProcessManagement.Web.Toolbars;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
 using Volo.Abp.UI.Navigation;
@@ -15,14 +17,15 @@ namespace EasyAbp.ProcessManagement.Web;
     typeof(ProcessManagementApplicationContractsModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
     typeof(AbpAutoMapperModule)
-    )]
+)]
 public class ProcessManagementWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
-            options.AddAssemblyResource(typeof(ProcessManagementResource), typeof(ProcessManagementWebModule).Assembly);
+            options.AddAssemblyResource(typeof(ProcessManagementResource),
+                typeof(ProcessManagementWebModule).Assembly);
         });
 
         PreConfigure<IMvcBuilder>(mvcBuilder =>
@@ -44,14 +47,14 @@ public class ProcessManagementWebModule : AbpModule
         });
 
         context.Services.AddAutoMapperObjectMapper<ProcessManagementWebModule>();
-        Configure<AbpAutoMapperOptions>(options =>
-        {
-            options.AddMaps<ProcessManagementWebModule>(validate: true);
-        });
+        Configure<AbpAutoMapperOptions>(options => { options.AddMaps<ProcessManagementWebModule>(validate: true); });
 
         Configure<RazorPagesOptions>(options =>
         {
-                //Configure authorization.
-            });
+            //Configure authorization.
+        });
+
+        Configure<AbpToolbarOptions>(
+            options => { options.Contributors.Add(new ProcessManagementToolbarContributor()); });
     }
 }
