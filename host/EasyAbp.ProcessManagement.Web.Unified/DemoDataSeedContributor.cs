@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using EasyAbp.ProcessManagement.Notifications;
 using EasyAbp.ProcessManagement.Processes;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
 using EasyAbp.ProcessManagement.UserGroups;
@@ -18,6 +19,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
     private readonly ProcessManager _processManager;
     private readonly IProcessRepository _processRepository;
     private readonly IProcessStateHistoryRepository _processStateHistoryRepository;
+    private readonly INotificationRepository _notificationRepository;
     private readonly UserIdUserGroupContributor _userIdUserGroupContributor;
 
     public DemoDataSeedContributor(
@@ -26,6 +28,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
         ProcessManager processManager,
         IProcessRepository processRepository,
         IProcessStateHistoryRepository processStateHistoryRepository,
+        INotificationRepository notificationRepository,
         UserIdUserGroupContributor userIdUserGroupContributor)
     {
         _clock = clock;
@@ -33,6 +36,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
         _processManager = processManager;
         _processRepository = processRepository;
         _processStateHistoryRepository = processStateHistoryRepository;
+        _notificationRepository = notificationRepository;
         _userIdUserGroupContributor = userIdUserGroupContributor;
     }
 
@@ -49,6 +53,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
         // delete all demo process entities.
         await _processRepository.DeleteManyAsync(processes, true);
         await _processStateHistoryRepository.DeleteAsync(x => processes.Select(y => y.Id).Contains(x.ProcessId));
+        await _notificationRepository.DeleteAsync(x => processes.Select(y => y.Id).Contains(x.ProcessId));
 
         var adminUser = await _identityUserManager.FindByNameAsync("admin");
         var now = _clock.Now;

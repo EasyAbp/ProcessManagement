@@ -38,14 +38,4 @@
     <Content Remove="wwwroot\**\*.*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\ProcessManagement" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\ProcessManagement\ProcessStateHistories\ProcessStateHistory\CreateModal.cshtml" />
-    <_ContentIncludedByDefault Remove="Pages\ProcessManagement\ProcessStateHistories\ProcessStateHistory\EditModal.cshtml" />
-    <_ContentIncludedByDefault Remove="Pages\ProcessManagement\ProcessStateHistories\ProcessStateHistory\Index.cshtml" />
-  </ItemGroup>
-
 </Project>

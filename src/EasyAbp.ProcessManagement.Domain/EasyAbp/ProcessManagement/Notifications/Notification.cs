@@ -11,6 +11,8 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
 
     public virtual Guid UserId { get; protected set; }
 
+    public virtual Guid ProcessId { get; protected set; }
+
     public virtual bool Read { get; protected set; }
 
     public virtual bool Dismissed { get; protected set; }
@@ -46,10 +48,15 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
 
     #endregion
 
-    public Notification(Guid id, Process process, Guid userId) : base(id)
+    protected Notification()
+    {
+    }
+
+    public Notification(Guid id, ProcessEto process, Guid userId) : base(id)
     {
         TenantId = process.TenantId;
         UserId = userId;
+        ProcessId = process.Id;
 
         ProcessName = process.ProcessName;
 
@@ -64,9 +71,13 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
         StateSummaryText = process.StateSummaryText;
     }
 
-    public void SetAsRead(bool dismissed)
+    public void SetRead(bool read)
     {
-        Read = true;
+        Read = read;
+    }
+
+    public void SetDismissed(bool dismissed)
+    {
         Dismissed = dismissed;
     }
 }
