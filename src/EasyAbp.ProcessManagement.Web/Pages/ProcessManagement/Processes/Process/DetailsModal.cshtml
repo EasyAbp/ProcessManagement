@@ -11,7 +11,7 @@
     <abp-modal-header title="@Model.ViewModel.State"></abp-modal-header>
     <abp-modal-body>
         <div class="mb-3">
-            <div id="ViewModel_StateDetailsText" contenteditable="false">@Html.Raw(Model.ViewModel.StateDetailsText)</div>
+            <div contenteditable="false">@Html.Raw(Model.ViewModel.StateDetailsText)</div>
         </div>
         <abp-collapse-body id="ProcessDetailsModalMoreInfo">
             <hr>
@@ -28,9 +28,3 @@
         <abp-button button-type="Secondary" data-bs-dismiss="modal">@L["Close"]</abp-button>
     </abp-modal-footer>
 </abp-modal>
-
-<style>
-    #ViewModel_StateDetailsText {
-
-    }
-</style>

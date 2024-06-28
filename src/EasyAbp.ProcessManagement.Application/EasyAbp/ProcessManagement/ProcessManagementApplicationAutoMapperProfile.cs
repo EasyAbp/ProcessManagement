@@ -18,6 +18,6 @@ public class ProcessManagementApplicationAutoMapperProfile : Profile
          * into multiple profile classes for a better organization. */
         CreateMap<Process, ProcessDto>().Ignore(x => x.ProcessDisplayName);
         CreateMap<ProcessStateHistory, ProcessStateHistoryDto>();
-        CreateMap<Notification, NotificationDto>();
+        CreateMap<Notification, NotificationDto>().Ignore(x => x.ProcessDisplayName);
     }
 }

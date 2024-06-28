@@ -1,6 +1,6 @@
 (function ($) {
 
-    let modal = new abp.ModalManager(abp.appPath + 'ProcessManagement/Notifications/NotificationsModal');
+    let modal = new abp.ModalManager(abp.appPath + 'ProcessManagement/Notifications/Notification/NotificationsModal');
 
     abp.widgets.NotificationsWidget = function ($widget) {
 

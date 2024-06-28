@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace EasyAbp.ProcessManagement.Migrations
 {
     [DbContext(typeof(UnifiedDbContext))]
-    [Migration("20240627131853_Initial")]
+    [Migration("20240628085532_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -58,8 +58,8 @@ namespace EasyAbp.ProcessManagement.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CreatorId");
 
-                    b.Property<bool>("Dismissed")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("DismissedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
@@ -77,8 +77,8 @@ namespace EasyAbp.ProcessManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Read")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("ReadTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StateFlag")
                         .HasColumnType("int");

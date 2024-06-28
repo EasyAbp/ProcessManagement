@@ -1,3 +1,11 @@
+.row-text-bold {
+    font-weight: bold;
+}
+
+tr:hover {
+    cursor: pointer;
+}
+
 .svg-icon {
     vertical-align: middle;
     width: 20px;

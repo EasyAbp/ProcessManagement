@@ -2,13 +2,22 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Notifications.Dtos;
+using EasyAbp.ProcessManagement.Options;
+using EasyAbp.ProcessManagement.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Users;
 
 namespace EasyAbp.ProcessManagement.Notifications;
 
+[Authorize]
 public class NotificationAppService : ReadOnlyAppService<Notification, NotificationDto, Guid, NotificationGetListInput>,
     INotificationAppService
 {
+    protected override string? GetPolicyName { get; set; } = ProcessManagementPermissions.Process.Default;
+    protected override string? GetListPolicyName { get; set; } = ProcessManagementPermissions.Process.Default;
+
     private readonly INotificationRepository _repository;
 
     public NotificationAppService(INotificationRepository repository) : base(repository)
@@ -23,8 +32,12 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
             .WhereIf(input.FromCreationTime.HasValue, x => x.CreationTime >= input.FromCreationTime)
             .WhereIf(input.ToCreationTime.HasValue, x => x.CreationTime <= input.ToCreationTime)
             .WhereIf(input.UserId != null, x => x.UserId == input.UserId)
-            .WhereIf(input.Read != null, x => x.Read == input.Read)
-            .WhereIf(input.Dismissed != null, x => x.Dismissed == input.Dismissed)
+            .WhereIf(input.ReadTime.HasValue, x => x.ReadTime == input.ReadTime)
+            .WhereIf(input.DismissedTime.HasValue, x => x.DismissedTime == input.DismissedTime)
+            .WhereIf(input.Read == true, x => x.ReadTime != null)
+            .WhereIf(input.Read == false, x => x.ReadTime == null)
+            .WhereIf(input.Dismissed == true, x => x.DismissedTime != null)
+            .WhereIf(input.Dismissed == false, x => x.DismissedTime == null)
             .WhereIf(!input.ProcessName.IsNullOrWhiteSpace(), x => x.ProcessName.Contains(input.ProcessName))
             .WhereIf(!input.CorrelationId.IsNullOrWhiteSpace(), x => x.CorrelationId.Contains(input.CorrelationId))
             .WhereIf(!input.GroupKey.IsNullOrWhiteSpace(), x => x.GroupKey.Contains(input.GroupKey))
@@ -35,5 +48,61 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
             .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
             .WhereIf(input.StateSummaryText != null, x => x.StateSummaryText == input.StateSummaryText)
             ;
+    }
+
+    protected override NotificationDto MapToGetOutputDto(Notification entity)
+    {
+        var options = LazyServiceProvider.LazyGetRequiredService<IOptions<ProcessManagementOptions>>();
+
+        var processDefinition = options.Value.GetProcessDefinition(entity.ProcessName);
+
+        var dto = base.MapToGetOutputDto(entity);
+
+        dto.ProcessDisplayName = processDefinition.DisplayName;
+
+        return dto;
+    }
+
+    protected override NotificationDto MapToGetListOutputDto(Notification entity)
+    {
+        return MapToGetOutputDto(entity);
+    }
+
+    public virtual async Task ReadAsync(Guid id)
+    {
+        var notification = await GetEntityByIdAsync(id);
+
+        if (notification.UserId != CurrentUser.GetId())
+        {
+            await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
+        }
+
+        notification.SetRead(Clock.Now);
+
+        await _repository.UpdateAsync(notification, true);
+    }
+
+    public virtual async Task DismissAsync(DismissNotificationDto input)
+    {
+        var now = Clock.Now;
+
+        foreach (var notificationId in input.NotificationIds)
+        {
+            var notification = await GetEntityByIdAsync(notificationId);
+
+            if (notification.UserId != CurrentUser.GetId())
+            {
+                await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
+            }
+
+            notification.SetDismissed(now);
+
+            await _repository.UpdateAsync(notification);
+        }
+
+        if (UnitOfWorkManager.Current != null)
+        {
+            await UnitOfWorkManager.Current.SaveChangesAsync();
+        }
     }
 }

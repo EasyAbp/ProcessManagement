@@ -16,6 +16,10 @@ public class NotificationGetListInput : PagedAndSortedResultRequestDto
 
     public Guid? ProcessId { get; set; }
 
+    public DateTime? ReadTime { get; set; }
+
+    public DateTime? DismissedTime { get; set; }
+
     public bool? Read { get; set; }
 
     public bool? Dismissed { get; set; }
