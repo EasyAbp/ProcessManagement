@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Notifications.Dtos;
@@ -6,6 +7,7 @@ using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Users;
 
@@ -48,6 +50,49 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
             .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
             .WhereIf(input.StateSummaryText != null, x => x.StateSummaryText == input.StateSummaryText)
             ;
+    }
+
+    public override async Task<NotificationDto> GetAsync(Guid id)
+    {
+        await CheckGetPolicyAsync();
+
+        var entity = await GetEntityByIdAsync(id);
+
+        if (entity.UserId != CurrentUser.GetId())
+        {
+            await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
+        }
+
+        return await MapToGetOutputDtoAsync(entity);
+    }
+
+    public override async Task<PagedResultDto<NotificationDto>> GetListAsync(NotificationGetListInput input)
+    {
+        await CheckGetListPolicyAsync();
+
+        if (input.UserId != CurrentUser.GetId())
+        {
+            await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
+        }
+
+        var query = await CreateFilteredQueryAsync(input);
+        var totalCount = await AsyncExecuter.CountAsync(query);
+
+        var entityDtos = new List<NotificationDto>();
+
+        if (totalCount > 0)
+        {
+            query = ApplySorting(query, input);
+            query = ApplyPaging(query, input);
+
+            var entities = await AsyncExecuter.ToListAsync(query);
+            entityDtos = await MapToGetListOutputDtosAsync(entities);
+        }
+
+        return new PagedResultDto<NotificationDto>(
+            totalCount,
+            entityDtos
+        );
     }
 
     protected override NotificationDto MapToGetOutputDto(Notification entity)

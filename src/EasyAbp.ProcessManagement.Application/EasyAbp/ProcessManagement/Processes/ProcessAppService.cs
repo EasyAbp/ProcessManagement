@@ -1,11 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Permissions;
 using EasyAbp.ProcessManagement.Processes.Dtos;
+using EasyAbp.ProcessManagement.UserGroups;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
+using Volo.Abp.Users;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
@@ -15,29 +21,65 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
     protected override string GetPolicyName { get; set; } = ProcessManagementPermissions.Process.Default;
     protected override string GetListPolicyName { get; set; } = ProcessManagementPermissions.Process.Default;
 
-    private readonly IProcessRepository _repository;
+    protected IUserGroupManager UserGroupManager => LazyServiceProvider.LazyGetRequiredService<IUserGroupManager>();
 
     public ProcessAppService(IProcessRepository repository) : base(repository)
     {
-        _repository = repository;
+    }
+
+    public override async Task<ProcessDto> GetAsync(Guid id)
+    {
+        await CheckGetPolicyAsync();
+
+        var entity = await GetEntityByIdAsync(id);
+
+        if (!await HasManagementPermissionAsync())
+        {
+            var groupKeys = await GetUserGroupKeys();
+
+            if (!groupKeys.Contains(entity.GroupKey))
+            {
+                throw new AbpAuthorizationException();
+            }
+        }
+
+        return await MapToGetOutputDtoAsync(entity);
     }
 
     protected override async Task<IQueryable<Process>> CreateFilteredQueryAsync(ProcessGetListInput input)
     {
-        return (await base.CreateFilteredQueryAsync(input))
-            .WhereIf(!input.ProcessName.IsNullOrWhiteSpace(), x => x.ProcessName.Contains(input.ProcessName))
-            .WhereIf(!input.CorrelationId.IsNullOrWhiteSpace(), x => x.CorrelationId.Contains(input.CorrelationId))
-            .WhereIf(!input.GroupKey.IsNullOrWhiteSpace(), x => x.GroupKey.Contains(input.GroupKey))
-            .WhereIf(input.CompletionTime != null, x => x.CompletionTime == input.CompletionTime)
-            .WhereIf(input.StateUpdateTime != null, x => x.StateUpdateTime == input.StateUpdateTime)
-            .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))
-            .WhereIf(!input.ActionName.IsNullOrWhiteSpace(), x => x.ActionName.Contains(input.ActionName))
-            .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
-            .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(),
-                x => x.StateSummaryText.Contains(input.StateSummaryText))
-            .WhereIf(!input.StateDetailsText.IsNullOrWhiteSpace(),
-                x => x.StateDetailsText.Contains(input.StateDetailsText))
+        var queryable = (await base.CreateFilteredQueryAsync(input));
+
+        if (!await HasManagementPermissionAsync())
+        {
+            var groupKeys = await GetUserGroupKeys();
+            queryable = queryable.Where(x => groupKeys.Contains(x.GroupKey));
+        }
+
+        return queryable
+                .WhereIf(!input.GroupKey.IsNullOrWhiteSpace(), x => x.GroupKey.Contains(input.GroupKey))
+                .WhereIf(!input.ProcessName.IsNullOrWhiteSpace(), x => x.ProcessName.Contains(input.ProcessName))
+                .WhereIf(!input.CorrelationId.IsNullOrWhiteSpace(), x => x.CorrelationId.Contains(input.CorrelationId))
+                .WhereIf(input.CompletionTime != null, x => x.CompletionTime == input.CompletionTime)
+                .WhereIf(input.StateUpdateTime != null, x => x.StateUpdateTime == input.StateUpdateTime)
+                .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))
+                .WhereIf(!input.ActionName.IsNullOrWhiteSpace(), x => x.ActionName.Contains(input.ActionName))
+                .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
+                .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(),
+                    x => x.StateSummaryText.Contains(input.StateSummaryText))
+                .WhereIf(!input.StateDetailsText.IsNullOrWhiteSpace(),
+                    x => x.StateDetailsText.Contains(input.StateDetailsText))
             ;
+    }
+
+    protected virtual async Task<bool> HasManagementPermissionAsync()
+    {
+        return await AuthorizationService.IsGrantedAsync(ProcessManagementPermissions.Process.Manage);
+    }
+
+    protected virtual async Task<List<string>> GetUserGroupKeys()
+    {
+        return await UserGroupManager.GetUserGroupKeysAsync(CurrentUser.GetId());
     }
 
     protected override ProcessDto MapToGetOutputDto(Process entity)

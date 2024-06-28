@@ -27,4 +27,9 @@ public interface IUserGroupContributor
     /// Get user IDs by groupKey.
     /// </summary>
     Task<List<Guid>> GetUserIdsAsync(string groupKey);
+
+    /// <summary>
+    /// Get groupKeys by user ID.
+    /// </summary>
+    Task<List<string>> GetUserGroupKeysAsync(Guid userId);
 }

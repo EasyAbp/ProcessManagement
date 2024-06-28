@@ -35,7 +35,6 @@ public static class ProcessManagementDbContextModelCreatingExtensions
         });
         */
 
-
         builder.Entity<Process>(b =>
         {
             b.ToTable(ProcessManagementDbProperties.DbTablePrefix + "Processes",
@@ -46,7 +45,6 @@ public static class ProcessManagementDbContextModelCreatingExtensions
             b.HasIndex(x => new { x.GroupKey, x.ProcessName });
             b.HasIndex(x => x.CorrelationId);
         });
-
 
         builder.Entity<ProcessStateHistory>(b =>
         {

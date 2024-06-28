@@ -20,14 +20,14 @@ public abstract class UserGroupContributorBase : IUserGroupContributor, ITransie
     protected IUserGroupRepository UserGroupRepository =>
         LazyServiceProvider.LazyGetRequiredService<IUserGroupRepository>();
 
-    protected abstract Task<List<string>> GetGroupKeysForUserAsync(Guid userId);
+    public abstract Task<List<string>> GetUserGroupKeysAsync(Guid userId);
 
     public abstract string GroupKeyPrefix { get; }
 
     [UnitOfWork(true)]
     public virtual async Task UpdateAsync(Guid userId)
     {
-        await InternalUpdateAsync(userId, await GetGroupKeysForUserAsync(userId));
+        await InternalUpdateAsync(userId, await GetUserGroupKeysAsync(userId));
     }
 
     public virtual Task<string> CreateGroupKeyAsync(string originalKey) =>

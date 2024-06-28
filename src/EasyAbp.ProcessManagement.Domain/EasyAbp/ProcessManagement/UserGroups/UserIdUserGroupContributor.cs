@@ -16,7 +16,7 @@ public class UserIdUserGroupContributor : UserGroupContributorBase, IDistributed
         return Task.FromResult<List<Guid>>([Guid.Parse(originalKey)]);
     }
 
-    protected override Task<List<string>> GetGroupKeysForUserAsync(Guid userId)
+    public override Task<List<string>> GetUserGroupKeysAsync(Guid userId)
     {
         return Task.FromResult<List<string>>([$"{GroupKeyPrefix}{userId}"]);
     }
