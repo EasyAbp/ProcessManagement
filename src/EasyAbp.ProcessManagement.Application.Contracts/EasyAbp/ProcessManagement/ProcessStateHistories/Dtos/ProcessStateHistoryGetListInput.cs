@@ -7,7 +7,7 @@ namespace EasyAbp.ProcessManagement.ProcessStateHistories.Dtos;
 [Serializable]
 public class ProcessStateHistoryGetListInput : PagedAndSortedResultRequestDto
 {
-    public Guid? ProcessId { get; set; }
+    public Guid ProcessId { get; set; }
 
     public string? StateName { get; set; }
 

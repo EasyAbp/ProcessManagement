@@ -35,4 +35,18 @@ public class UserGroupManager : IUserGroupManager, ITransientDependency
 
         return userIds.Distinct().ToList();
     }
+
+    public virtual async Task<List<string>> GetUserGroupKeysAsync(Guid userId)
+    {
+        var contributors = LazyServiceProvider.LazyGetRequiredService<IEnumerable<IUserGroupContributor>>();
+
+        List<string> userGroupKeys = [];
+
+        foreach (var contributor in contributors)
+        {
+            userGroupKeys.AddRange(await contributor.GetUserGroupKeysAsync(userId));
+        }
+
+        return userGroupKeys.Distinct().ToList();
+    }
 }
