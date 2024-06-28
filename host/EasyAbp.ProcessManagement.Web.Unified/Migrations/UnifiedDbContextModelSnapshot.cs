@@ -55,8 +55,8 @@ namespace EasyAbp.ProcessManagement.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CreatorId");
 
-                    b.Property<bool>("Dismissed")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("DismissedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
@@ -74,8 +74,8 @@ namespace EasyAbp.ProcessManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Read")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("ReadTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StateFlag")
                         .HasColumnType("int");

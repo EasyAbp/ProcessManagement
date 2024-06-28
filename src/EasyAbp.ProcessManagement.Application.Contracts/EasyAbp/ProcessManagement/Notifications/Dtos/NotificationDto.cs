@@ -11,9 +11,9 @@ public class NotificationDto : CreationAuditedEntityDto<Guid>
 
     public Guid ProcessId { get; set; }
 
-    public bool Read { get; set; }
+    public DateTime? ReadTime { get; set; }
 
-    public bool Dismissed { get; set; }
+    public DateTime? DismissedTime { get; set; }
 
     public string ProcessName { get; set; }
 
@@ -32,4 +32,10 @@ public class NotificationDto : CreationAuditedEntityDto<Guid>
     public ProcessStateFlag StateFlag { get; set; }
 
     public string? StateSummaryText { get; set; }
+
+    #region Out of the entity
+
+    public string ProcessDisplayName { get; set; }
+
+    #endregion
 }

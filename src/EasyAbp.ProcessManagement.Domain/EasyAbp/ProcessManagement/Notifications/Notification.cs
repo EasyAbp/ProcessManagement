@@ -13,9 +13,9 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
 
     public virtual Guid ProcessId { get; protected set; }
 
-    public virtual bool Read { get; protected set; }
+    public virtual DateTime? ReadTime { get; protected set; }
 
-    public virtual bool Dismissed { get; protected set; }
+    public virtual DateTime? DismissedTime { get; protected set; }
 
     #region Process information
 
@@ -71,13 +71,13 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
         StateSummaryText = process.StateSummaryText;
     }
 
-    public void SetRead(bool read)
+    public void SetRead(DateTime? readTime)
     {
-        Read = read;
+        ReadTime = readTime;
     }
 
-    public void SetDismissed(bool dismissed)
+    public void SetDismissed(DateTime? dismissedTime)
     {
-        Dismissed = dismissed;
+        DismissedTime = dismissedTime;
     }
 }
