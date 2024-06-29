@@ -29,22 +29,17 @@ public class ProcessDetailViewModel
     public DateTime CreationTime { get; set; }
 
     [ReadOnlyInput]
-    [Display(Name = "ProcessCompletionTime")]
-    public DateTime? CompletionTime { get; set; }
-
-    [ReadOnlyInput]
     [Display(Name = "ProcessCorrelationId")]
     public string CorrelationId { get; set; }
 
     public ProcessDetailViewModel(string correlationId, string processDisplayName, string state,
-        string? stateDetailsText, string? histories, DateTime creationTime, DateTime? completionTime)
+        string? stateDetailsText, string? histories, DateTime creationTime)
     {
         CorrelationId = correlationId;
         ProcessDisplayName = processDisplayName;
         State = state;
         StateDetailsText = stateDetailsText;
         Histories = histories;
-        CompletionTime = completionTime;
         CreationTime = creationTime;
     }
 }

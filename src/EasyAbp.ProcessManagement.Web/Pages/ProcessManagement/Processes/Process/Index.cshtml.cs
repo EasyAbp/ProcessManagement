@@ -31,10 +31,6 @@ public class ProcessFilterInput
     public string? GroupKey { get; set; }
 
     [FormControlSize(AbpFormControlSize.Small)]
-    [Display(Name = "ProcessCompletionTime")]
-    public DateTime? CompletionTime { get; set; }
-
-    [FormControlSize(AbpFormControlSize.Small)]
     [Display(Name = "ProcessStateUpdateTime")]
     public DateTime? StateUpdateTime { get; set; }
 

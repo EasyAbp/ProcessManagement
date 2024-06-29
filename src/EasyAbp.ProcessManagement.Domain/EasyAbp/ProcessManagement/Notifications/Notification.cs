@@ -29,9 +29,6 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
     public virtual string GroupKey { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual DateTime? CompletionTime { get; protected set; }
-
-    /// <inheritdoc/>
     public virtual DateTime StateUpdateTime { get; protected set; }
 
     /// <inheritdoc/>
@@ -62,7 +59,6 @@ public class Notification : CreationAuditedAggregateRoot<Guid>, IProcess, IMulti
 
         CorrelationId = process.CorrelationId;
         GroupKey = process.GroupKey;
-        CompletionTime = process.CompletionTime;
 
         StateUpdateTime = process.StateUpdateTime;
         StateName = process.StateName;

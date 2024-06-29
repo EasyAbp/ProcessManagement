@@ -43,7 +43,7 @@ public static class ProcessManagementDbContextModelCreatingExtensions
 
             /* Configure more properties here */
             b.HasIndex(x => new { x.GroupKey, x.ProcessName });
-            b.HasIndex(x => x.CorrelationId);
+            b.HasIndex(x => x.CorrelationId).IsUnique();
         });
 
         builder.Entity<ProcessStateHistory>(b =>

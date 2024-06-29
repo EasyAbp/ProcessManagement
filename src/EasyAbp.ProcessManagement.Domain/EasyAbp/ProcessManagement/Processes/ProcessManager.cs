@@ -17,16 +17,17 @@ public class ProcessManager : DomainService
         Options = options.Value;
     }
 
-    public virtual Task<Process> CreateAsync(string processName, DateTime now, string groupKey,
-        IProcessStateCustom? stateCustom = null, string? correlationId = null)
+    public virtual Task<Process> CreateAsync(CreateProcessModel model, DateTime now)
     {
-        var processDefinition = Options.GetProcessDefinition(processName);
+        var processDefinition = Options.GetProcessDefinition(model.ProcessName);
 
-        return Task.FromResult(new Process(GuidGenerator.Create(), CurrentTenant.Id, processDefinition, now,
-            groupKey, stateCustom, correlationId));
+        var id = GuidGenerator.Create();
+
+        return Task.FromResult(new Process(id, CurrentTenant.Id, processDefinition, now, model.GroupKey,
+            model.CorrelationId ?? id.ToString(), model));
     }
 
-    public virtual Task UpdateStateAsync(Process process, IProcessState nextState, bool completeProcess)
+    public virtual Task UpdateStateAsync(Process process, IProcessState nextState)
     {
         var processDefinition = Options.GetProcessDefinition(process.ProcessName);
 
@@ -38,12 +39,7 @@ public class ProcessManager : DomainService
                 $"The specified state `{nextState.StateName}` is invalid for the process `{process.ProcessName}`");
         }
 
-        process.SetState(processDefinition, nextState);
-
-        if (completeProcess)
-        {
-            process.CompleteProcess(Clock.Now);
-        }
+        process.SetState(nextState);
 
         return Task.CompletedTask;
     }
