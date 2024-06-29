@@ -21,8 +21,6 @@ public class NotificationDto : CreationAuditedEntityDto<Guid>
 
     public string GroupKey { get; set; }
 
-    public DateTime? CompletionTime { get; set; }
-
     public DateTime StateUpdateTime { get; set; }
 
     public string StateName { get; set; }

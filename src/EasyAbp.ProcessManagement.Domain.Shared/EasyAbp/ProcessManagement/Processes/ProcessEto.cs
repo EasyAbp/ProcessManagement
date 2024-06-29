@@ -14,8 +14,6 @@ public class ProcessEto : EntityEto<Guid>, IProcess, IMultiTenant
 
     public string GroupKey { get; set; }
 
-    public DateTime? CompletionTime { get; set; }
-
     public string? ActionName { get; set; }
 
     public ProcessStateFlag StateFlag { get; set; }

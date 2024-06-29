@@ -58,60 +58,63 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
         var adminUser = await _identityUserManager.FindByNameAsync("admin");
         var now = _clock.Now;
 
-        var process1 = await _processManager.CreateAsync("FakeExport", now.AddHours(-5),
-            await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString()));
+        var process1 = await _processManager.CreateAsync(
+            new CreateProcessModel("FakeExport", null,
+                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now.AddHours(-5));
 
         await _processManager.UpdateStateAsync(process1,
             new ProcessStateInfoModel(now.AddHours(-4), "Exporting",
                 new ProcessStateCustomModel("Loading data",
                     ProcessStateFlag.Running,
                     "Loading the data...",
-                    "<b>Loading the data...</b>")), false);
+                    "<b>Loading the data...</b>")));
 
         await _processManager.UpdateStateAsync(process1,
             new ProcessStateInfoModel(now.AddHours(-3), "Exporting",
                 new ProcessStateCustomModel("Exporting to ZIP",
                     ProcessStateFlag.Running,
                     "Exporting to the .zip file...",
-                    "<b>Exporting to the .zip file...</b>")), false);
+                    "<b>Exporting to the .zip file...</b>")));
 
         await _processManager.UpdateStateAsync(process1,
             new ProcessStateInfoModel(now.AddHours(-2), "Succeeded",
                 new ProcessStateCustomModel("Export is done!",
                     ProcessStateFlag.Success,
                     "Congratulations! Export successful.",
-                    "<b>Congratulations!</b><br/>Everything is done.")), false);
+                    "<b>Congratulations!</b><br/>Everything is done.")));
 
         await _processRepository.InsertAsync(process1, true);
 
-        var process2 = await _processManager.CreateAsync("FakeExport", now,
-            await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString()));
+        var process2 = await _processManager.CreateAsync(
+            new CreateProcessModel("FakeExport", null,
+                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now);
 
         await _processManager.UpdateStateAsync(process2,
             new ProcessStateInfoModel(now.AddHours(-1), "Exporting",
                 new ProcessStateCustomModel("Loading data",
                     ProcessStateFlag.Running,
                     "Loading the data...",
-                    "<b>Loading the data...</b>")), false);
+                    "<b>Loading the data...</b>")));
 
         await _processRepository.InsertAsync(process2, true);
 
-        var process3 = await _processManager.CreateAsync("FakeExport", now,
-            await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString()));
+        var process3 = await _processManager.CreateAsync(
+            new CreateProcessModel("FakeExport", null,
+                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now);
 
         await _processManager.UpdateStateAsync(process3,
             new ProcessStateInfoModel(now.AddHours(-2), "Exporting",
                 new ProcessStateCustomModel("Loading data",
                     ProcessStateFlag.Running,
                     "Loading the data...",
-                    "<b>Loading the data...</b>")), false);
+                    "<b>Loading the data...</b>")));
 
         await _processManager.UpdateStateAsync(process3,
             new ProcessStateInfoModel(now.AddHours(-1), "Failed",
                 new ProcessStateCustomModel("Failed...",
                     ProcessStateFlag.Failure,
                     "Oops, the task failed!",
-                    null)), false);
+                    null)));
 
         await _processRepository.InsertAsync(process3, true);
     }

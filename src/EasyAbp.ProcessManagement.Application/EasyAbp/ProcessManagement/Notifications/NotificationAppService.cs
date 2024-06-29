@@ -43,7 +43,6 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
             .WhereIf(!input.ProcessName.IsNullOrWhiteSpace(), x => x.ProcessName.Contains(input.ProcessName))
             .WhereIf(!input.CorrelationId.IsNullOrWhiteSpace(), x => x.CorrelationId.Contains(input.CorrelationId))
             .WhereIf(!input.GroupKey.IsNullOrWhiteSpace(), x => x.GroupKey.Contains(input.GroupKey))
-            .WhereIf(input.CompletionTime != null, x => x.CompletionTime == input.CompletionTime)
             .WhereIf(input.StateUpdateTime != null, x => x.StateUpdateTime == input.StateUpdateTime)
             .WhereIf(!input.StateName.IsNullOrWhiteSpace(), x => x.StateName.Contains(input.StateName))
             .WhereIf(input.ActionName != null, x => x.ActionName == input.ActionName)

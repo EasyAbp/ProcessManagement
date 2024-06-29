@@ -20,9 +20,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     public virtual string GroupKey { get; protected set; }
 
     /// <inheritdoc/>
-    public virtual DateTime? CompletionTime { get; protected set; }
-
-    /// <inheritdoc/>
     public virtual DateTime StateUpdateTime { get; protected set; }
 
     /// <inheritdoc/>
@@ -45,21 +42,18 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     }
 
     internal Process(Guid id, Guid? tenantId, ProcessDefinition processDefinition, DateTime now, string groupKey,
-        IProcessStateCustom? stateCustom = null, string? correlationId = null) : base(id)
+        string correlationId, IProcessStateCustom? stateCustom = null) : base(id)
     {
         TenantId = tenantId;
-        CorrelationId = correlationId ?? id.ToString();
+        CorrelationId = correlationId;
         GroupKey = groupKey;
         ProcessName = Check.NotNullOrWhiteSpace(processDefinition.Name, nameof(ProcessName));
 
-        SetState(processDefinition, new ProcessStateInfoModel(now, processDefinition.InitialStateName, stateCustom));
+        SetState(new ProcessStateInfoModel(now, processDefinition.InitialStateName, stateCustom));
     }
 
-    internal void SetState(ProcessDefinition processDefinition, IProcessState processState)
+    internal void SetState(IProcessState processState)
     {
-        CheckProcessDefinition(processDefinition);
-        CheckIsNotCompleted();
-
         var oldState = StateName.IsNullOrEmpty() ? null : ToStateInfoModel();
 
         StateUpdateTime = processState.StateUpdateTime;
@@ -69,36 +63,12 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
         StateSummaryText = processState.StateSummaryText;
         StateDetailsText = processState.StateDetailsText;
 
-        AddLocalEvent(new ProcessStateChangedEto(TenantId, Id, ProcessName, CorrelationId, GroupKey, CompletionTime,
-            oldState, ToStateInfoModel()));
+        AddLocalEvent(new ProcessStateChangedEto(
+            TenantId, Id, ProcessName, CorrelationId, GroupKey, oldState, ToStateInfoModel()));
     }
 
     public ProcessStateInfoModel ToStateInfoModel()
     {
         return new ProcessStateInfoModel(StateUpdateTime, StateName, this);
-    }
-
-    internal void CompleteProcess(DateTime now)
-    {
-        CheckIsNotCompleted();
-
-        CompletionTime = now;
-    }
-
-    private void CheckProcessDefinition(ProcessDefinition processDefinition)
-    {
-        if (processDefinition.Name != ProcessName)
-        {
-            throw new AbpException($"Invalid process definition. The expected process's name is `{ProcessName}`");
-        }
-    }
-
-    private void CheckIsNotCompleted()
-    {
-        if (CompletionTime.HasValue)
-        {
-            throw new AbpException(
-                $"The operation failed since process `{ProcessName}` (id: {Id}) had already been completed.");
-        }
     }
 }
