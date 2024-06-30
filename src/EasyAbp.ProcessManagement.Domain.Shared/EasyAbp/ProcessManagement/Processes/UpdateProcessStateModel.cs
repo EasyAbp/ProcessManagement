@@ -7,8 +7,6 @@ namespace EasyAbp.ProcessManagement.Processes;
 [Serializable]
 public class UpdateProcessStateModel : ExtensibleObject, IProcessState
 {
-    public string CorrelationId { get; set; }
-
     public string? ActionName { get; set; }
 
     public ProcessStateFlag StateFlag { get; set; }
@@ -25,10 +23,9 @@ public class UpdateProcessStateModel : ExtensibleObject, IProcessState
     {
     }
 
-    public UpdateProcessStateModel(string correlationId, string? actionName, ProcessStateFlag stateFlag,
-        string? stateSummaryText, DateTime stateUpdateTime, string stateName, string? stateDetailsText)
+    public UpdateProcessStateModel(string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText,
+        DateTime stateUpdateTime, string stateName, string? stateDetailsText)
     {
-        CorrelationId = Check.NotNullOrWhiteSpace(correlationId, nameof(correlationId));
         ActionName = actionName;
         StateFlag = stateFlag;
         StateSummaryText = stateSummaryText;
