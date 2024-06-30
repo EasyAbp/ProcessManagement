@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Localization;
 using EasyAbp.ProcessManagement.Permissions;
@@ -18,16 +19,21 @@ public class ProcessManagementMenuContributor : IMenuContributor
     private async Task ConfigureMainMenuAsync(MenuConfigurationContext context)
     {
         var l = context.GetLocalizer<ProcessManagementResource>();
-        //Add main menu items.
-        context.Menu.GetAdministration().AddItem(new ApplicationMenuItem(ProcessManagementMenus.Prefix,
-            displayName: "ProcessManagement", icon: "fa fa-list", url: "~/ProcessManagement"));
+
+        var processManagementMenuItem = new ApplicationMenuItem(ProcessManagementMenus.Prefix,
+            displayName: l["Menu:ProcessManagement"], icon: "fa fa-tasks", url: "~/ProcessManagement");
 
         if (await context.IsGrantedAsync(ProcessManagementPermissions.Process.Manage))
         {
-            context.Menu.GetAdministration().AddItem(
+            processManagementMenuItem.AddItem(
                 new ApplicationMenuItem(ProcessManagementMenus.Process, l["Menu:Process"],
                     "/ProcessManagement/Processes/Process")
             );
+        }
+
+        if (processManagementMenuItem.Items.Any())
+        {
+            context.Menu.GetAdministration().AddItem(processManagementMenuItem);
         }
     }
 }

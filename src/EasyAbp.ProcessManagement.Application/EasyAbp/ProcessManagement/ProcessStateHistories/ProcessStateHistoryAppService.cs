@@ -36,7 +36,7 @@ public class ProcessStateHistoryAppService : ReadOnlyAppService<ProcessStateHist
         if (!await HasManagementPermissionAsync())
         {
             var process = await ProcessRepository.GetAsync(history.ProcessId);
-            var groupKeys = await GetUserGroupKeys();
+            var groupKeys = await GetUserGroupKeys(CurrentUser.GetId());
 
             if (!groupKeys.Contains(process.GroupKey))
             {
@@ -55,7 +55,7 @@ public class ProcessStateHistoryAppService : ReadOnlyAppService<ProcessStateHist
         if (!await HasManagementPermissionAsync())
         {
             var process = await ProcessRepository.GetAsync(input.ProcessId);
-            var groupKeys = await GetUserGroupKeys();
+            var groupKeys = await GetUserGroupKeys(CurrentUser.GetId());
 
             if (!groupKeys.Contains(process.GroupKey))
             {
@@ -109,8 +109,8 @@ public class ProcessStateHistoryAppService : ReadOnlyAppService<ProcessStateHist
         return await AuthorizationService.IsGrantedAsync(ProcessManagementPermissions.Process.Manage);
     }
 
-    protected virtual async Task<List<string>> GetUserGroupKeys()
+    protected virtual async Task<List<string>> GetUserGroupKeys(Guid userId)
     {
-        return await UserGroupManager.GetUserGroupKeysAsync(CurrentUser.GetId());
+        return await UserGroupManager.GetUserGroupKeysAsync(userId);
     }
 }
