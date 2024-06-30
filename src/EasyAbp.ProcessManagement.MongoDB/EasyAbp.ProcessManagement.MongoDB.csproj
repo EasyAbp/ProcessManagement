@@ -13,8 +13,5 @@
     <ProjectReference Include="..\EasyAbp.ProcessManagement.Domain\EasyAbp.ProcessManagement.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EasyAbp\ProcessManagement" />
-  </ItemGroup>
 
 </Project>

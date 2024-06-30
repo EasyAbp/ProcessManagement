@@ -4,7 +4,7 @@ $(function () {
         document.location = abp.appPath + 'ProcessManagement/Processes/Process';
     });
 
-    var l = abp.localization.getResource('ProcessManagement');
+    var l = abp.localization.getResource('EasyAbpProcessManagement');
 
     var notificationService = easyAbp.processManagement.notifications.notification;
     var processService = easyAbp.processManagement.processes.process;
@@ -21,7 +21,7 @@ $(function () {
         scrollCollapse: true,
         ordering: false,
         ajax: abp.libs.datatables.createAjax(notificationService.getList, {
-            fromCreationTime: abp.clock.normalize(new Date(abp.clock.now() - notificationLifetime)),
+            fromCreationTime: new Date(abp.clock.now() - notificationLifetime),
             userId: abp.currentUser.id,
             dismissed: false
         }),

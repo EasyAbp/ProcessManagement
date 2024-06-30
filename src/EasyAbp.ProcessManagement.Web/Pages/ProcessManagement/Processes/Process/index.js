@@ -19,7 +19,7 @@ $(function () {
         return input;
     };
 
-    var l = abp.localization.getResource('ProcessManagement');
+    var l = abp.localization.getResource('EasyAbpProcessManagement');
 
     var service = easyAbp.processManagement.processes.process;
     var detailsModal = new abp.ModalManager(abp.appPath + 'ProcessManagement/Processes/Process/DetailsModal');
