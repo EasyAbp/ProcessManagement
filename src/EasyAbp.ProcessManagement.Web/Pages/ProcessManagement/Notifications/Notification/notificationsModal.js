@@ -21,7 +21,7 @@ $(function () {
         scrollCollapse: true,
         ordering: false,
         ajax: abp.libs.datatables.createAjax(notificationService.getList, {
-            fromCreationTime: abp.clock.normalize(new Date(abp.clock.now().getTime() - notificationLifetime)),
+            fromCreationTime: abp.clock.normalize(new Date(abp.clock.now() - notificationLifetime)),
             userId: abp.currentUser.id,
             dismissed: false
         }),
