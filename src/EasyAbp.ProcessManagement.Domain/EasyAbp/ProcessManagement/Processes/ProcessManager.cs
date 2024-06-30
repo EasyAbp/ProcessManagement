@@ -29,14 +29,17 @@ public class ProcessManager : DomainService
 
     public virtual Task UpdateStateAsync(Process process, IProcessState nextState)
     {
-        var processDefinition = Options.GetProcessDefinition(process.ProcessName);
-
-        var nextStates = processDefinition.GetChildStateNames(process.StateName);
-
-        if (!nextStates.Contains(nextState.StateName))
+        if (nextState.StateName != process.StateName)
         {
-            throw new AbpException(
-                $"The specified state `{nextState.StateName}` is invalid for the process `{process.ProcessName}`");
+            var processDefinition = Options.GetProcessDefinition(process.ProcessName);
+
+            var nextStates = processDefinition.GetChildStateNames(process.StateName);
+
+            if (!nextStates.Contains(nextState.StateName))
+            {
+                throw new AbpException(
+                    $"The specified state `{nextState.StateName}` is invalid for the process `{process.ProcessName}`");
+            }
         }
 
         process.SetState(nextState);
