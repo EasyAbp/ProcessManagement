@@ -35,7 +35,7 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
 
         if (!await HasManagementPermissionAsync())
         {
-            var groupKeys = await GetUserGroupKeys();
+            var groupKeys = await GetUserGroupKeys(CurrentUser.GetId());
 
             if (!groupKeys.Contains(entity.GroupKey))
             {
@@ -48,11 +48,18 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
 
     protected override async Task<IQueryable<Process>> CreateFilteredQueryAsync(ProcessGetListInput input)
     {
-        var queryable = (await base.CreateFilteredQueryAsync(input));
+        var queryable = await base.CreateFilteredQueryAsync(input);
 
-        if (!await HasManagementPermissionAsync())
+        var hasUserNameInput = !input.UserName.IsNullOrWhiteSpace();
+
+        if (hasUserNameInput && input.UserName != CurrentUser.UserName && !await HasManagementPermissionAsync())
         {
-            var groupKeys = await GetUserGroupKeys();
+            throw new AbpAuthorizationException();
+        }
+
+        if (hasUserNameInput)
+        {
+            var groupKeys = await GetUserGroupKeys(CurrentUser.GetId());
             queryable = queryable.Where(x => groupKeys.Contains(x.GroupKey));
         }
 
@@ -76,9 +83,9 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
         return await AuthorizationService.IsGrantedAsync(ProcessManagementPermissions.Process.Manage);
     }
 
-    protected virtual async Task<List<string>> GetUserGroupKeys()
+    protected virtual async Task<List<string>> GetUserGroupKeys(Guid userId)
     {
-        return await UserGroupManager.GetUserGroupKeysAsync(CurrentUser.GetId());
+        return await UserGroupManager.GetUserGroupKeysAsync(userId);
     }
 
     protected override ProcessDto MapToGetOutputDto(Process entity)

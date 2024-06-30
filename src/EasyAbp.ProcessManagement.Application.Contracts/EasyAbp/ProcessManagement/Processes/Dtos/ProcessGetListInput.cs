@@ -23,4 +23,6 @@ public class ProcessGetListInput : PagedAndSortedResultRequestDto
     public string? StateSummaryText { get; set; }
 
     public string? StateDetailsText { get; set; }
+
+    public string? UserName { get; set; }
 }
