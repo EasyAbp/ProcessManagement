@@ -33,7 +33,7 @@ public class ProcessManager : DomainService
         {
             var processDefinition = Options.GetProcessDefinition(process.ProcessName);
 
-            var nextStates = processDefinition.GetChildStateNames(process.StateName);
+            var nextStates = processDefinition.GetChildrenStateNames(process.StateName);
 
             if (!nextStates.Contains(nextState.StateName))
             {

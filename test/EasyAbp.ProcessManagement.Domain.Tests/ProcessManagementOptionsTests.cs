@@ -4,6 +4,7 @@ using EasyAbp.ProcessManagement.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using Volo.Abp;
 using Xunit;
 
 namespace EasyAbp.ProcessManagement;
@@ -13,32 +14,38 @@ public class ProcessManagementOptionsTests : ProcessManagementDomainTestBase
     [Fact]
     public void Should_Get_Definitions()
     {
-        var options = ServiceProvider.GetService<IOptions<ProcessManagementOptions>>();
+        var options = ServiceProvider.GetRequiredService<IOptions<ProcessManagementOptions>>().Value;
 
-        options.ShouldNotBeNull();
+        var processDefinition = options.GetProcessDefinition("FakeExport");
 
-        var processDefinition = options.Value.GetProcessDefinition("MyDemoProcess");
-        
-        processDefinition.GetState("Startup").ShouldNotBeNull();
-        processDefinition.GetState("Step1").ShouldNotBeNull();
-        processDefinition.GetState("Step2").ShouldNotBeNull();
-        processDefinition.GetState("Step3").ShouldNotBeNull();
-        processDefinition.GetState("Step4").ShouldNotBeNull();
-        processDefinition.GetState("Step5").ShouldNotBeNull();
-        processDefinition.GetState("Step6").ShouldNotBeNull();
-        processDefinition.GetState("Step7").ShouldNotBeNull();
-        processDefinition.GetState("Step8").ShouldNotBeNull();
+        processDefinition.GetState("Ready").ShouldNotBeNull();
+        processDefinition.GetState("FailedToStartExporting").ShouldNotBeNull();
+        processDefinition.GetState("Exporting").ShouldNotBeNull();
+        processDefinition.GetState("ExportFailed").ShouldNotBeNull();
+        processDefinition.GetState("Succeeded").ShouldNotBeNull();
         Should.Throw<KeyNotFoundException>(() => processDefinition.GetState("Step10000"));
 
-        processDefinition.InitialStateName.ShouldBe("Startup");
-        processDefinition.GetChildStateNames("Startup").ToArray().ShouldBeEquivalentTo(new[] { "Step1", "Step2" });
-        processDefinition.GetChildStateNames("Step1").ToArray().ShouldBeEquivalentTo(new[] { "Step3" });
-        processDefinition.GetChildStateNames("Step2").ToArray().ShouldBeEquivalentTo(new[] { "Step3" });
-        processDefinition.GetChildStateNames("Step3").ToArray().ShouldBeEquivalentTo(new[] { "Step4", "Step5" });
-        processDefinition.GetChildStateNames("Step4").ToArray().ShouldBeEquivalentTo(new[] { "Step6" });
-        processDefinition.GetChildStateNames("Step5").ToArray().ShouldBeEquivalentTo(new[] { "Step7" });
-        processDefinition.GetChildStateNames("Step6").ToArray().ShouldBeEquivalentTo(new[] { "Step4" });
-        processDefinition.GetChildStateNames("Step7").ToArray().ShouldBeEquivalentTo(new[] { "Step8" });
-        processDefinition.GetChildStateNames("Step8").ToArray().ShouldBeEquivalentTo(new[] { "Step5" });
+        processDefinition.InitialStateName.ShouldBe("Ready");
+        processDefinition.GetChildrenStateNames("Ready").ToArray()
+            .ShouldBeEquivalentTo(new[] { "FailedToStartExporting", "Exporting" });
+        processDefinition.GetChildrenStateNames("Exporting").ToArray()
+            .ShouldBeEquivalentTo(new[] { "ExportFailed", "Succeeded" });
+        processDefinition.GetChildrenStateNames("FailedToStartExporting").ToArray().ShouldBeEmpty();
+        processDefinition.GetChildrenStateNames("Succeeded").ToArray().ShouldBeEmpty();
+        processDefinition.GetChildrenStateNames("ExportFailed").ToArray().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Should_Not_Add_Duplicate_State()
+    {
+        var options = ServiceProvider.GetRequiredService<IOptions<ProcessManagementOptions>>().Value;
+
+        var processDefinition = options.GetProcessDefinition("FakeExport");
+
+        Should.Throw<AbpException>(() =>
+            processDefinition.AddState(new ProcessStateDefinition("Ready", "Ready", null)));
+
+        Should.Throw<AbpException>(() =>
+            processDefinition.AddState(new ProcessStateDefinition("Exporting", "Exporting", "Ready")));
     }
 }
