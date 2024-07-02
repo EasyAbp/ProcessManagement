@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Volo.Abp;
 
 namespace EasyAbp.ProcessManagement.Options;
@@ -19,11 +20,11 @@ public class ProcessDefinition
         DisplayName = displayName;
     }
 
-    public IEnumerable<string> GetChildStateNames(string currentStateName)
+    public List<string> GetChildrenStateNames(string currentStateName)
     {
         Check.NotNullOrWhiteSpace(currentStateName, nameof(currentStateName));
 
-        return StateDefinitions[currentStateName].NextStateNames;
+        return StateDefinitions[currentStateName].ChildrenStateNames.ToList();
     }
 
     public ProcessStateDefinition GetState(string stateName)
@@ -33,13 +34,7 @@ public class ProcessDefinition
         return StateDefinitions[stateName];
     }
 
-    /// <summary>
-    /// Add a state.
-    /// </summary>
-    /// <param name="stateDefinition">The state definition object.</param>
-    /// <param name="parentStateNames">Names of the parent states. Stages can only transition from their parent states.</param>
-    /// <returns></returns>
-    public ProcessDefinition AddState(ProcessStateDefinition stateDefinition, params string[]? parentStateNames)
+    public ProcessDefinition AddState(ProcessStateDefinition stateDefinition)
     {
         Check.NotNull(stateDefinition, nameof(stateDefinition));
 
@@ -51,32 +46,29 @@ public class ProcessDefinition
 
         StateDefinitions.Add(stateDefinition.Name, stateDefinition);
 
-        if (parentStateNames is null)
+        if (stateDefinition.FatherStateName is null)
         {
-            SetInitialState(stateDefinition.Name);
+            SetAsInitialState(stateDefinition.Name);
         }
         else
         {
-            foreach (var parentStateName in parentStateNames)
-            {
-                LinkStates(stateDefinition.Name, parentStateName);
-            }
+            SetAsChildState(stateDefinition.Name, stateDefinition.FatherStateName);
         }
 
         return this;
     }
 
-    private void LinkStates(string stateName, string parentStateName)
+    private void SetAsChildState(string stateName, string fatherStateName)
     {
         Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
-        Check.NotNullOrWhiteSpace(parentStateName, nameof(parentStateName));
+        Check.NotNullOrWhiteSpace(fatherStateName, nameof(fatherStateName));
 
         var stateDefinition = StateDefinitions[stateName];
 
-        StateDefinitions[parentStateName].NextStateNames.Add(stateDefinition.Name);
+        StateDefinitions[fatherStateName].ChildrenStateNames.Add(stateDefinition.Name);
     }
 
-    private void SetInitialState(string stateName)
+    private void SetAsInitialState(string stateName)
     {
         Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
 
