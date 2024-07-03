@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using EasyAbp.ProcessManagement.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -7,7 +6,7 @@ using Shouldly;
 using Volo.Abp;
 using Xunit;
 
-namespace EasyAbp.ProcessManagement;
+namespace EasyAbp.ProcessManagement.Processes;
 
 public class ProcessManagementOptionsTests : ProcessManagementDomainTestBase
 {

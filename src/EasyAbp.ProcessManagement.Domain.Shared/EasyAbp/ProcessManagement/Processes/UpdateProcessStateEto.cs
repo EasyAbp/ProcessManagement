@@ -15,9 +15,16 @@ public class UpdateProcessStateEto : UpdateProcessStateModel, IMultiTenant
     {
     }
 
-    public UpdateProcessStateEto(Guid? tenantId, string correlationId, string? actionName, ProcessStateFlag stateFlag,
-        string? stateSummaryText, DateTime stateUpdateTime, string stateName, string? stateDetailsText) : base(
-        actionName, stateFlag, stateSummaryText, stateUpdateTime, stateName, stateDetailsText)
+    public UpdateProcessStateEto(Guid? tenantId, string correlationId, DateTime stateUpdateTime, string stateName,
+        string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText, string? stateDetailsText) : base(
+        stateUpdateTime, stateName, actionName, stateFlag, stateSummaryText, stateDetailsText)
+    {
+        TenantId = tenantId;
+        CorrelationId = Check.NotNullOrWhiteSpace(correlationId, nameof(correlationId));
+    }
+
+    public UpdateProcessStateEto(Guid? tenantId, string correlationId, DateTime stateUpdateTime, string stateName) :
+        base(stateUpdateTime, stateName)
     {
         TenantId = tenantId;
         CorrelationId = Check.NotNullOrWhiteSpace(correlationId, nameof(correlationId));

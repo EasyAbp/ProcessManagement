@@ -31,7 +31,9 @@ public class ProcessDefinition
     {
         Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
 
-        return StateDefinitions[stateName];
+        return StateDefinitions.TryGetValue(stateName, out var stateDefinition)
+            ? stateDefinition
+            : throw new UndefinedProcessStateException(stateName, Name);
     }
 
     public ProcessDefinition AddState(ProcessStateDefinition stateDefinition)
@@ -56,6 +58,23 @@ public class ProcessDefinition
         }
 
         return this;
+    }
+
+    /// <summary>
+    /// If the specified state is a child, grandchild, or further descendant of the current state, it returns true.
+    /// </summary>
+    public bool IsDescendantState(string stateName, string currentStateName)
+    {
+        var currentStateDefinition = StateDefinitions[currentStateName];
+
+        if (currentStateDefinition.ChildrenStateNames.Contains(stateName))
+        {
+            return true;
+        }
+
+        return currentStateDefinition.ChildrenStateNames
+            .SelectMany(x => StateDefinitions[x].ChildrenStateNames)
+            .Contains(stateName);
     }
 
     private void SetAsChildState(string stateName, string fatherStateName)

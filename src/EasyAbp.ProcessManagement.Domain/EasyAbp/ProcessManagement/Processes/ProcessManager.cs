@@ -1,49 +1,115 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Options;
+using EasyAbp.ProcessManagement.ProcessStateHistories;
 using Microsoft.Extensions.Options;
 using Volo.Abp;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.Uow;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
 public class ProcessManager : DomainService
 {
-    protected ProcessManagementOptions Options { get; }
+    protected ProcessManagementOptions Options =>
+        LazyServiceProvider.LazyGetRequiredService<IOptions<ProcessManagementOptions>>().Value;
 
-    public ProcessManager(IOptions<ProcessManagementOptions> options)
-    {
-        Options = options.Value;
-    }
+    protected IProcessStateHistoryRepository ProcessStateHistoryRepository => LazyServiceProvider
+        .LazyGetRequiredService<IProcessStateHistoryRepository>();
 
-    public virtual Task<Process> CreateAsync(CreateProcessModel model, DateTime now)
+    public virtual async Task<Process> CreateAsync(CreateProcessModel model, DateTime now)
     {
         var processDefinition = Options.GetProcessDefinition(model.ProcessName);
 
         var id = GuidGenerator.Create();
 
-        return Task.FromResult(new Process(id, CurrentTenant.Id, processDefinition, now, model.GroupKey,
-            model.CorrelationId ?? id.ToString(), model));
+        var process = new Process(id, CurrentTenant.Id, processDefinition, now, model.GroupKey,
+            model.CorrelationId ?? id.ToString(), model);
+
+        await RecordStateHistoryAsync(process.Id, process);
+
+        return process;
     }
 
-    public virtual Task UpdateStateAsync(Process process, IProcessState nextState)
+    [UnitOfWork]
+    public virtual async Task UpdateStateAsync(Process process, IProcessState nextState)
     {
         if (nextState.StateName != process.StateName)
         {
-            var processDefinition = Options.GetProcessDefinition(process.ProcessName);
+            await UpdateToDifferentStateAsync(process, nextState);
+        }
+        else
+        {
+            await UpdateStateCustomInfoAsync(process, nextState);
+        }
+    }
 
-            var nextStates = processDefinition.GetChildrenStateNames(process.StateName);
+    [UnitOfWork]
+    protected virtual async Task UpdateToDifferentStateAsync(Process process, IProcessState state)
+    {
+        var processDefinition = Options.GetProcessDefinition(process.ProcessName);
 
-            if (!nextStates.Contains(nextState.StateName))
+        var availableStates = processDefinition.GetChildrenStateNames(process.StateName);
+
+        if (availableStates.Contains(state.StateName))
+        {
+            if (state.StateUpdateTime <= process.StateUpdateTime)
             {
-                throw new AbpException(
-                    $"The specified state `{nextState.StateName}` is invalid for the process `{process.ProcessName}`");
+                throw new InvalidStateUpdateTimeException(state.StateName, process.ProcessName, process.Id);
             }
+
+            process.SetState(state);
+
+            await RecordStateHistoryAsync(process.Id, state);
+        }
+        else
+        {
+            // get or throw.
+            processDefinition.GetState(state.StateName);
+
+            /* If this incoming state is a descendant of the current state, it will be accepted in the future.
+             * So we throw an exception and skip handling it this time.
+             * The next time the event handling is attempted, it may succeed.
+             */
+            if (processDefinition.IsDescendantState(state.StateName, process.StateName))
+            {
+                throw new UpdatingToFutureStateException(state.StateName, process.ProcessName, process.Id);
+            }
+
+            /*
+             * Or, the process has been updated to this incoming state before, we just record the state history.
+             */
+            if ((await ProcessStateHistoryRepository.GetHistoriesByStateNameAsync(
+                    process.Id, state.StateName)).Count != 0)
+            {
+                await RecordStateHistoryAsync(process.Id, state);
+                return;
+            }
+
+            /*
+             * Otherwise, this incoming state will never succeed, we don't handle it.
+             */
+            throw new UpdatingToNonDescendantStateException(state.StateName, process.ProcessName, process.Id);
+        }
+    }
+
+    protected virtual async Task UpdateStateCustomInfoAsync(Process process, IProcessState state)
+    {
+        /* If it receives a state update event out of order (event.StateUpdateTime < process.StateUpdateTime),
+         * we will only add a new state history entity without updating the process entity properties.
+         */
+        if (state.StateUpdateTime > process.StateUpdateTime)
+        {
+            process.SetState(state);
         }
 
-        process.SetState(nextState);
+        await RecordStateHistoryAsync(process.Id, state);
+    }
 
-        return Task.CompletedTask;
+    [UnitOfWork]
+    protected virtual async Task<ProcessStateHistory> RecordStateHistoryAsync(Guid processId, IProcessState state)
+    {
+        return await ProcessStateHistoryRepository.InsertAsync(
+            new ProcessStateHistory(GuidGenerator.Create(), CurrentTenant.Id, processId, state), true);
     }
 }
