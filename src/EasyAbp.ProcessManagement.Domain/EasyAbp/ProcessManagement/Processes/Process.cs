@@ -46,7 +46,7 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     {
         TenantId = tenantId;
         CorrelationId = correlationId;
-        GroupKey = groupKey;
+        GroupKey = Check.NotNull(groupKey, nameof(groupKey));
         ProcessName = Check.NotNullOrWhiteSpace(processDefinition.Name, nameof(ProcessName));
 
         SetState(new ProcessStateInfoModel(now, processDefinition.InitialStateName, stateCustom));

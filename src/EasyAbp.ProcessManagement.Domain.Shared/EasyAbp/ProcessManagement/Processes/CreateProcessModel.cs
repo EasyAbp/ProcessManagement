@@ -34,7 +34,7 @@ public class CreateProcessModel : ExtensibleObject, IProcessBase, IProcessStateC
     {
         ProcessName = Check.NotNullOrWhiteSpace(processName, nameof(processName));
         CorrelationId = correlationId;
-        GroupKey = Check.NotNullOrWhiteSpace(groupKey, nameof(groupKey));
+        GroupKey = Check.NotNull(groupKey, nameof(groupKey));
         ActionName = actionName;
         StateFlag = stateFlag;
         StateSummaryText = stateSummaryText;
@@ -45,6 +45,6 @@ public class CreateProcessModel : ExtensibleObject, IProcessBase, IProcessStateC
     {
         ProcessName = Check.NotNullOrWhiteSpace(processName, nameof(processName));
         CorrelationId = correlationId;
-        GroupKey = Check.NotNullOrWhiteSpace(groupKey, nameof(groupKey));
+        GroupKey = Check.NotNull(groupKey, nameof(groupKey));
     }
 }

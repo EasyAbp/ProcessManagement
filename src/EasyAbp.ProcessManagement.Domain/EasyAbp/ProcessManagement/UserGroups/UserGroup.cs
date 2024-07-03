@@ -21,6 +21,6 @@ public class UserGroup : CreationAuditedAggregateRoot<Guid>, IMultiTenant
     {
         TenantId = tenantId;
         UserId = userId;
-        GroupKey = Check.NotNullOrWhiteSpace(groupKey, nameof(groupKey));
+        GroupKey = Check.NotNull(groupKey, nameof(groupKey));
     }
 }
