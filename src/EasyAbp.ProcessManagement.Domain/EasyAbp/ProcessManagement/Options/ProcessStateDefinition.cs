@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using EasyAbp.ProcessManagement.Processes;
 using Volo.Abp;
 
 namespace EasyAbp.ProcessManagement.Options;
@@ -15,6 +16,13 @@ public class ProcessStateDefinition
     /// todo: use ILocalizableString.
     /// </summary>
     public string? DisplayName { get; }
+
+    /// <summary>
+    /// The default state flag.
+    /// This flag is converted to a state icon and displayed on the UI.
+    /// For example, when the flag is Warning, the UI shows ⚠️.
+    /// </summary>
+    public ProcessStateFlag DefaultStateFlag { get; }
 
     /// <summary>
     /// Name of the father state. Stages can only transition from their father state.
@@ -34,10 +42,14 @@ public class ProcessStateDefinition
     /// <param name="displayName">Localized display name.</param>
     /// <param name="fatherStateName">Name of the father state. Stages can only transition from their father state.
     /// If null, this state is the initial state. A process can have only one initial state.</param>
-    public ProcessStateDefinition(string name, string? displayName, string? fatherStateName)
+    /// <param name="defaultStateFlag">The default state flag. This flag is converted to a state icon and displayed
+    /// on the UI. For example, when the flag is Warning, the UI shows ⚠️.</param>
+    public ProcessStateDefinition(string name, string? displayName, string? fatherStateName,
+        ProcessStateFlag defaultStateFlag)
     {
         Name = Check.NotNullOrWhiteSpace(name, nameof(name));
         DisplayName = displayName;
         FatherStateName = fatherStateName;
+        DefaultStateFlag = defaultStateFlag;
     }
 }

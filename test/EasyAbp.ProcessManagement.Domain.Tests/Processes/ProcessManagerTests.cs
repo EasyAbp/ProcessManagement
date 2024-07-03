@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
+using Microsoft.Extensions.Options;
 using Shouldly;
-using Volo.Abp;
 using Xunit;
 
 namespace EasyAbp.ProcessManagement.Processes;
@@ -14,12 +14,14 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
     protected ProcessManager ProcessManager { get; }
     protected IProcessRepository ProcessRepository { get; }
     protected IProcessStateHistoryRepository ProcessStateHistoryRepository { get; }
+    protected ProcessManagementOptions Options { get; }
 
     public ProcessManagerTests()
     {
         ProcessManager = GetRequiredService<ProcessManager>();
         ProcessRepository = GetRequiredService<IProcessRepository>();
         ProcessStateHistoryRepository = GetRequiredService<IProcessStateHistoryRepository>();
+        Options = GetRequiredService<IOptions<ProcessManagementOptions>>().Value;
     }
 
     [Fact]
@@ -70,7 +72,10 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
     public async Task Should_Update_State_Custom_Info()
     {
         var process = await ProcessManager.CreateAsync(
-            new CreateProcessModel("FakeExport", null, "groupKey"), DateTime.Now);
+            new CreateProcessModel("FakeExport", null, "groupKey", "hi", ProcessStateFlag.Information, null, null),
+            DateTime.Now);
+
+        process.StateFlag.ShouldBe(ProcessStateFlag.Information);
 
         await ProcessRepository.InsertAsync(process, true);
 
@@ -85,7 +90,8 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
         histories.Count.ShouldBe(2);
         histories.Count(x => x.StateName == "Ready").ShouldBe(2);
         histories.ShouldContain(x =>
-            x.StateName == "Ready" && x.ActionName == "balalala" && x.StateUpdateTime == updateTime);
+            x.StateName == "Ready" && x.ActionName == "balalala" && x.StateFlag == ProcessStateFlag.Running &&
+            x.StateUpdateTime == updateTime);
     }
 
     [Fact]
@@ -136,5 +142,18 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
         await Should.ThrowAsync<UpdatingToNonDescendantStateException>(() =>
             ProcessManager.UpdateStateAsync(process,
                 new UpdateProcessStateModel(DateTime.Now, "FailedToStartExporting")));
+    }
+
+    [Fact]
+    public async Task Should_Use_Default_State_If_Not_Set()
+    {
+        var process = await ProcessManager.CreateAsync(
+            new CreateProcessModel("FakeExport", null, "groupKey"), DateTime.Now);
+
+        process.StateFlag.ShouldBe(Options.GetProcessDefinition("FakeExport").GetState("Ready").DefaultStateFlag);
+
+        await ProcessManager.UpdateStateAsync(process, new UpdateProcessStateModel(DateTime.Now, "Exporting"));
+
+        process.StateFlag.ShouldBe(Options.GetProcessDefinition("FakeExport").GetState("Exporting").DefaultStateFlag);
     }
 }
