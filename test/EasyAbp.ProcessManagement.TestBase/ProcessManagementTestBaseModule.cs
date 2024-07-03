@@ -1,4 +1,5 @@
 ﻿using EasyAbp.ProcessManagement.Options;
+using EasyAbp.ProcessManagement.Processes;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp;
 using Volo.Abp.Authorization;
@@ -35,11 +36,16 @@ public class ProcessManagementTestBaseModule : AbpModule
          *             FailedToStartExporting
          */
         var processDefinition = new ProcessDefinition("FakeExport", "Fake export")
-            .AddState(new ProcessStateDefinition("Ready", "Ready", null))
-            .AddState(new ProcessStateDefinition("FailedToStartExporting", "Failed", "Ready"))
-            .AddState(new ProcessStateDefinition("Exporting", "Exporting", "Ready"))
-            .AddState(new ProcessStateDefinition("ExportFailed", "Failed", "Exporting"))
-            .AddState(new ProcessStateDefinition("Succeeded", "Succeeded", "Exporting"));
+            .AddState(new ProcessStateDefinition(
+                "Ready", "Ready", null, ProcessStateFlag.Information))
+            .AddState(new ProcessStateDefinition(
+                "FailedToStartExporting", "Failed", "Ready", ProcessStateFlag.Failure))
+            .AddState(new ProcessStateDefinition(
+                "Exporting", "Exporting", "Ready", ProcessStateFlag.Running))
+            .AddState(new ProcessStateDefinition(
+                "ExportFailed", "Failed", "Exporting", ProcessStateFlag.Failure))
+            .AddState(new ProcessStateDefinition(
+                "Succeeded", "Succeeded", "Exporting", ProcessStateFlag.Success));
 
         context.Services.Configure<ProcessManagementOptions>(options =>
         {

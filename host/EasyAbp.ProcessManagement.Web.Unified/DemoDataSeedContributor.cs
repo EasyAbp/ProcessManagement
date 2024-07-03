@@ -63,25 +63,25 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
                 await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now.AddHours(-5));
 
         await _processManager.UpdateStateAsync(process1,
-            new ProcessStateInfoModel(now.AddHours(-4), "Exporting",
-                new ProcessStateCustomModel("Loading data",
-                    ProcessStateFlag.Running,
-                    "Loading the data...",
-                    "<b>Loading the data...</b>")));
+            new UpdateProcessStateModel(now.AddHours(-4), "Exporting",
+                "Loading data",
+                ProcessStateFlag.Running,
+                "Loading the data...",
+                "<b>Loading the data...</b>"));
 
         await _processManager.UpdateStateAsync(process1,
-            new ProcessStateInfoModel(now.AddHours(-3), "Exporting",
-                new ProcessStateCustomModel("Exporting to ZIP",
-                    ProcessStateFlag.Running,
-                    "Exporting to the .zip file...",
-                    "<b>Exporting to the .zip file...</b>")));
+            new UpdateProcessStateModel(now.AddHours(-3), "Exporting",
+                "Exporting to ZIP",
+                ProcessStateFlag.Running,
+                "Exporting to the .zip file...",
+                "<b>Exporting to the .zip file...</b>"));
 
         await _processManager.UpdateStateAsync(process1,
-            new ProcessStateInfoModel(now.AddHours(-2), "Succeeded",
-                new ProcessStateCustomModel("Export is done!",
-                    ProcessStateFlag.Success,
-                    "Congratulations! Export successful.",
-                    "<b>Congratulations!</b><br/>Everything is done.")));
+            new UpdateProcessStateModel(now.AddHours(-2), "Succeeded",
+                "Export is done!",
+                ProcessStateFlag.Success,
+                "Congratulations! Export successful.",
+                "<b>Congratulations!</b><br/>Everything is done."));
 
         await _processRepository.InsertAsync(process1, true);
 
@@ -90,11 +90,11 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
                 await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now);
 
         await _processManager.UpdateStateAsync(process2,
-            new ProcessStateInfoModel(now.AddHours(-1), "Exporting",
-                new ProcessStateCustomModel("Loading data",
-                    ProcessStateFlag.Running,
-                    "Loading the data...",
-                    "<b>Loading the data...</b>")));
+            new UpdateProcessStateModel(now.AddHours(-1), "Exporting",
+                "Loading data",
+                ProcessStateFlag.Running,
+                "Loading the data...",
+                "<b>Loading the data...</b>"));
 
         await _processRepository.InsertAsync(process2, true);
 
@@ -103,18 +103,18 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
                 await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now);
 
         await _processManager.UpdateStateAsync(process3,
-            new ProcessStateInfoModel(now.AddHours(-2), "Exporting",
-                new ProcessStateCustomModel("Loading data",
-                    ProcessStateFlag.Running,
-                    "Loading the data...",
-                    "<b>Loading the data...</b>")));
+            new UpdateProcessStateModel(now.AddHours(-2), "Exporting",
+                "Loading data",
+                ProcessStateFlag.Running,
+                "Loading the data...",
+                "<b>Loading the data...</b>"));
 
         await _processManager.UpdateStateAsync(process3,
-            new ProcessStateInfoModel(now.AddHours(-1), "Failed",
-                new ProcessStateCustomModel("Failed...",
-                    ProcessStateFlag.Failure,
-                    "Oops, the task failed!",
-                    null)));
+            new UpdateProcessStateModel(now.AddHours(-1), "Failed",
+                "Failed...",
+                ProcessStateFlag.Failure,
+                "Oops, the task failed!",
+                null));
 
         await _processRepository.InsertAsync(process3, true);
     }

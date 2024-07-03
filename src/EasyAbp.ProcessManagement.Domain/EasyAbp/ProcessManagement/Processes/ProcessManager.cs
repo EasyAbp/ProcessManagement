@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.ProcessStateHistories;
 using Microsoft.Extensions.Options;
-using Volo.Abp;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Uow;
 
@@ -20,7 +19,9 @@ public class ProcessManager : DomainService
     public virtual async Task<Process> CreateAsync(CreateProcessModel model, DateTime now)
     {
         var processDefinition = Options.GetProcessDefinition(model.ProcessName);
+        var stateDefinition = processDefinition.GetState(processDefinition.InitialStateName);
 
+        model.StateFlag = NormalizeStateFlag(stateDefinition, model.StateFlag);
         var id = GuidGenerator.Create();
 
         var process = new Process(id, CurrentTenant.Id, processDefinition, now, model.GroupKey,
@@ -32,23 +33,34 @@ public class ProcessManager : DomainService
     }
 
     [UnitOfWork]
-    public virtual async Task UpdateStateAsync(Process process, IProcessState nextState)
+    public virtual async Task UpdateStateAsync(Process process, UpdateProcessStateModel state)
     {
-        if (nextState.StateName != process.StateName)
+        var processDefinition = Options.GetProcessDefinition(process.ProcessName);
+        var stateDefinition = processDefinition.GetState(state.StateName);
+
+        state.StateFlag = NormalizeStateFlag(stateDefinition, state.StateFlag);
+
+        if (state.StateName != process.StateName)
         {
-            await UpdateToDifferentStateAsync(process, nextState);
+            await UpdateToDifferentStateAsync(processDefinition, stateDefinition, process, state);
         }
         else
         {
-            await UpdateStateCustomInfoAsync(process, nextState);
+            await UpdateStateCustomInfoAsync(process, state);
         }
     }
 
-    [UnitOfWork]
-    protected virtual async Task UpdateToDifferentStateAsync(Process process, IProcessState state)
+    private static ProcessStateFlag NormalizeStateFlag(ProcessStateDefinition stateDefinition, ProcessStateFlag flag)
     {
-        var processDefinition = Options.GetProcessDefinition(process.ProcessName);
+        var newFlag = flag != ProcessStateFlag.Unspecified ? flag : stateDefinition.DefaultStateFlag;
 
+        return newFlag == ProcessStateFlag.Unspecified ? ProcessStateFlag.Information : newFlag;
+    }
+
+    [UnitOfWork]
+    protected virtual async Task UpdateToDifferentStateAsync(ProcessDefinition processDefinition,
+        ProcessStateDefinition stateDefinition, Process process, UpdateProcessStateModel state)
+    {
         var availableStates = processDefinition.GetChildrenStateNames(process.StateName);
 
         if (availableStates.Contains(state.StateName))
@@ -64,9 +76,6 @@ public class ProcessManager : DomainService
         }
         else
         {
-            // get or throw.
-            processDefinition.GetState(state.StateName);
-
             /* If this incoming state is a descendant of the current state, it will be accepted in the future.
              * So we throw an exception and skip handling it this time.
              * The next time the event handling is attempted, it may succeed.
@@ -93,7 +102,7 @@ public class ProcessManager : DomainService
         }
     }
 
-    protected virtual async Task UpdateStateCustomInfoAsync(Process process, IProcessState state)
+    protected virtual async Task UpdateStateCustomInfoAsync(Process process, UpdateProcessStateModel state)
     {
         /* If it receives a state update event out of order (event.StateUpdateTime < process.StateUpdateTime),
          * we will only add a new state history entity without updating the process entity properties.

@@ -22,7 +22,7 @@ public class ProcessManagementOptionsTests : ProcessManagementDomainTestBase
         processDefinition.GetState("Exporting").ShouldNotBeNull();
         processDefinition.GetState("ExportFailed").ShouldNotBeNull();
         processDefinition.GetState("Succeeded").ShouldNotBeNull();
-        Should.Throw<KeyNotFoundException>(() => processDefinition.GetState("Step10000"));
+        Should.Throw<UndefinedProcessStateException>(() => processDefinition.GetState("Step10000"));
 
         processDefinition.InitialStateName.ShouldBe("Ready");
         processDefinition.GetChildrenStateNames("Ready").ToArray()
@@ -42,9 +42,11 @@ public class ProcessManagementOptionsTests : ProcessManagementDomainTestBase
         var processDefinition = options.GetProcessDefinition("FakeExport");
 
         Should.Throw<AbpException>(() =>
-            processDefinition.AddState(new ProcessStateDefinition("Ready", "Ready", null)));
+            processDefinition.AddState(new ProcessStateDefinition("Ready", "Ready", null,
+                ProcessStateFlag.Information)));
 
         Should.Throw<AbpException>(() =>
-            processDefinition.AddState(new ProcessStateDefinition("Exporting", "Exporting", "Ready")));
+            processDefinition.AddState(new ProcessStateDefinition("Exporting", "Exporting", "Ready",
+                ProcessStateFlag.Information)));
     }
 }
