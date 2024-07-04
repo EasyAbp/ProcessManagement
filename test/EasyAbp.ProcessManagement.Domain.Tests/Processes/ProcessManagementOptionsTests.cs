@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
 using Volo.Abp;
+using Volo.Abp.Localization;
 using Xunit;
 
 namespace EasyAbp.ProcessManagement.Processes;
@@ -42,11 +43,11 @@ public class ProcessManagementOptionsTests : ProcessManagementDomainTestBase
         var processDefinition = options.GetProcessDefinition("FakeExport");
 
         Should.Throw<AbpException>(() =>
-            processDefinition.AddState(new ProcessStateDefinition("Ready", "Ready", null,
-                ProcessStateFlag.Information)));
+            processDefinition.AddState(new ProcessStateDefinition("Ready", new FixedLocalizableString("Ready"),
+                null, ProcessStateFlag.Information)));
 
         Should.Throw<AbpException>(() =>
-            processDefinition.AddState(new ProcessStateDefinition("Exporting", "Exporting", "Ready",
-                ProcessStateFlag.Information)));
+            processDefinition.AddState(new ProcessStateDefinition("Exporting", new FixedLocalizableString("Exporting"),
+                "Ready", ProcessStateFlag.Information)));
     }
 }

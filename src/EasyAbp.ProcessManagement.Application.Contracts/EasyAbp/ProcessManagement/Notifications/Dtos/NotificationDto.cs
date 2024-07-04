@@ -35,5 +35,7 @@ public class NotificationDto : CreationAuditedEntityDto<Guid>
 
     public string ProcessDisplayName { get; set; }
 
+    public string StateDisplayName { get; set; }
+
     #endregion
 }

@@ -87,7 +87,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
 
         var process2 = await _processManager.CreateAsync(
             new CreateProcessModel("FakeExport", null,
-                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now);
+                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now.AddHours(-2));
 
         await _processManager.UpdateStateAsync(process2,
             new UpdateProcessStateModel(now.AddHours(-1), "Exporting",
@@ -100,7 +100,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
 
         var process3 = await _processManager.CreateAsync(
             new CreateProcessModel("FakeExport", null,
-                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now);
+                await _userIdUserGroupContributor.CreateGroupKeyAsync(adminUser!.Id.ToString())), now.AddHours(-3));
 
         await _processManager.UpdateStateAsync(process3,
             new UpdateProcessStateModel(now.AddHours(-2), "Exporting",
@@ -110,7 +110,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
                 "<b>Loading the data...</b>"));
 
         await _processManager.UpdateStateAsync(process3,
-            new UpdateProcessStateModel(now.AddHours(-1), "Failed",
+            new UpdateProcessStateModel(now.AddHours(-1), "ExportFailed",
                 "Failed...",
                 ProcessStateFlag.Failure,
                 "Oops, the task failed!",

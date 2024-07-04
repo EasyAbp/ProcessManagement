@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using EasyAbp.ProcessManagement.EntityFrameworkCore;
+using EasyAbp.ProcessManagement.Localization;
 using EasyAbp.ProcessManagement.MultiTenancy;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Processes;
@@ -13,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
+using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
@@ -82,24 +84,52 @@ namespace EasyAbp.ProcessManagement;
 )]
 public class ProcessManagementWebUnifiedModule : AbpModule
 {
+    public override void PreConfigureServices(ServiceConfigurationContext context)
+    {
+        context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
+        {
+            options.AddAssemblyResource(typeof(DemoResource),
+                typeof(ProcessManagementWebUnifiedModule).Assembly);
+        });
+    }
+
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
+        Configure<AbpVirtualFileSystemOptions>(options =>
+        {
+            options.FileSets.AddEmbedded<ProcessManagementWebUnifiedModule>();
+        });
+
+        Configure<AbpLocalizationOptions>(options =>
+        {
+            options.Resources
+                .Add<DemoResource>("en")
+                .AddVirtualJson("/Localization/Demo");
+
+            options.DefaultResourceType = typeof(DemoResource);
+        });
+
         Configure<ProcessManagementOptions>(options =>
         {
-            var definition = new ProcessDefinition("FakeExport", "Fake export")
+            var definition = new ProcessDefinition("FakeExport", new LocalizableString("Process:FakeExport"))
                 .AddState(new ProcessStateDefinition(
-                    "Ready", "Ready", null, ProcessStateFlag.Information))
+                    "Ready", new LocalizableString("Process:Ready"),
+                    null, ProcessStateFlag.Information))
                 .AddState(new ProcessStateDefinition(
-                    "FailedToStartExporting", "Failed", "Ready", ProcessStateFlag.Failure))
+                    "FailedToStartExporting", new LocalizableString("Process:FailedToStartExporting"),
+                    "Ready", ProcessStateFlag.Failure))
                 .AddState(new ProcessStateDefinition(
-                    "Exporting", "Exporting", "Ready", ProcessStateFlag.Running))
+                    "Exporting", new LocalizableString("Process:Exporting"),
+                    "Ready", ProcessStateFlag.Running))
                 .AddState(new ProcessStateDefinition(
-                    "ExportFailed", "Failed", "Exporting", ProcessStateFlag.Failure))
+                    "ExportFailed", new LocalizableString("Process:ExportFailed"),
+                    "Exporting", ProcessStateFlag.Failure))
                 .AddState(new ProcessStateDefinition(
-                    "Succeeded", "Succeeded", "Exporting", ProcessStateFlag.Success));
+                    "Succeeded", new LocalizableString("Process:Succeeded"),
+                    "Exporting", ProcessStateFlag.Success));
 
             options.AddOrUpdateProcessDefinition(definition);
         });

@@ -5,6 +5,7 @@ using Volo.Abp;
 using Volo.Abp.Authorization;
 using Volo.Abp.Autofac;
 using Volo.Abp.Data;
+using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.Threading;
 
@@ -35,17 +36,22 @@ public class ProcessManagementTestBaseModule : AbpModule
          *          ↘
          *             FailedToStartExporting
          */
-        var processDefinition = new ProcessDefinition("FakeExport", "Fake export")
+        var processDefinition = new ProcessDefinition("FakeExport", new LocalizableString("Process:FakeExport"))
             .AddState(new ProcessStateDefinition(
-                "Ready", "Ready", null, ProcessStateFlag.Information))
+                "Ready", new LocalizableString("Process:Ready"),
+                null, ProcessStateFlag.Information))
             .AddState(new ProcessStateDefinition(
-                "FailedToStartExporting", "Failed", "Ready", ProcessStateFlag.Failure))
+                "FailedToStartExporting", new LocalizableString("Process:FailedToStartExporting"),
+                "Ready", ProcessStateFlag.Failure))
             .AddState(new ProcessStateDefinition(
-                "Exporting", "Exporting", "Ready", ProcessStateFlag.Running))
+                "Exporting", new LocalizableString("Process:Exporting"),
+                "Ready", ProcessStateFlag.Running))
             .AddState(new ProcessStateDefinition(
-                "ExportFailed", "Failed", "Exporting", ProcessStateFlag.Failure))
+                "ExportFailed", new LocalizableString("Process:ExportFailed"),
+                "Exporting", ProcessStateFlag.Failure))
             .AddState(new ProcessStateDefinition(
-                "Succeeded", "Succeeded", "Exporting", ProcessStateFlag.Success));
+                "Succeeded", new LocalizableString("Process:Succeeded"),
+                "Exporting", ProcessStateFlag.Success));
 
         context.Services.Configure<ProcessManagementOptions>(options =>
         {

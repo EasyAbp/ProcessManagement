@@ -28,5 +28,7 @@ public class ProcessDto : FullAuditedEntityDto<Guid>, IProcess, IProcessState
 
     public string ProcessDisplayName { get; set; }
 
+    public string StateDisplayName { get; set; }
+
     #endregion
 }

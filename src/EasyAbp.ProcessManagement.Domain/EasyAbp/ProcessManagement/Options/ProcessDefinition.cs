@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Volo.Abp;
+using Volo.Abp.Localization;
 
 namespace EasyAbp.ProcessManagement.Options;
 
@@ -8,13 +9,13 @@ public class ProcessDefinition
 {
     public string Name { get; }
 
-    public string? DisplayName { get; }
+    public ILocalizableString? DisplayName { get; }
 
     public string InitialStateName { get; protected set; } = null!;
 
     protected Dictionary<string, ProcessStateDefinition> StateDefinitions { get; } = new();
 
-    public ProcessDefinition(string name, string? displayName)
+    public ProcessDefinition(string name, ILocalizableString? displayName)
     {
         Name = Check.NotNullOrWhiteSpace(name, nameof(name));
         DisplayName = displayName;

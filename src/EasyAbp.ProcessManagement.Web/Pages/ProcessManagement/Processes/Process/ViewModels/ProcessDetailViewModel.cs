@@ -12,8 +12,8 @@ public class ProcessDetailViewModel
     public string? StateDetailsText { get; set; }
 
     [ReadOnlyInput]
-    [Display(Name = "ProcessProcessDisplayName")]
-    public string ProcessDisplayName { get; }
+    [Display(Name = "ProcessProcessName")]
+    public string Process { get; }
 
     [ReadOnlyInput]
     [Display(Name = "ProcessStateName")]
@@ -32,11 +32,11 @@ public class ProcessDetailViewModel
     [Display(Name = "ProcessCorrelationId")]
     public string CorrelationId { get; set; }
 
-    public ProcessDetailViewModel(string correlationId, string processDisplayName, string state,
-        string? stateDetailsText, string? histories, DateTime creationTime)
+    public ProcessDetailViewModel(string correlationId, string process, string state, string? stateDetailsText,
+        string? histories, DateTime creationTime)
     {
         CorrelationId = correlationId;
-        ProcessDisplayName = processDisplayName;
+        Process = process;
         State = state;
         StateDetailsText = stateDetailsText;
         Histories = histories;
