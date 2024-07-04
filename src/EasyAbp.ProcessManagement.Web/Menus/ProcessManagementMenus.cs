@@ -6,7 +6,4 @@ public class ProcessManagementMenus
 
     //Add your menu items here...
     //public const string Home = Prefix + ".MyNewMenuItem";
-
-    public const string Process = Prefix + ".Process";
-    public const string ProcessStateHistory = Prefix + ".ProcessStateHistory";
 }
