@@ -51,7 +51,7 @@ $(function () {
                 title: l('ProcessStateName'),
                 data: "stateName",
                 render: function (data, type, row, meta) {
-                    return `<div class="stage-flag-name-container">` + getStateFlagIcon(row) + ' ' + (row.actionName ? row.actionName : data) + `</div>`;
+                    return `<div class="stage-flag-name-container">` + getStateFlagIcon(row) + ' ' + (row.actionName ? row.actionName : row.stateDisplayName) + `</div>`;
                 }
             },
             {
@@ -67,7 +67,10 @@ $(function () {
             },
             {
                 title: l('ProcessProcessName'),
-                data: "processDisplayName"
+                data: "processName",
+                render: function (data, type, row, meta) {
+                    return row.processDisplayName;
+                }
             },
         ]
     }));

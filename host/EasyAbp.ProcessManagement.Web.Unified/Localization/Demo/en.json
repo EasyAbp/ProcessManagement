@@ -1,0 +1,11 @@
+{
+  "culture": "en",
+  "texts": {
+    "Process:FakeExport": "Fake export",
+    "State:Ready": "Ready",
+    "State:FailedToStartExporting": "Failed",
+    "State:Exporting": "Exporting",
+    "State:ExportFailed": "Failed",
+    "State:Succeeded": "Succeeded"
+  }
+}

@@ -93,10 +93,12 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
         var options = LazyServiceProvider.LazyGetRequiredService<IOptions<ProcessManagementOptions>>();
 
         var processDefinition = options.Value.GetProcessDefinition(entity.ProcessName);
+        var stateDefinition = processDefinition.GetState(entity.StateName);
 
         var dto = base.MapToGetOutputDto(entity);
 
-        dto.ProcessDisplayName = processDefinition.DisplayName;
+        dto.ProcessDisplayName = processDefinition.DisplayName?.Localize(StringLocalizerFactory) ?? dto.ProcessName;
+        dto.StateDisplayName = stateDefinition.DisplayName?.Localize(StringLocalizerFactory) ?? dto.StateName;
 
         return dto;
     }

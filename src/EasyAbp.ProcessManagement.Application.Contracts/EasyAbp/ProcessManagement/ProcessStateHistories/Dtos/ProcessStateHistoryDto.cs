@@ -9,6 +9,8 @@ public class ProcessStateHistoryDto : EntityDto<Guid>, IProcessState
 {
     public Guid ProcessId { get; set; }
 
+    public string ProcessName { get; set; }
+
     public string StateName { get; set; }
 
     public string? ActionName { get; set; }
@@ -20,4 +22,12 @@ public class ProcessStateHistoryDto : EntityDto<Guid>, IProcessState
     public string? StateDetailsText { get; set; }
 
     public DateTime StateUpdateTime { get; set; }
+
+    #region Out of the entity
+
+    public string ProcessDisplayName { get; set; }
+
+    public string StateDisplayName { get; set; }
+
+    #endregion
 }

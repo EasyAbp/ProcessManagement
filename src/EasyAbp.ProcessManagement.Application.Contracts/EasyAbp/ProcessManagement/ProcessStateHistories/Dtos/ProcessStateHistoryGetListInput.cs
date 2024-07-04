@@ -9,6 +9,8 @@ public class ProcessStateHistoryGetListInput : PagedAndSortedResultRequestDto
 {
     public Guid ProcessId { get; set; }
 
+    public string? ProcessName { get; set; }
+
     public string? StateName { get; set; }
 
     public string? ActionName { get; set; }

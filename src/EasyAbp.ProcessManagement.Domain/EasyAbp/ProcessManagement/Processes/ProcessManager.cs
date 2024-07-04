@@ -27,7 +27,7 @@ public class ProcessManager : DomainService
         var process = new Process(id, CurrentTenant.Id, processDefinition, now, model.GroupKey,
             model.CorrelationId ?? id.ToString(), model);
 
-        await RecordStateHistoryAsync(process.Id, process);
+        await RecordStateHistoryAsync(process, process);
 
         return process;
     }
@@ -72,7 +72,7 @@ public class ProcessManager : DomainService
 
             process.SetState(state);
 
-            await RecordStateHistoryAsync(process.Id, state);
+            await RecordStateHistoryAsync(process, state);
         }
         else
         {
@@ -91,7 +91,7 @@ public class ProcessManager : DomainService
             if ((await ProcessStateHistoryRepository.GetHistoriesByStateNameAsync(
                     process.Id, state.StateName)).Count != 0)
             {
-                await RecordStateHistoryAsync(process.Id, state);
+                await RecordStateHistoryAsync(process, state);
                 return;
             }
 
@@ -112,13 +112,14 @@ public class ProcessManager : DomainService
             process.SetState(state);
         }
 
-        await RecordStateHistoryAsync(process.Id, state);
+        await RecordStateHistoryAsync(process, state);
     }
 
     [UnitOfWork]
-    protected virtual async Task<ProcessStateHistory> RecordStateHistoryAsync(Guid processId, IProcessState state)
+    protected virtual async Task<ProcessStateHistory> RecordStateHistoryAsync(Process process, IProcessState state)
     {
         return await ProcessStateHistoryRepository.InsertAsync(
-            new ProcessStateHistory(GuidGenerator.Create(), CurrentTenant.Id, processId, state), true);
+            new ProcessStateHistory(GuidGenerator.Create(), CurrentTenant.Id, process.Id, process.ProcessName, state),
+            true);
     }
 }
