@@ -2,6 +2,8 @@
 
     abp.widgets.NotificationsOffcanvasWidget = function ($widget) {
 
+        var intervalId;
+        
         function fetchAndShowAlerts() {
             easyAbp.processManagement.notifications.notification.getList({
                 fromCreationTime: new Date(abp.clock.now() - notificationLifetimeMilliseconds),
@@ -14,14 +16,23 @@
 
                 var existingAlertIds = new Map();
                 existingAlerts.each(function () {
-                    var id = $(this).data('id');
+                    var id = $(this).attr('id');
                     existingAlertIds.set(id, $(this));
                 });
 
                 res.items.forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
                         var newAlert = createAlert(item);
-                        alertPlaceholder.append(newAlert);
+                        alertPlaceholder.append(newAlert)
+                        var newAlertNode = document.getElementById(item.id);
+                        newAlertNode.addEventListener('close.bs.alert', function () {
+                            tryClearInterval();
+                            easyAbp.processManagement.notifications.notification.dismiss({
+                                notificationIds: [$(this).attr('id')]
+                            }).always(function () {
+                                tryCreateInterval();
+                            });
+                        });
                     }
                 });
 
@@ -71,20 +82,52 @@
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            `).data('id', item.id);
+            `).attr('id', item.id);
         }
 
+        function tryCreateInterval() {
+            intervalId = setInterval(fetchAndShowAlerts, 5000);
+        }
+        
+        function tryClearInterval() {
+            if (intervalId) clearInterval(intervalId);
+        }
+        
         function init() {
             var offcanvasElement = document.getElementById('notificationsOffcanvas');
-            var intervalId;
 
             offcanvasElement.addEventListener('show.bs.offcanvas', function () {
                 fetchAndShowAlerts();
-                intervalId = setInterval(fetchAndShowAlerts, 5000);
+                tryCreateInterval();
             });
 
             offcanvasElement.addEventListener('hide.bs.offcanvas', function () {
-                if (intervalId) clearInterval(intervalId);
+                tryClearInterval();
+            });
+
+            var clearAllBtn = document.getElementById('notification-offcanvas-clear-all-btn');
+
+            clearAllBtn.addEventListener('click', function() {
+                tryClearInterval();
+                var alertPlaceholder = $('#alert-placeholder');
+                var existingAlerts = alertPlaceholder.find('.alert');
+
+                var existingAlertIds = new Map();
+                existingAlerts.each(function () {
+                    var id = $(this).attr('id');
+                    existingAlertIds.set(id, $(this));
+                });
+                
+                easyAbp.processManagement.notifications.notification.dismiss({
+                    notificationIds: existingAlertIds.keys().toArray()
+                }).then(function () {
+                    existingAlertIds.forEach(function (alert, id) {
+                        alert.addClass('fade-out').one('animationend', function () {
+                            $(this).remove();
+                        });
+                    });
+                    tryCreateInterval();
+                });
             });
         }
 

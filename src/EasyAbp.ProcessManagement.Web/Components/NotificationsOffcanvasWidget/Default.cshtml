@@ -8,6 +8,15 @@
 </script>
 
 <style>
+    .clear-all-area {
+        height: 40px;
+    }
+    .clear-all-btn {
+        float: right;
+        padding: 0;
+        text-decoration: none;
+        color: var(--bs-offcanvas-color);
+    }
     .svg-icon {
         width: 24px;
         height: 24px;
@@ -46,7 +55,10 @@
         <h5 class="offcanvas-title" id="notificationsOffcanvasLabel">@L["Notifications"]</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body" style="padding-top: 0">
+        <div class="clear-all-area">
+            <button type="button" id="notification-offcanvas-clear-all-btn" class="clear-all-btn btn btn-link"><small>@L["ClearAllNotifications"]</small></button>
+        </div>
         <div id="alert-placeholder"></div>
     </div>
 </div>
