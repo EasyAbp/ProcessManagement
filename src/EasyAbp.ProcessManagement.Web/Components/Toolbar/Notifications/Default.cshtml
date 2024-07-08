@@ -3,10 +3,40 @@
 </div>
 
 <script>
+    function refreshNotificationsToolbarItemWidget() {
+        (function ($) {
+            var $wrapper = $('#ToolbarNotificationsWidgetArea');
+            var $widgets = $wrapper.find('.abp-widget-wrapper');
+            if (!$widgets) {
+                if ($wrapper.hasClass('abp-widget-wrapper')) {
+                    $widgets = $wrapper;
+                } else {
+                    $widgets = $wrapper.findWithSelf('.abp-widget-wrapper');
+                }
+            }
+
+            $widgets.each(function () {
+                var $widget = $(this);
+                var refreshUrl = $widget.attr('data-refresh-url');
+                $.ajax({
+                    url: refreshUrl,
+                    type: 'GET',
+                    dataType: 'html',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data: {},
+                    error: function (jqXHR) {
+                        console.log('Notifications toolbar item: failed to get the notification count', jqXHR);
+                    }
+                }).then(function (result) {
+                    var $result = $(result);
+                    $widget.replaceWith($result);
+                });
+            });
+        })(jQuery);
+    }
+
     setInterval(function () {
-        let widgetManager = new abp.WidgetManager({
-            wrapper: '#ToolbarNotificationsWidgetArea'
-        });
-        widgetManager.refresh();
+        refreshNotificationsToolbarItemWidget();
     }, 5000);
+
 </script>
