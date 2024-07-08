@@ -7,9 +7,9 @@ namespace EasyAbp.ProcessManagement.Web.Controllers;
 public class ProcessManagementWidgetsController : AbpController
 {
     [HttpGet]
-    [Route("Notifications")]
-    public IActionResult Notifications()
+    [Route("NotificationsToolbarItem")]
+    public IActionResult NotificationsToolbarItem()
     {
-        return ViewComponent("NotificationsWidget");
+        return ViewComponent("NotificationsToolbarItemWidget");
     }
 }

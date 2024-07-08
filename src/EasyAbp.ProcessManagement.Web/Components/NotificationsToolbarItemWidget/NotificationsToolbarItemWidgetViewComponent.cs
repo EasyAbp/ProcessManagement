@@ -4,18 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.Widgets;
 
-namespace EasyAbp.ProcessManagement.Web.Components.NotificationsWidget;
+namespace EasyAbp.ProcessManagement.Web.Components.NotificationsToolbarItemWidget;
 
 [Widget(
     AutoInitialize = true,
-    RefreshUrl = "/Widgets/ProcessManagement/Notifications",
-    ScriptFiles = ["/Components/NotificationsWidget/Default.js"]
+    RefreshUrl = "/Widgets/ProcessManagement/NotificationsToolbarItem"
 )]
-public class NotificationsWidgetViewComponent : AbpViewComponent
+public class NotificationsToolbarItemWidgetViewComponent : AbpViewComponent
 {
     private readonly NotificationCountCache _notificationCountCache;
 
-    public NotificationsWidgetViewComponent(NotificationCountCache notificationCountCache)
+    public NotificationsToolbarItemWidgetViewComponent(NotificationCountCache notificationCountCache)
     {
         _notificationCountCache = notificationCountCache;
     }
@@ -24,7 +23,7 @@ public class NotificationsWidgetViewComponent : AbpViewComponent
     {
         var notificationCount = await _notificationCountCache.GetOrAddAsync();
 
-        return View("~/Components/NotificationsWidget/Default.cshtml",
-            new NotificationsWidgetViewModel(notificationCount));
+        return View("~/Components/NotificationsToolbarItemWidget/Default.cshtml",
+            new NotificationsToolbarItemWidgetViewModel(notificationCount));
     }
 }

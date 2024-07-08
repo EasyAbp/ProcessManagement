@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
 using EasyAbp.ProcessManagement.Localization;
+using EasyAbp.ProcessManagement.Web.Components.NotificationsOffcanvasWidget;
 using EasyAbp.ProcessManagement.Web.Menus;
 using EasyAbp.ProcessManagement.Web.Toolbars;
 using Volo.Abp.AspNetCore.Mvc.Localization;
@@ -8,6 +9,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
+using Volo.Abp.Ui.LayoutHooks;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
 
@@ -56,5 +58,10 @@ public class ProcessManagementWebModule : AbpModule
 
         Configure<AbpToolbarOptions>(
             options => { options.Contributors.Add(new ProcessManagementToolbarContributor()); });
+
+        Configure<AbpLayoutHookOptions>(options =>
+        {
+            options.Add(LayoutHooks.Body.First, typeof(NotificationsOffcanvasWidgetViewComponent));
+        });
     }
 }
