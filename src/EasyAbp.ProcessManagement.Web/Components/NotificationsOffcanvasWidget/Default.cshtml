@@ -1,0 +1,52 @@
+﻿@using EasyAbp.ProcessManagement.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<ProcessManagementResource> L
+@model EasyAbp.ProcessManagement.Web.Components.NotificationsOffcanvasWidget.NotificationsOffcanvasWidgetViewModel
+
+<script>
+    const notificationLifetimeMilliseconds = @Model.Options.NotificationLifetime.TotalMilliseconds;
+</script>
+
+<style>
+    .svg-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+    }
+    .state-update-time {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: .8rem 1rem;
+        text-align: right !important;
+    }
+    .alert-purple {
+        background-color: #cf9ce6;
+        color: #212529;
+    }
+    .fade-in {
+        animation: fadeIn 0.5s;
+    }
+    .fade-out {
+        animation: fadeOut 0.5s;
+    }
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @@keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+</style>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="notificationsOffcanvas"
+     aria-labelledby="notificationsOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="notificationsOffcanvasLabel">@L["Notifications"]</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="alert-placeholder"></div>
+    </div>
+</div>

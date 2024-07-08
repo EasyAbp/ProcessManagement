@@ -1,0 +1,10 @@
+﻿@using EasyAbp.ProcessManagement.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<ProcessManagementResource> L
+@model EasyAbp.ProcessManagement.Web.Components.NotificationsToolbarItemWidget.NotificationsToolbarItemWidgetViewModel
+
+<div class="dropdown">
+    <a class="nav-link notifications-toolbar-item" data-bs-toggle="offcanvas" href="#notificationsOffcanvas" role="button" aria-controls="notificationsOffcanvas">
+        <i class="fas fa-bell"></i> @Model.UnreadCount
+    </a>
+</div>

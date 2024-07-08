@@ -1,3 +1,12 @@
 ﻿<div id="ToolbarNotificationsWidgetArea">
-    @await Component.InvokeAsync("NotificationsWidget")
+    @await Component.InvokeAsync("NotificationsToolbarItemWidget")
 </div>
+
+<script>
+    setInterval(function () {
+        let widgetManager = new abp.WidgetManager({
+            wrapper: '#ToolbarNotificationsWidgetArea'
+        });
+        widgetManager.refresh();
+    }, 5000);
+</script>
