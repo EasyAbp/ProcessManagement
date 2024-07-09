@@ -23,7 +23,7 @@ $(function () {
 
     var service = easyAbp.processManagement.processes.process;
     var detailsModal = new abp.ModalManager(abp.appPath + 'ProcessManagement/Processes/Process/DetailsModal');
-
+console.log(customActions)
     var dataTable = $('#ProcessTable').DataTable(abp.libs.datatables.normalizeConfiguration({
         processing: true,
         serverSide: true,
@@ -43,7 +43,8 @@ $(function () {
                                 action: function (data) {
                                     detailsModal.open({id: data.record.id});
                                 }
-                            }
+                            },
+                            ...customActions
                         ]
                 }
             },

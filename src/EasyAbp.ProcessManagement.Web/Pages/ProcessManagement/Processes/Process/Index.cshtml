@@ -4,7 +4,6 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using EasyAbp.ProcessManagement.Web.Pages.ProcessManagement.Processes.Process
 @using EasyAbp.ProcessManagement.Localization
-@using EasyAbp.ProcessManagement.Web.Menus
 @model IndexModel
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<ProcessManagementResource> L
@@ -22,6 +21,10 @@
 {
     <abp-style src="/Pages/ProcessManagement/Processes/Process/index.css"/>
 }
+
+<script>
+    var customActions = @Html.Raw(Model.CustomActions);
+</script>
 
 <abp-card>
     <abp-card-header>

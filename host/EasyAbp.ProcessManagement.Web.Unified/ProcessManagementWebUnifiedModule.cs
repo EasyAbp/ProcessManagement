@@ -10,6 +10,7 @@ using EasyAbp.ProcessManagement.MultiTenancy;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Processes;
 using EasyAbp.ProcessManagement.Web;
+using EasyAbp.ProcessManagement.Web.Options;
 using Microsoft.OpenApi.Models;
 using Volo.Abp;
 using Volo.Abp.Account;
@@ -132,6 +133,19 @@ public class ProcessManagementWebUnifiedModule : AbpModule
                     "Exporting", ProcessStateFlag.Success));
 
             options.AddOrUpdateProcessDefinition(definition);
+        });
+
+        Configure<ProcessManagementWebOptions>(options =>
+        {
+            options.Actions.Add(new ProcessStateActionDefinition("FakeExport", "ExportFailed",
+                new LocalizableString("Action:Retry"),
+                "abp.message.confirm(l('SureToRetry')).then(function(confirmed){if(confirmed){abp.notify.success(l('SuccessToRetry'),l('Success'));if(alertNode){var alert=new bootstrap.Alert(alertNode);alert.close();}}})",
+                "abp.auth.isGranted('Demo.Exporting.Retry')"));
+
+            options.Actions.Add(new ProcessStateActionDefinition("FakeExport", "ExportFailed",
+                new LocalizableString("Action:Ping"),
+                "alert('Pong')",
+                null));
         });
 
         Configure<AbpDbContextOptions>(options => { options.UseSqlServer(); });
