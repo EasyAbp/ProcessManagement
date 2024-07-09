@@ -19,8 +19,6 @@ public class ProcessStateHistoryDto : EntityDto<Guid>, IProcessState
 
     public string? StateSummaryText { get; set; }
 
-    public string? StateDetailsText { get; set; }
-
     public DateTime StateUpdateTime { get; set; }
 
     #region Out of the entity

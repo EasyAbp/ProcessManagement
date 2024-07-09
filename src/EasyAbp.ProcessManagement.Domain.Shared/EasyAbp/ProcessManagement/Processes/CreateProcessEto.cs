@@ -13,8 +13,8 @@ public class CreateProcessEto : CreateProcessModel, IMultiTenant
     }
 
     public CreateProcessEto(Guid? tenantId, string processName, string correlationId, string groupKey,
-        string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText, string? stateDetailsText) : base(
-        processName, correlationId, groupKey, actionName, stateFlag, stateSummaryText, stateDetailsText)
+        string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText)
+        : base(processName, correlationId, groupKey, actionName, stateFlag, stateSummaryText)
     {
         TenantId = tenantId;
     }

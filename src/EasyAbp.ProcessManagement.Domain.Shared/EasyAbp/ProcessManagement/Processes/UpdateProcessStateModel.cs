@@ -18,8 +18,6 @@ public class UpdateProcessStateModel : ExtensibleObject, IProcessState
     public string? StateSummaryText { get; set; }
 
 
-    public string? StateDetailsText { get; set; }
-
     public UpdateProcessStateModel()
     {
     }
@@ -31,13 +29,12 @@ public class UpdateProcessStateModel : ExtensibleObject, IProcessState
     }
 
     public UpdateProcessStateModel(DateTime stateUpdateTime, string stateName, string? actionName,
-        ProcessStateFlag stateFlag, string? stateSummaryText, string? stateDetailsText)
+        ProcessStateFlag stateFlag, string? stateSummaryText)
     {
         StateUpdateTime = stateUpdateTime;
         StateName = Check.NotNullOrWhiteSpace(stateName, nameof(stateName));
         ActionName = actionName;
         StateFlag = stateFlag;
         StateSummaryText = stateSummaryText;
-        StateDetailsText = stateDetailsText;
     }
 }

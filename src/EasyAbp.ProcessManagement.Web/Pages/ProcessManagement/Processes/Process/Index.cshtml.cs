@@ -53,8 +53,4 @@ public class ProcessFilterInput
     [FormControlSize(AbpFormControlSize.Small)]
     [Display(Name = "ProcessStateSummaryText")]
     public string? StateSummaryText { get; set; }
-
-    [FormControlSize(AbpFormControlSize.Small)]
-    [Display(Name = "ProcessStateDetailsText")]
-    public string? StateDetailsText { get; set; }
 }

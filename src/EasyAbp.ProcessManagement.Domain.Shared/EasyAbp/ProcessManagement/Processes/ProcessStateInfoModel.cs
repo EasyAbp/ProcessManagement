@@ -21,9 +21,6 @@ public class ProcessStateInfoModel : IProcessState
     /// <inheritdoc/>
     public virtual string? StateSummaryText { get; protected set; }
 
-    /// <inheritdoc/>
-    public virtual string? StateDetailsText { get; protected set; }
-
     public ProcessStateInfoModel()
     {
     }
@@ -35,6 +32,5 @@ public class ProcessStateInfoModel : IProcessState
         ActionName = stateCustom?.ActionName;
         StateFlag = stateCustom?.StateFlag ?? default;
         StateSummaryText = stateCustom?.StateSummaryText;
-        StateDetailsText = stateCustom?.StateDetailsText;
     }
 }

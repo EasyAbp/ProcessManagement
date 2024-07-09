@@ -7,9 +7,9 @@ namespace EasyAbp.ProcessManagement.Web.Pages.ProcessManagement.Processes.Proces
 public class ProcessDetailViewModel
 {
     [ReadOnlyInput]
-    [Display(Name = "ProcessStateDetailsText")]
+    [Display(Name = "ProcessStateSummaryText")]
     [TextArea(Rows = 5)]
-    public string? StateDetailsText { get; set; }
+    public string? StateSummaryText { get; set; }
 
     [ReadOnlyInput]
     [Display(Name = "ProcessProcessName")]
@@ -32,13 +32,13 @@ public class ProcessDetailViewModel
     [Display(Name = "ProcessCorrelationId")]
     public string CorrelationId { get; set; }
 
-    public ProcessDetailViewModel(string correlationId, string process, string state, string? stateDetailsText,
+    public ProcessDetailViewModel(string correlationId, string process, string state, string? stateSummaryText,
         string? histories, DateTime creationTime)
     {
         CorrelationId = correlationId;
         Process = process;
         State = state;
-        StateDetailsText = stateDetailsText;
+        StateSummaryText = stateSummaryText;
         Histories = histories;
         CreationTime = creationTime;
     }
