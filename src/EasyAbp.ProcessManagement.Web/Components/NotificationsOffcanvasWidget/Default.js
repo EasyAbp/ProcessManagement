@@ -3,7 +3,7 @@
     abp.widgets.NotificationsOffcanvasWidget = function ($widget) {
 
         var intervalId;
-        
+
         function fetchAndShowAlerts() {
             easyAbp.processManagement.notifications.notification.getList({
                 fromCreationTime: new Date(abp.clock.now() - notificationLifetimeMilliseconds),
@@ -25,7 +25,7 @@
                         removeAlert(alert)
                     }
                 });
-                
+
                 res.items.forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
                         var newAlert = createAlert(item);
@@ -68,15 +68,23 @@
         }
 
         function createAlert(item) {
+            var actionBtns = "";
+            for (var i in notificationOffcanvasAlertActions) {
+                var action = notificationOffcanvasAlertActions[i];
+                if (!action.visible(item)) continue;
+                var actionBtn = `<button type="button" id="action-btn-${i}-${item.id}" class="process-action-btn btn btn-link btn-sm">${action.text}</button><script>var actionBtn = document.getElementById('action-btn-${i}-${item.id}');actionBtn.addEventListener('click', function () {var l = abp.localization.getResource();var alertNode = document.getElementById('${item.id}');return ${action.action}(${JSON.stringify(item)});});</script>`
+                actionBtns += actionBtn;
+            }
             return $(`
                 <div class="alert ${getAlertColorClassName(item.stateFlag)} alert-dismissible fade-in" role="alert">
-                    <div class="d-flex">
+                    <div class="d-flex mb-4">
                         <img src="/images/process-management/icons/${item.stateFlag}.svg" class="svg-icon" alt=""/>
-                        <div>
+                        <div class="alert-content-area">
                             <strong>${item.actionName ? item.actionName : item.stateDisplayName}</strong>
-                            <p class="small mb-4">
+                            <p class="small mb-0">
                                 ${item.stateSummaryText}
                             </p>
+                            ${actionBtns}
                         </div>
                     </div>
                     <div class="state-update-time">
@@ -90,7 +98,7 @@
         function tryCreateInterval() {
             intervalId = setInterval(fetchAndShowAlerts, 5000);
         }
-        
+
         function tryClearInterval() {
             if (intervalId) clearInterval(intervalId);
         }
@@ -101,15 +109,13 @@
                 refreshBaseUiElements()
             });
         }
-        
-        function refreshBaseUiElements(){
+
+        function refreshBaseUiElements() {
             var alertPlaceholder = $('#alert-placeholder');
             if (alertPlaceholder.find('.alert').length) {
                 $('#no-notification-text').hide();
-                $('.clear-all-area').show();
             } else {
                 $('#no-notification-text').show();
-                $('.clear-all-area').hide();
             }
         }
 
@@ -125,9 +131,15 @@
                 tryClearInterval();
             });
 
+            var moreProcessesBtn = document.getElementById('notification-offcanvas-more-processes-btn');
             var clearAllBtn = document.getElementById('notification-offcanvas-clear-all-btn');
 
-            clearAllBtn.addEventListener('click', function() {
+            moreProcessesBtn.addEventListener('click', function () {
+                var url = abp.appPath + 'ProcessManagement/Processes/Process';
+                window.open(url, '_blank');
+            });
+
+            clearAllBtn.addEventListener('click', function () {
                 tryClearInterval();
                 var alertPlaceholder = $('#alert-placeholder');
                 var existingAlerts = alertPlaceholder.find('.alert');
@@ -137,7 +149,7 @@
                     var id = $(this).attr('id');
                     existingAlertIds.set(id, $(this));
                 });
-                
+
                 easyAbp.processManagement.notifications.notification.dismiss({
                     notificationIds: existingAlertIds.keys().toArray()
                 }).then(function () {

@@ -1,26 +1,50 @@
 ﻿@using EasyAbp.ProcessManagement.Localization
+@using EasyAbp.ProcessManagement.Web.Options
 @using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Microsoft.Extensions.Options
 @inject IHtmlLocalizer<ProcessManagementResource> L
+@inject IOptions<ProcessManagementWebOptions> Options
+@inject IStringLocalizerFactory StringLocalizerFactory
 @model EasyAbp.ProcessManagement.Web.Components.NotificationsOffcanvasWidget.NotificationsOffcanvasWidgetViewModel
 
+@{
+    var customActions = "[" + Options.Value.Actions.Select(x =>
+            $"{{text:'{x.DisplayName.Localize(StringLocalizerFactory)}',action:function(data){{{x.OnClickCallbackCode}}},visible:function(data){{return data.processName==='{x.ProcessName}'&&data.stateName==='{x.StateName}'&&({x.VisibleCheckCode ?? "true"})}}}}")
+        .JoinAsString(",") + "]";
+}
 <script>
     const notificationLifetimeMilliseconds = @Model.Options.NotificationLifetime.TotalMilliseconds;
+    var notificationOffcanvasAlertActions = @Html.Raw(customActions);
 </script>
 
 <style>
-    .clear-all-area {
+    .notification-offcanvas-action-area {
         height: 40px;
-        display: none;
+        .more-processes-btn {
+            float: left;
+            padding: 0;
+            text-decoration: none;
+            color: var(--bs-offcanvas-color);
+        }
+        .clear-all-btn {
+            float: right;
+            padding: 0;
+            text-decoration: none;
+            color: var(--bs-offcanvas-color);
+        }
     }
-    .clear-all-btn {
-        float: right;
-        padding: 0;
-        text-decoration: none;
-        color: var(--bs-offcanvas-color);
+    .alert-content-area {
+        .process-action-btn {
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-left: 0;
+            color: var(--bs-offcanvas-color);
+        }
     }
     .no-notification-text {
         text-align: center;
-        margin-top: 30px;
+        margin-top: 10px;
     }
     .svg-icon {
         width: 24px;
@@ -61,10 +85,17 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body" style="padding-top: 0">
-        <div class="clear-all-area">
-            <button type="button" id="notification-offcanvas-clear-all-btn" class="clear-all-btn btn btn-link"><small>@L["ClearAllNotifications"]</small></button>
+        <div class="notification-offcanvas-action-area">
+            <button type="button" id="notification-offcanvas-more-processes-btn" class="more-processes-btn btn btn-link">
+                <small>@L["MoreProcesses"]</small>
+            </button>
+            <button type="button" id="notification-offcanvas-clear-all-btn" class="clear-all-btn btn btn-link">
+                <small>@L["ClearAllNotifications"]</small>
+            </button>
         </div>
-        <div id="no-notification-text" class="no-notification-text"><small>@L["NoNotification"]</small></div>
+        <div id="no-notification-text" class="no-notification-text">
+            <small>@L["NoNotification"]</small>
+        </div>
         <div id="alert-placeholder"></div>
     </div>
 </div>

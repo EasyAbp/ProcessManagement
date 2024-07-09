@@ -20,6 +20,7 @@
     "ProcessStateSummaryText": "Summary",
     "ProcessStateUpdateTime": "Updated",
     "ProcessUserName": "Username",
-    "TableFilter": "TableFilter"
+    "TableFilter": "TableFilter",
+    "MoreProcesses": "More processes →"
   }
 }

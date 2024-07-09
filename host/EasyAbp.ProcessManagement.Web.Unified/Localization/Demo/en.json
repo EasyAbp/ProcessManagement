@@ -6,6 +6,14 @@
     "State:FailedToStartExporting": "Failed",
     "State:Exporting": "Exporting",
     "State:ExportFailed": "Failed",
-    "State:Succeeded": "Succeeded"
+    "State:Succeeded": "Succeeded",
+    "Action:Retry": "Retry",
+    "Action:Ping": "Ping",
+    "SureToRetry": "Are you sure to retry this process?",
+    "Success": "Success",
+    "SuccessToRetry": "The process has restarted running.",
+    "Permission:Demo": "Demo",
+    "Permission:Exporting": "Exporting",
+    "Permission:Retry": "Retry"
   }
 }
