@@ -2,7 +2,7 @@ using System;
 
 namespace EasyAbp.ProcessManagement.Processes;
 
-public interface IProcessStateBase : IProcessStateCustomBase
+public interface IProcessStateBase : IProcessStateCustom
 {
     /// <summary>
     /// Time of the process has been updated to this state.

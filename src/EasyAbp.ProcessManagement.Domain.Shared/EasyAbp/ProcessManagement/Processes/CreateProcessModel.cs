@@ -23,14 +23,12 @@ public class CreateProcessModel : ExtensibleObject, IProcessBase, IProcessStateC
 
     public string? StateSummaryText { get; set; }
 
-    public string? StateDetailsText { get; set; }
-
     public CreateProcessModel()
     {
     }
 
     public CreateProcessModel(string processName, string? correlationId, string groupKey, string? actionName,
-        ProcessStateFlag stateFlag, string? stateSummaryText, string? stateDetailsText)
+        ProcessStateFlag stateFlag, string? stateSummaryText)
     {
         ProcessName = Check.NotNullOrWhiteSpace(processName, nameof(processName));
         CorrelationId = correlationId;
@@ -38,7 +36,6 @@ public class CreateProcessModel : ExtensibleObject, IProcessBase, IProcessStateC
         ActionName = actionName;
         StateFlag = stateFlag;
         StateSummaryText = stateSummaryText;
-        StateDetailsText = stateDetailsText;
     }
 
     public CreateProcessModel(string processName, string? correlationId, string groupKey)

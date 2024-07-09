@@ -16,8 +16,8 @@ public class UpdateProcessStateEto : UpdateProcessStateModel, IMultiTenant
     }
 
     public UpdateProcessStateEto(Guid? tenantId, string correlationId, DateTime stateUpdateTime, string stateName,
-        string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText, string? stateDetailsText) : base(
-        stateUpdateTime, stateName, actionName, stateFlag, stateSummaryText, stateDetailsText)
+        string? actionName, ProcessStateFlag stateFlag, string? stateSummaryText)
+        : base(stateUpdateTime, stateName, actionName, stateFlag, stateSummaryText)
     {
         TenantId = tenantId;
         CorrelationId = Check.NotNullOrWhiteSpace(correlationId, nameof(correlationId));

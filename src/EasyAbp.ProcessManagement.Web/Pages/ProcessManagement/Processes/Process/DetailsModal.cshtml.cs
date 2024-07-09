@@ -53,6 +53,6 @@ public class DetailsModalModel : ProcessManagementPageModel
             .JoinAsString(Environment.NewLine);
 
         ViewModel = new ProcessDetailViewModel(dto.CorrelationId, dto.ProcessDisplayName, stateString,
-            dto.StateDetailsText ?? dto.StateSummaryText, historiesString, dto.CreationTime);
+            dto.StateSummaryText, historiesString, dto.CreationTime);
     }
 }

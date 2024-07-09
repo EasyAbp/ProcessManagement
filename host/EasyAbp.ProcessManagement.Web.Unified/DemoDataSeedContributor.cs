@@ -66,22 +66,19 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
             new UpdateProcessStateModel(now.AddHours(-4), "Exporting",
                 "Loading data",
                 ProcessStateFlag.Running,
-                "Loading the data...",
-                "<b>Loading the data...</b>"));
+                "Loading the data..."));
 
         await _processManager.UpdateStateAsync(process1,
             new UpdateProcessStateModel(now.AddHours(-3), "Exporting",
                 "Exporting to ZIP",
                 ProcessStateFlag.Running,
-                "Exporting to the .zip file...",
-                "<b>Exporting to the .zip file...</b>"));
+                "Exporting to the .zip file..."));
 
         await _processManager.UpdateStateAsync(process1,
             new UpdateProcessStateModel(now.AddHours(-2), "Succeeded",
                 "Export is done!",
                 ProcessStateFlag.Success,
-                "Congratulations! Export successful.",
-                "<b>Congratulations!</b><br/>Everything is done."));
+                "Congratulations! Export successful."));
 
         await _processRepository.InsertAsync(process1, true);
 
@@ -93,8 +90,7 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
             new UpdateProcessStateModel(now.AddHours(-1), "Exporting",
                 "Loading data",
                 ProcessStateFlag.Running,
-                "Loading the data...",
-                "<b>Loading the data...</b>"));
+                "Loading the data..."));
 
         await _processRepository.InsertAsync(process2, true);
 
@@ -106,15 +102,13 @@ public class DemoDataSeedContributor : IDataSeedContributor, ITransientDependenc
             new UpdateProcessStateModel(now.AddHours(-2), "Exporting",
                 "Loading data",
                 ProcessStateFlag.Running,
-                "Loading the data...",
-                "<b>Loading the data...</b>"));
+                "Loading the data..."));
 
         await _processManager.UpdateStateAsync(process3,
             new UpdateProcessStateModel(now.AddHours(-1), "ExportFailed",
                 "Failed...",
                 ProcessStateFlag.Failure,
-                "Oops, the task failed!",
-                null));
+                "Oops, the task failed!"));
 
         await _processRepository.InsertAsync(process3, true);
     }

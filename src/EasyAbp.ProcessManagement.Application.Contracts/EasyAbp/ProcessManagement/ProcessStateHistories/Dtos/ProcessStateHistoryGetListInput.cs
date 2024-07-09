@@ -19,7 +19,5 @@ public class ProcessStateHistoryGetListInput : PagedAndSortedResultRequestDto
 
     public string? StateSummaryText { get; set; }
 
-    public string? StateDetailsText { get; set; }
-
     public DateTime? StateUpdateTime { get; set; }
 }

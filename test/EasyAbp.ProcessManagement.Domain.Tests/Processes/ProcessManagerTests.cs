@@ -72,7 +72,7 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
     public async Task Should_Update_State_Custom_Info()
     {
         var process = await ProcessManager.CreateAsync(
-            new CreateProcessModel("FakeExport", null, "groupKey", "hi", ProcessStateFlag.Information, null, null),
+            new CreateProcessModel("FakeExport", null, "groupKey", "hi", ProcessStateFlag.Information, null),
             DateTime.Now);
 
         process.StateFlag.ShouldBe(ProcessStateFlag.Information);
@@ -83,7 +83,7 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
 
         // Not updating from Exporting to Ready, but add a history for Ready.
         await ProcessManager.UpdateStateAsync(process,
-            new UpdateProcessStateModel(updateTime, "Ready", "balalala", ProcessStateFlag.Running, null, null));
+            new UpdateProcessStateModel(updateTime, "Ready", "balalala", ProcessStateFlag.Running, null));
 
         var histories = await ProcessStateHistoryRepository.GetListAsync(x => x.ProcessId == process.Id);
 
@@ -109,7 +109,7 @@ public class ProcessManagerTests : ProcessManagementDomainTestBase
 
         // Not updating from Exporting to Ready, but add a history for Ready.
         await ProcessManager.UpdateStateAsync(process,
-            new UpdateProcessStateModel(updateTime, "Ready", "balalala", ProcessStateFlag.Running, null, null));
+            new UpdateProcessStateModel(updateTime, "Ready", "balalala", ProcessStateFlag.Running, null));
 
         var histories = await ProcessStateHistoryRepository.GetListAsync(x => x.ProcessId == process.Id);
 

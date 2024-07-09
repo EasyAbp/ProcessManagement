@@ -22,8 +22,6 @@ public class ProcessDto : FullAuditedEntityDto<Guid>, IProcess, IProcessState
 
     public string? StateSummaryText { get; set; }
 
-    public string? StateDetailsText { get; set; }
-
     #region Out of the entity
 
     public string ProcessDisplayName { get; set; }

@@ -73,8 +73,6 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
                 .WhereIf(input.StateFlag != null, x => x.StateFlag == input.StateFlag)
                 .WhereIf(!input.StateSummaryText.IsNullOrWhiteSpace(),
                     x => x.StateSummaryText.Contains(input.StateSummaryText))
-                .WhereIf(!input.StateDetailsText.IsNullOrWhiteSpace(),
-                    x => x.StateDetailsText.Contains(input.StateDetailsText))
             ;
     }
 

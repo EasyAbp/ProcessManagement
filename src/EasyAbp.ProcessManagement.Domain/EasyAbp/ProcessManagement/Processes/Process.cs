@@ -34,9 +34,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
     /// <inheritdoc/>
     public virtual string? StateSummaryText { get; protected set; }
 
-    /// <inheritdoc/>
-    public virtual string? StateDetailsText { get; protected set; }
-
     protected Process()
     {
     }
@@ -61,7 +58,6 @@ public class Process : FullAuditedAggregateRoot<Guid>, IProcess, IProcessState, 
         ActionName = processState.ActionName;
         StateFlag = processState.StateFlag;
         StateSummaryText = processState.StateSummaryText;
-        StateDetailsText = processState.StateDetailsText;
 
         AddLocalEvent(new ProcessStateChangedEto(
             TenantId, Id, ProcessName, CorrelationId, GroupKey, oldState, ToStateInfoModel()));

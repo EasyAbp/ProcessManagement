@@ -1,11 +1,25 @@
 namespace EasyAbp.ProcessManagement.Processes;
 
-public interface IProcessStateCustom : IProcessStateCustomBase
+public interface IProcessStateCustom
 {
     /// <summary>
-    /// Description for the state, optional. This value will NOT be shown in the notification list,
-    /// users can only view it in the detail page/modal. Both plain text and HTML are supported.
+    /// A custom action name as a complement to the StateName, optional.
+    /// Users can see both the StateName and ActionName on the UI.
+    /// Only plain text is supported.
     /// </summary>
-    /// <example><![CDATA[<p>Data is loading, the uploader ID is...</p>]]></example>
-    string? StateDetailsText { get; }
+    /// <example>Copying the data</example>
+    string? ActionName { get; }
+
+    /// <summary>
+    /// This flag is converted to a state icon and displayed on the UI.
+    /// For example, when the flag is Warning, the UI shows ⚠️.
+    /// </summary>
+    ProcessStateFlag StateFlag { get; }
+
+    /// <summary>
+    /// Summary for the state, optional. This value will be shown in the notification list.
+    /// Only plain text is supported.
+    /// </summary>
+    /// <example><![CDATA[<p>Data is loading...</p>]]></example>
+    string? StateSummaryText { get; }
 }
