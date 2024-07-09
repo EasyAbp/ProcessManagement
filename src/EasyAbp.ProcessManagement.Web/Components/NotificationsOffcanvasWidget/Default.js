@@ -20,6 +20,12 @@
                     existingAlertIds.set(id, $(this));
                 });
 
+                existingAlertIds.forEach(function (alert, id) {
+                    if (!res.items.some(item => item.id === id)) {
+                        removeAlert(alert)
+                    }
+                });
+                
                 res.items.forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
                         var newAlert = createAlert(item);
@@ -33,16 +39,12 @@
                                 tryCreateInterval();
                             });
                         });
-                    }
-                });
-
-                existingAlertIds.forEach(function (alert, id) {
-                    if (!res.items.some(item => item.id === id)) {
-                        alert.addClass('fade-out').one('animationend', function () {
-                            $(this).remove();
+                        newAlertNode.addEventListener('closed.bs.alert', function () {
+                            refreshBaseUiElements()
                         });
                     }
                 });
+                refreshBaseUiElements()
             });
         }
 
@@ -92,7 +94,25 @@
         function tryClearInterval() {
             if (intervalId) clearInterval(intervalId);
         }
+
+        function removeAlert(alert) {
+            alert.addClass('fade-out').one('animationend', function () {
+                $(this).remove();
+                refreshBaseUiElements()
+            });
+        }
         
+        function refreshBaseUiElements(){
+            var alertPlaceholder = $('#alert-placeholder');
+            if (alertPlaceholder.find('.alert').length) {
+                $('#no-notification-text').hide();
+                $('.clear-all-area').show();
+            } else {
+                $('#no-notification-text').show();
+                $('.clear-all-area').hide();
+            }
+        }
+
         function init() {
             var offcanvasElement = document.getElementById('notificationsOffcanvas');
 
@@ -122,10 +142,9 @@
                     notificationIds: existingAlertIds.keys().toArray()
                 }).then(function () {
                     existingAlertIds.forEach(function (alert, id) {
-                        alert.addClass('fade-out').one('animationend', function () {
-                            $(this).remove();
-                        });
+                        removeAlert(alert)
                     });
+                }).always(function () {
                     tryCreateInterval();
                 });
             });

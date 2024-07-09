@@ -10,12 +10,17 @@
 <style>
     .clear-all-area {
         height: 40px;
+        display: none;
     }
     .clear-all-btn {
         float: right;
         padding: 0;
         text-decoration: none;
         color: var(--bs-offcanvas-color);
+    }
+    .no-notification-text {
+        text-align: center;
+        margin-top: 30px;
     }
     .svg-icon {
         width: 24px;
@@ -59,6 +64,7 @@
         <div class="clear-all-area">
             <button type="button" id="notification-offcanvas-clear-all-btn" class="clear-all-btn btn btn-link"><small>@L["ClearAllNotifications"]</small></button>
         </div>
+        <div id="no-notification-text" class="no-notification-text"><small>@L["NoNotification"]</small></div>
         <div id="alert-placeholder"></div>
     </div>
 </div>
