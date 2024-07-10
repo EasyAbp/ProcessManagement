@@ -77,15 +77,15 @@
             }
             return $(`
                 <div class="alert ${getAlertColorClassName(item.stateFlag)} alert-dismissible fade-in" role="alert">
-                    <div class="d-flex mb-4">
+                    <div class="alert-content-title d-flex align-items-center mb-1">
                         <img src="/images/process-management/icons/${item.stateFlag}.svg" class="svg-icon" alt=""/>
-                        <div class="alert-content-area">
-                            <strong>${item.actionName ? item.actionName : item.stateDisplayName}</strong>
-                            <p class="small mb-0">
-                                ${item.stateSummaryText}
-                            </p>
-                            ${actionBtns}
-                        </div>
+                        <h6><strong>${item.actionName ? item.actionName : item.stateDisplayName}</strong></h6>
+                    </div>
+                    <div class="alert-content-area mb-4">
+                        <p class="small mb-0">
+                            ${item.stateSummaryText}
+                        </p>
+                        ${actionBtns}
                     </div>
                     <div class="state-update-time">
                         <span class="small"><time class="timeago" datetime="${item.creationTime}">${item.creationTime}</time></span>

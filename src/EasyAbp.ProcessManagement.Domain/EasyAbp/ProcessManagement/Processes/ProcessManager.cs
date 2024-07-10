@@ -67,7 +67,8 @@ public class ProcessManager : DomainService
         {
             if (state.StateUpdateTime <= process.StateUpdateTime)
             {
-                throw new InvalidStateUpdateTimeException(state.StateName, process.ProcessName, process.Id);
+                throw new InvalidStateUpdateTimeException(
+                    process.StateName, state.StateName, process.ProcessName, process.Id);
             }
 
             process.SetState(state);
@@ -82,7 +83,8 @@ public class ProcessManager : DomainService
              */
             if (processDefinition.IsDescendantState(state.StateName, process.StateName))
             {
-                throw new UpdatingToFutureStateException(state.StateName, process.ProcessName, process.Id);
+                throw new UpdatingToFutureStateException(
+                    process.StateName, state.StateName, process.ProcessName, process.Id);
             }
 
             /*
@@ -98,7 +100,8 @@ public class ProcessManager : DomainService
             /*
              * Otherwise, this incoming state will never succeed, we don't handle it.
              */
-            throw new UpdatingToNonDescendantStateException(state.StateName, process.ProcessName, process.Id);
+            throw new UpdatingToNonDescendantStateException(
+                process.StateName, state.StateName, process.ProcessName, process.Id);
         }
     }
 

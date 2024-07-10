@@ -34,7 +34,18 @@
             color: var(--bs-offcanvas-color);
         }
     }
+    .alert-content-title {
+        gap: 10px;
+        h6 {
+            margin: 0;
+        }
+        .svg-icon {
+            width: 24px;
+            height: 24px;
+        }
+    }
     .alert-content-area {
+        padding-left: 34px;
         .process-action-btn {
             padding-top: 0;
             padding-bottom: 0;
@@ -45,11 +56,6 @@
     .no-notification-text {
         text-align: center;
         margin-top: 10px;
-    }
-    .svg-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
     }
     .state-update-time {
         position: absolute;
@@ -81,7 +87,7 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationsOffcanvas"
      aria-labelledby="notificationsOffcanvasLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="notificationsOffcanvasLabel">@L["Notifications"]</h5>
+        <h4 class="offcanvas-title" id="notificationsOffcanvasLabel">@L["Notifications"]</h4>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body" style="padding-top: 0">
