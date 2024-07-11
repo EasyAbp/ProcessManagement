@@ -72,7 +72,7 @@
             for (var i in notificationOffcanvasAlertActions) {
                 var action = notificationOffcanvasAlertActions[i];
                 if (!action.visible(item)) continue;
-                var actionBtn = `<button type="button" id="action-btn-${i}-${item.id}" class="process-action-btn btn btn-link btn-sm">${action.text}</button><script>var actionBtn = document.getElementById('action-btn-${i}-${item.id}');actionBtn.addEventListener('click', function () {var alertNode = document.getElementById('${item.id}');return ${action.action}(${JSON.stringify(item)});});</script>`
+                var actionBtn = `<button type="button" id="action-btn-${i}-${item.id}" class="process-action-btn btn btn-link btn-sm">${action.text}</button><script>var actionBtn = document.getElementById('action-btn-${i}-${item.id}');actionBtn.addEventListener('click', function () {var alert=new bootstrap.Alert(document.getElementById('${item.id}'));return ${action.action}(${JSON.stringify(item)});});</script>`
                 actionBtns += actionBtn;
             }
             return $(`
