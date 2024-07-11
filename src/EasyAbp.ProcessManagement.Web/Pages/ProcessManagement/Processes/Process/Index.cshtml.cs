@@ -26,7 +26,7 @@ public class IndexModel : ProcessManagementPageModel
         }
 
         CustomActions = "[" + Options.Actions.Select(x =>
-                $"{{text:'{x.DisplayName.Localize(StringLocalizerFactory)}',action:function(data){{{x.OnClickCallbackCode}}},visible:function(data){{return data.processName==='{x.ProcessName}'&&data.stateName==='{x.StateName}'&&({x.VisibleCheckCode ?? "true"})}}}}")
+                $"{{text:'{x.DisplayName.Localize(StringLocalizerFactory)}',action:function(data){{{x.TableOnClickCallbackCode}}},visible:function(data){{return data.processName==='{x.ProcessName}'&&data.stateName==='{x.StateName}'&&({x.VisibleCheckCode ?? "true"})}}}}")
             .JoinAsString(",") + "]";
 
         await Task.CompletedTask;

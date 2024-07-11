@@ -139,11 +139,13 @@ public class ProcessManagementWebUnifiedModule : AbpModule
         {
             options.Actions.Add(new ProcessStateActionDefinition("FakeExport", "ExportFailed",
                 new LocalizableString("Action:Retry"),
-                "abp.message.confirm(l('SureToRetry')).then(function(confirmed){if(confirmed){abp.notify.success(l('SuccessToRetry'),l('Success'));if(alertNode){var alert=new bootstrap.Alert(alertNode);alert.close();}}})",
+                "var l = abp.localization.getResource();abp.message.confirm(l('SureToRetry')).then(function(confirmed){if(confirmed){abp.notify.success(l('SuccessToRetry'),l('Success'));}});",
+                "var l = abp.localization.getResource();abp.message.confirm(l('SureToRetry')).then(function(confirmed){if(confirmed){abp.notify.success(l('SuccessToRetry'),l('Success'));var alert=new bootstrap.Alert(alertNode);alert.close();}})",
                 "abp.auth.isGranted('Demo.Exporting.Retry')"));
 
             options.Actions.Add(new ProcessStateActionDefinition("FakeExport", "ExportFailed",
                 new LocalizableString("Action:Ping"),
+                "alert('Pong')",
                 "alert('Pong')",
                 null));
         });

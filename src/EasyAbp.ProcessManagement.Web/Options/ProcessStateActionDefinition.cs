@@ -20,24 +20,31 @@ public class ProcessStateActionDefinition
     public ILocalizableString DisplayName { get; set; } = null!;
 
     /// <summary>
-    /// JS code that is executed when the action button is clicked.
+    /// JS code that is executed when the table action button is clicked.
     /// </summary>
     /// <example>detailsModal.open({id: data.record.id});</example>
-    public string OnClickCallbackCode { get; set; } = null!;
+    public string TableOnClickCallbackCode { get; set; } = null!;
+
+    /// <summary>
+    /// JS code that is executed when the offcanvas action button is clicked.
+    /// </summary>
+    /// <example>detailsModal.open({id: data.id});</example>
+    public string OffcanvasOnClickCallbackCode { get; set; } = null!;
 
     /// <summary>
     /// JS code for the action visible check. Skip checking if null.
     /// </summary>
-    /// <example>abp.auth.isGranted('MyPermissionName')</example>
+    /// <example>abp.auth.isGranted('MyPermissionName') && data.available</example>
     public string? VisibleCheckCode { get; set; }
 
     public ProcessStateActionDefinition(string processName, string stateName, ILocalizableString displayName,
-        string onClickCallbackCode, string? visibleCheckCode)
+        string tableOnClickCallbackCode, string offcanvasOnClickCallbackCode, string? visibleCheckCode)
     {
         ProcessName = processName;
         StateName = stateName;
         DisplayName = displayName;
-        OnClickCallbackCode = onClickCallbackCode;
+        TableOnClickCallbackCode = tableOnClickCallbackCode;
+        OffcanvasOnClickCallbackCode = offcanvasOnClickCallbackCode;
         VisibleCheckCode = visibleCheckCode;
     }
 }
