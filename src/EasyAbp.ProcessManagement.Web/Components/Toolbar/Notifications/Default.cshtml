@@ -1,11 +1,14 @@
-﻿<div id="ToolbarNotificationsWidgetArea">
+﻿@{
+    var randomId = Guid.NewGuid();
+}
+<div id="ToolbarNotificationsWidgetArea-@randomId">
     @await Component.InvokeAsync("NotificationsToolbarItemWidget")
 </div>
 
 <script>
     function refreshNotificationsToolbarItemWidget() {
         (function ($) {
-            var $wrapper = $('#ToolbarNotificationsWidgetArea');
+            var $wrapper = $('#ToolbarNotificationsWidgetArea-@randomId');
             var $widgets = $wrapper.find('.abp-widget-wrapper');
             if (!$widgets) {
                 if ($wrapper.hasClass('abp-widget-wrapper')) {
