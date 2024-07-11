@@ -10,7 +10,7 @@
 
 @{
     var customActions = "[" + Options.Value.Actions.Select(x =>
-            $"{{text:'{x.DisplayName.Localize(StringLocalizerFactory)}',action:function(data){{{x.OnClickCallbackCode}}},visible:function(data){{return data.processName==='{x.ProcessName}'&&data.stateName==='{x.StateName}'&&({x.VisibleCheckCode ?? "true"})}}}}")
+            $"{{text:'{x.DisplayName.Localize(StringLocalizerFactory)}',action:function(data){{{x.OffcanvasOnClickCallbackCode}}},visible:function(data){{return data.processName==='{x.ProcessName}'&&data.stateName==='{x.StateName}'&&({x.VisibleCheckCode ?? "true"})}}}}")
         .JoinAsString(",") + "]";
 }
 <script>
