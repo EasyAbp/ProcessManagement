@@ -4,7 +4,7 @@ using Volo.Abp.Application.Dtos;
 namespace EasyAbp.ProcessManagement.Processes.Dtos;
 
 [Serializable]
-public class ProcessDto : FullAuditedEntityDto<Guid>, IProcess, IProcessState
+public class ProcessDto : ExtensibleFullAuditedEntityDto<Guid>, IProcess, IProcessState
 {
     public string ProcessName { get; set; }
 

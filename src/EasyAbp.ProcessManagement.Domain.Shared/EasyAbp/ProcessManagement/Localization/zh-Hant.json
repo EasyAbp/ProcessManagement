@@ -21,6 +21,7 @@
     "ProcessStateUpdateTime": "更新時間",
     "ProcessUserName": "使用者名",
     "TableFilter": "篩選器",
-    "MoreProcesses": "查看更多流程 →"
+    "MoreProcesses": "查看更多流程 →",
+    "Process:InstantNotification": "通知"
   }
 }
