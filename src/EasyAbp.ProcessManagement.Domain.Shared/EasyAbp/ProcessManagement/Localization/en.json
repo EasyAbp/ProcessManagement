@@ -21,6 +21,7 @@
     "ProcessStateUpdateTime": "Updated",
     "ProcessUserName": "Username",
     "TableFilter": "TableFilter",
-    "MoreProcesses": "More processes →"
+    "MoreProcesses": "More processes →",
+    "Process:InstantNotification": "Notification"
   }
 }

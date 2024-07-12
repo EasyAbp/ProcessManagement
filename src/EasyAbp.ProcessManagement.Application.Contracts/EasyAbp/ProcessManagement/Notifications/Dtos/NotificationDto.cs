@@ -5,7 +5,7 @@ using Volo.Abp.Application.Dtos;
 namespace EasyAbp.ProcessManagement.Notifications.Dtos;
 
 [Serializable]
-public class NotificationDto : CreationAuditedEntityDto<Guid>
+public class NotificationDto : ExtensibleCreationAuditedEntityDto<Guid>
 {
     public Guid UserId { get; set; }
 
