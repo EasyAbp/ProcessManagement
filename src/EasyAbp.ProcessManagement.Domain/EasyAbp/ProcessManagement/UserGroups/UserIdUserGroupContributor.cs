@@ -25,4 +25,6 @@ public class UserIdUserGroupContributor : UserGroupContributorBase, IDistributed
     {
         await UpdateAsync(eventData.Entity.Id);
     }
+
+    public virtual Task<string> CreateGroupKeyAsync(Guid userId) => CreateGroupKeyAsync(userId.ToString());
 }
