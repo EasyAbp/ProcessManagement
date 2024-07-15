@@ -26,7 +26,7 @@
                     }
                 });
 
-                res.items.forEach(function (item) {
+                res.items.reverse().forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
                         var newAlert = createAlert(item);
                         alertPlaceholder.prepend(newAlert)
