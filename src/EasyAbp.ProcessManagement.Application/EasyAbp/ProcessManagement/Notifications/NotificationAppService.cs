@@ -109,6 +109,11 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
         return dto;
     }
 
+    protected override IQueryable<Notification> ApplyDefaultSorting(IQueryable<Notification> query)
+    {
+        return query.OrderByDescending(e => e.Id);
+    }
+
     protected override NotificationDto MapToGetListOutputDto(Notification entity)
     {
         return MapToGetOutputDto(entity);

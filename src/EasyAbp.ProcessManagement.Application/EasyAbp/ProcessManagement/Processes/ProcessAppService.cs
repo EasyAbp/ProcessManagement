@@ -101,6 +101,11 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
         return dto;
     }
 
+    protected override IQueryable<Process> ApplyDefaultSorting(IQueryable<Process> query)
+    {
+        return query.OrderByDescending(e => e.Id);
+    }
+
     protected override ProcessDto MapToGetListOutputDto(Process entity)
     {
         return MapToGetOutputDto(entity);
