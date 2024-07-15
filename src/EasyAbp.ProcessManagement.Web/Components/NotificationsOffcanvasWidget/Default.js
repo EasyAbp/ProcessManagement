@@ -29,7 +29,7 @@
                 res.items.forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
                         var newAlert = createAlert(item);
-                        alertPlaceholder.append(newAlert)
+                        alertPlaceholder.prepend(newAlert)
                         var newAlertNode = document.getElementById(item.id);
                         newAlertNode.addEventListener('close.bs.alert', function () {
                             tryClearInterval();
