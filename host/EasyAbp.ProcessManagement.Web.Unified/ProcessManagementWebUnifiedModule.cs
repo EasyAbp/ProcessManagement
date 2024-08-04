@@ -117,19 +117,19 @@ public class ProcessManagementWebUnifiedModule : AbpModule
         {
             var definition = new ProcessDefinition("FakeExport", new LocalizableString("Process:FakeExport"))
                 .AddState(new ProcessStateDefinition(
-                    "Ready", new LocalizableString("Process:Ready"),
+                    "Ready", new LocalizableString("State:Ready"),
                     null, ProcessStateFlag.Information))
                 .AddState(new ProcessStateDefinition(
-                    "FailedToStartExporting", new LocalizableString("Process:FailedToStartExporting"),
+                    "FailedToStartExporting", new LocalizableString("State:FailedToStartExporting"),
                     "Ready", ProcessStateFlag.Failure))
                 .AddState(new ProcessStateDefinition(
-                    "Exporting", new LocalizableString("Process:Exporting"),
+                    "Exporting", new LocalizableString("State:Exporting"),
                     "Ready", ProcessStateFlag.Running))
                 .AddState(new ProcessStateDefinition(
-                    "ExportFailed", new LocalizableString("Process:ExportFailed"),
+                    "ExportFailed", new LocalizableString("State:ExportFailed"),
                     "Exporting", ProcessStateFlag.Failure))
                 .AddState(new ProcessStateDefinition(
-                    "Succeeded", new LocalizableString("Process:Succeeded"),
+                    "Succeeded", new LocalizableString("State:Succeeded"),
                     "Exporting", ProcessStateFlag.Success));
 
             options.AddOrUpdateProcessDefinition(definition);
@@ -145,8 +145,8 @@ public class ProcessManagementWebUnifiedModule : AbpModule
 
             options.Actions.Add(new ProcessStateActionDefinition("FakeExport", "ExportFailed",
                 new LocalizableString("Action:Ping"),
-                "alert('Pong')",
-                "alert('Pong')",
+                "window.alert('Pong')",
+                "window.alert('Pong')",
                 null));
         });
 
