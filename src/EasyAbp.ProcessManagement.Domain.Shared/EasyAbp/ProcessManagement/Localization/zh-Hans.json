@@ -22,6 +22,7 @@
     "ProcessUserName": "用户名",
     "TableFilter": "筛选器",
     "MoreProcesses": "查看更多流程 →",
-    "Process:InstantNotification": "通知"
+    "Process:InstantNotification": "通知",
+    "SureToClearAll": "是否确认清空所有通知? 此操作不可撤销."
   }
 }

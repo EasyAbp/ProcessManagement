@@ -22,6 +22,7 @@
     "ProcessUserName": "Username",
     "TableFilter": "TableFilter",
     "MoreProcesses": "More processes →",
-    "Process:InstantNotification": "Notification"
+    "Process:InstantNotification": "Notification",
+    "SureToClearAll": "Are you sure to clear all notifications? This action cannot be undone."
   }
 }

@@ -121,6 +121,7 @@
 
         function init() {
             var offcanvasElement = document.getElementById('notificationsOffcanvas');
+            var l = abp.localization.getResource('EasyAbpProcessManagement');
 
             offcanvasElement.addEventListener('show.bs.offcanvas', function () {
                 fetchAndShowAlerts();
@@ -150,12 +151,16 @@
                     existingAlertIds.set(id, $(this));
                 });
 
-                easyAbp.processManagement.notifications.notification.dismiss({
-                    notificationIds: existingAlertIds.keys().toArray()
-                }).then(function () {
-                    existingAlertIds.forEach(function (alert, id) {
-                        removeAlert(alert)
-                    });
+                abp.message.confirm(l('SureToClearAll')).then(function (confirmed) {
+                    if (confirmed) {
+                        easyAbp.processManagement.notifications.notification.dismiss({
+                            notificationIds: existingAlertIds.keys().toArray()
+                        }).then(function () {
+                            existingAlertIds.forEach(function (alert, id) {
+                                removeAlert(alert)
+                            });
+                        });
+                    }
                 }).always(function () {
                     tryCreateInterval();
                 });
