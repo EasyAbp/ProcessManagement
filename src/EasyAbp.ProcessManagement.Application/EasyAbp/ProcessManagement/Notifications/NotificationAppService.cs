@@ -139,7 +139,12 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
 
         foreach (var notificationId in input.NotificationIds)
         {
-            var notification = await GetEntityByIdAsync(notificationId);
+            var notification = await Repository.FindAsync(notificationId);
+
+            if (notification is null)
+            {
+                continue;
+            }
 
             if (notification.UserId != CurrentUser.GetId())
             {
