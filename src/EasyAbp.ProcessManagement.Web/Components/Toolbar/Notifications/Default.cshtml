@@ -6,40 +6,182 @@
 </div>
 
 <script>
-    function refreshNotificationsToolbarItemWidget() {
-        (function ($) {
-            var $wrapper = $('#ToolbarNotificationsWidgetArea-@randomId');
-            var $widgets = $wrapper.find('.abp-widget-wrapper');
-            if (!$widgets) {
-                if ($wrapper.hasClass('abp-widget-wrapper')) {
-                    $widgets = $wrapper;
-                } else {
-                    $widgets = $wrapper.findWithSelf('.abp-widget-wrapper');
-                }
+    (function () {
+        // Variables for managing refresh and activity state
+        let refreshIntervalId = null;
+        let activityTimeoutId = null;
+        let isUserActive = true;
+        let isPageVisible = true;
+
+        const REFRESH_INTERVAL = 5000; // 5 seconds refresh interval
+        const INACTIVITY_TIMEOUT = 5000; // 5 seconds of inactivity before pausing
+        const DEBUG_LOGS = false; // Set to true to enable debug logs
+
+        // Debug logging function
+        function log(message) {
+            if (DEBUG_LOGS) {
+                console.log(`[NotificationsToolbar] ${new Date().toISOString().substr(11, 8)} - ${message}`);
+            }
+        }
+
+        // Function to refresh the notifications count
+        function refreshNotificationsToolbarItemWidget() {
+            if (!isPageVisible) {
+                log("Refresh skipped: Page not visible");
+                return;
+            }
+            
+            if (!isUserActive) {
+                log("Refresh skipped: User inactive");
+                return;
             }
 
-            $widgets.each(function () {
-                var $widget = $(this);
-                var refreshUrl = $widget.attr('data-refresh-url');
-                $.ajax({
-                    url: refreshUrl,
-                    type: 'GET',
-                    dataType: 'html',
-                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                    data: {},
-                    error: function (jqXHR) {
-                        console.log('Notifications toolbar item: failed to get the notification count', jqXHR);
+            log("Attempting to refresh notifications count...");
+
+            (function ($) {
+                const $wrapper = $('#ToolbarNotificationsWidgetArea-@randomId');
+                let $widgets = $wrapper.find('.abp-widget-wrapper');
+                if (!$widgets.length) {
+                    if ($wrapper.hasClass('abp-widget-wrapper')) {
+                        $widgets = $wrapper;
+                    } else {
+                        $widgets = $wrapper.findWithSelf('.abp-widget-wrapper');
                     }
-                }).then(function (result) {
-                    var $result = $(result);
-                    $widget.replaceWith($result);
+                }
+
+                $widgets.each(function () {
+                    const $widget = $(this);
+                    const refreshUrl = $widget.attr('data-refresh-url');
+                    log(`Making API call to: ${refreshUrl}`);
+                    
+                    $.ajax({
+                        url: refreshUrl,
+                        type: 'GET',
+                        dataType: 'html',
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        data: {},
+                        error: function (jqXHR) {
+                            log(`Error: Failed to get notification count - ${jqXHR.status} ${jqXHR.statusText}`);
+                        }
+                    }).then(function (result) {
+                        log("API call successful, updating widget");
+                        var $result = $(result);
+                        $widget.replaceWith($result);
+                    });
                 });
+            })(jQuery);
+        }
+
+        // Function to mark user as active and reset inactivity timer
+        function markUserActive() {
+            const wasInactive = !isUserActive;
+            isUserActive = true;
+            
+            // Clear any existing inactivity timeout
+            if (activityTimeoutId) {
+                clearTimeout(activityTimeoutId);
+            }
+            
+            // Set new inactivity timeout
+            activityTimeoutId = setTimeout(function() {
+                isUserActive = false;
+                log("User became inactive after timeout period");
+                // Next refresh cycle will check isUserActive
+            }, INACTIVITY_TIMEOUT);
+            
+            // If user was inactive and now is active, and page is visible, refresh immediately
+            if (wasInactive) {
+                log("User activity detected after inactivity");
+                if (isPageVisible) {
+                    log("Triggering immediate refresh due to renewed activity");
+                    refreshNotificationsToolbarItemWidget();
+                    ensureIntervalRunning();
+                }
+            }
+        }
+
+        // Function to ensure interval is running (if it should be)
+        function ensureIntervalRunning() {
+            if (isPageVisible && isUserActive) {
+                if (!refreshIntervalId) {
+                    log(`Starting refresh interval (every ${REFRESH_INTERVAL/1000} seconds)`);
+                    refreshIntervalId = setInterval(refreshNotificationsToolbarItemWidget, REFRESH_INTERVAL);
+                }
+            }
+        }
+        
+        // Function to stop interval if it's running
+        function stopInterval() {
+            if (refreshIntervalId) {
+                log("Stopping refresh interval");
+                clearInterval(refreshIntervalId);
+                refreshIntervalId = null;
+            }
+        }
+
+        // Setup page visibility detection
+        document.addEventListener('visibilitychange', function() {
+            isPageVisible = document.visibilityState === 'visible';
+            
+            if (isPageVisible) {
+                log("Page became visible");
+                markUserActive(); // Treat page becoming visible as user activity
+            } else {
+                log("Page became hidden");
+                stopInterval(); // Stop interval when page is hidden
+            }
+        });
+
+        // Track user activity events
+        function setupActivityTracking() {
+            log("Setting up user activity tracking");
+            
+            // Mouse movement indicates user activity (throttled to reduce excessive calls)
+            let mouseMoveThrottle;
+            document.addEventListener('mousemove', function() {
+                if (!mouseMoveThrottle) {
+                    mouseMoveThrottle = setTimeout(function() {
+                        markUserActive();
+                        mouseMoveThrottle = null;
+                    }, 1000); // Throttle to once per second
+                }
             });
-        })(jQuery);
-    }
+            
+            // These events always mark as active immediately
+            document.addEventListener('mousedown', function() { 
+                log("Activity detected: mouse click"); 
+                markUserActive(); 
+            });
+            document.addEventListener('keydown', function() { 
+                log("Activity detected: keyboard"); 
+                markUserActive(); 
+            });
+            document.addEventListener('touchstart', function() { 
+                log("Activity detected: touch"); 
+                markUserActive(); 
+            });
+            
+            // Throttle scroll events
+            let scrollThrottle;
+            document.addEventListener('scroll', function() {
+                if (!scrollThrottle) {
+                    scrollThrottle = setTimeout(function() {
+                        log("Activity detected: scroll");
+                        markUserActive();
+                        scrollThrottle = null;
+                    }, 1000); // Throttle to once per second
+                }
+            });
+        }
 
-    setInterval(function () {
-        refreshNotificationsToolbarItemWidget();
-    }, 5000);
-
+        // Initialize when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            log("Initializing NotificationsToolbarItem refresh mechanism");
+            log(`Settings: Refresh interval=${REFRESH_INTERVAL/1000}s, Inactivity timeout=${INACTIVITY_TIMEOUT/1000}s`);
+            
+            setupActivityTracking();
+            markUserActive(); // Initial activity state
+            ensureIntervalRunning(); // Start initial refresh cycle
+        });
+    })();
 </script>
