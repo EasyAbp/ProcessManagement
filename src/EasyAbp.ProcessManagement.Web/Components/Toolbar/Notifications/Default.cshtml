@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     var randomId = Guid.NewGuid();
 }
 <div id="ToolbarNotificationsWidgetArea-@randomId">
@@ -7,6 +7,15 @@
 
 <script>
     (function () {
+        // Check if notification refresh mechanism is already initialized
+        if (window.notificationsToolbarRefreshInitialized) {
+            console.log('[NotificationsToolbar] Refresh mechanism already initialized. Skipping duplicate initialization.');
+            return;
+        }
+        
+        // Mark as initialized to prevent duplicate timers
+        window.notificationsToolbarRefreshInitialized = true;
+        
         // Variables for managing refresh and activity state
         let refreshIntervalId = null;
         let activityTimeoutId = null;
