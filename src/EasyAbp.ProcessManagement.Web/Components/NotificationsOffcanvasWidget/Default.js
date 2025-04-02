@@ -6,7 +6,7 @@
 
         function fetchAndShowAlerts() {
             easyAbp.processManagement.notifications.notification.getList({
-                fromCreationTime: new Date(abp.clock.now() - notificationLifetimeMilliseconds),
+                fromCreationTime: new Date(new Date() - notificationLifetimeMilliseconds),
                 userId: abp.currentUser.id,
                 dismissed: false,
                 maxResultCount: 10
