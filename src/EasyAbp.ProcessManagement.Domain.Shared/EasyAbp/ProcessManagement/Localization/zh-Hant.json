@@ -5,7 +5,7 @@
     "Menu:ProcessManagement": "流程管理",
     "More": "更多",
     "Notifications": "通知",
-    "ClearAllNotifications": "清空通知",
+    "DismissAllNotifications": "清空通知",
     "NoNotification": "無通知",
     "Permission:Manage": "管理",
     "Permission:Process": "流程",
@@ -23,6 +23,8 @@
     "TableFilter": "篩選器",
     "MoreProcesses": "查看更多流程 →",
     "Process:InstantNotification": "通知",
-    "SureToClearAll": "是否確認清空所有通知? 此操作不可撤銷."
+    "SureToDismissAll": "通知清除操作不可撤銷.",
+    "DismissAll": "清除所有通知",
+    "DismissDisplayed": "清除已顯示通知"
   }
 }

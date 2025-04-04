@@ -5,5 +5,7 @@ namespace EasyAbp.ProcessManagement.Notifications.Dtos;
 
 public class DismissNotificationDto
 {
-    public List<Guid> NotificationIds { get; set; }
+    public DateTime? MaxCreationTime { get; set; }
+
+    public List<Guid>? NotificationIds { get; set; }
 }
