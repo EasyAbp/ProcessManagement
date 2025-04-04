@@ -5,7 +5,7 @@
     "Menu:ProcessManagement": "Process management",
     "More": "More",
     "Notifications": "Notifications",
-    "ClearAllNotifications": "Clear all",
+    "DismissAllNotifications": "Dismiss all",
     "NoNotification": "No notification",
     "Permission:Manage": "Manage",
     "Permission:Process": "Process",
@@ -23,6 +23,8 @@
     "TableFilter": "TableFilter",
     "MoreProcesses": "More processes →",
     "Process:InstantNotification": "Notification",
-    "SureToClearAll": "Are you sure to clear all notifications? This action cannot be undone."
+    "SureToDismissAll": "Notification dismiss actions cannot be undone.",
+    "DismissAll": "Dismiss all",
+    "DismissDisplayed": "Dismiss displayed"
   }
 }

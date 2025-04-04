@@ -136,21 +136,37 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
     public virtual async Task DismissAsync(DismissNotificationDto input)
     {
         var now = Clock.Now;
+        var userId = CurrentUser.GetId();
 
-        foreach (var notificationId in input.NotificationIds)
+        List<Notification> notifications = [];
+        if (input.MaxCreationTime.HasValue)
         {
-            var notification = await Repository.FindAsync(notificationId);
+            notifications =
+                await Repository.GetListAsync(x => x.CreationTime <= input.MaxCreationTime && x.UserId == userId);
+        }
 
-            if (notification is null)
+        if (input.NotificationIds != null)
+        {
+            foreach (var notificationId in input.NotificationIds.Where(notificationId =>
+                         notifications.All(x => x.Id != notificationId)))
             {
-                continue;
-            }
+                var notification = await Repository.FindAsync(notificationId);
+                if (notification is null)
+                {
+                    continue;
+                }
 
-            if (notification.UserId != CurrentUser.GetId())
-            {
-                await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
-            }
+                if (notification.UserId != userId)
+                {
+                    await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
+                }
 
+                notifications.Add(notification);
+            }
+        }
+
+        foreach (var notification in notifications)
+        {
             notification.SetDismissed(now);
 
             await _repository.UpdateAsync(notification);

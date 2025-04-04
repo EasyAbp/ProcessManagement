@@ -3,6 +3,7 @@
     abp.widgets.NotificationsOffcanvasWidget = function ($widget) {
 
         var intervalId;
+        var maxNotificationTime = null;
 
         function fetchAndShowAlerts() {
             easyAbp.processManagement.notifications.notification.getList({
@@ -26,8 +27,12 @@
                     }
                 });
 
+                maxNotificationTime = null;
                 res.items.reverse().forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
+                        if (maxNotificationTime == null || maxNotificationTime < item.creationTime) {
+                            maxNotificationTime = item.creationTime;
+                        }
                         var newAlert = createAlert(item);
                         alertPlaceholder.prepend(newAlert)
                         var newAlertNode = document.getElementById(item.id);
@@ -133,14 +138,14 @@
             });
 
             var moreProcessesBtn = document.getElementById('notification-offcanvas-more-processes-btn');
-            var clearAllBtn = document.getElementById('notification-offcanvas-clear-all-btn');
+            var dismissAllBtn = document.getElementById('notification-offcanvas-dismiss-all-btn');
 
             moreProcessesBtn.addEventListener('click', function () {
                 var url = abp.appPath + 'ProcessManagement/Processes/Process';
                 window.open(url, '_blank');
             });
 
-            clearAllBtn.addEventListener('click', function () {
+            dismissAllBtn.addEventListener('click', function () {
                 tryClearInterval();
                 var alertPlaceholder = $('#alert-placeholder');
                 var existingAlerts = alertPlaceholder.find('.alert');
@@ -151,17 +156,32 @@
                     existingAlertIds.set(id, $(this));
                 });
 
-                abp.message.confirm(l('SureToClearAll')).then(function (confirmed) {
-                    if (confirmed) {
-                        easyAbp.processManagement.notifications.notification.dismiss({
-                            notificationIds: existingAlertIds.keys().toArray()
-                        }).then(function () {
+                Swal.fire({
+                    ...abp.libs.sweetAlert.config.default,
+                    ...abp.libs.sweetAlert.config.confirm,
+                    text: l('SureToDismissAll'),
+                    input: "radio",
+                    inputValue: 'DismissDisplayed',
+                    inputOptions: {
+                        'DismissDisplayed': l('DismissDisplayed'),
+                        'DismissAll': l('DismissAll')
+                    },
+                }).then(function ({value: dismiss}) {
+                    if (dismiss) {
+                        let dismissOpts = dismiss === 'DismissDisplayed' ?
+                            {
+                                notificationIds: existingAlertIds.keys().toArray()
+                            } :
+                            {
+                                maxCreationTime: maxNotificationTime
+                            };
+                        easyAbp.processManagement.notifications.notification.dismiss(dismissOpts).then(function () {
                             existingAlertIds.forEach(function (alert, id) {
                                 removeAlert(alert)
                             });
                         });
                     }
-                }).always(function () {
+                }).finally(function () {
                     tryCreateInterval();
                 });
             });
