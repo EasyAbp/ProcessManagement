@@ -1,4 +1,4 @@
-﻿﻿@{
+﻿@{
     var randomId = Guid.NewGuid();
 }
 <div id="ToolbarNotificationsWidgetArea-@randomId">
@@ -6,7 +6,9 @@
 </div>
 
 <script>
+    var toolbarNotificationsWidgetAreaRandomIds = toolbarNotificationsWidgetAreaRandomIds ?? [];
     (function () {
+        toolbarNotificationsWidgetAreaRandomIds.push('@randomId');
         // Check if notification refresh mechanism is already initialized
         if (window.notificationsToolbarRefreshInitialized) {
             console.log('[NotificationsToolbar] Refresh mechanism already initialized. Skipping duplicate initialization.');
@@ -48,7 +50,7 @@
             log("Attempting to refresh notifications count...");
 
             (function ($) {
-                const $wrapper = $('#ToolbarNotificationsWidgetArea-@randomId');
+                let $wrapper = $('#ToolbarNotificationsWidgetArea-@randomId');
                 let $widgets = $wrapper.find('.abp-widget-wrapper');
                 if (!$widgets.length) {
                     if ($wrapper.hasClass('abp-widget-wrapper')) {
@@ -58,25 +60,30 @@
                     }
                 }
 
-                $widgets.each(function () {
-                    const $widget = $(this);
-                    const refreshUrl = $widget.attr('data-refresh-url');
-                    log(`Making API call to: ${refreshUrl}`);
-                    
-                    $.ajax({
-                        url: refreshUrl,
-                        type: 'GET',
-                        dataType: 'html',
-                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                        data: {},
-                        error: function (jqXHR) {
-                            log(`Error: Failed to get notification count - ${jqXHR.status} ${jqXHR.statusText}`);
+                var $firstWidget = $widgets.first();
+                const refreshUrl = $firstWidget.attr('data-refresh-url');
+                if (!refreshUrl) return;
+                log(`Making API call to: ${refreshUrl}`);
+                
+                $.ajax({
+                    url: refreshUrl,
+                    type: 'GET',
+                    dataType: 'html',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data: {},
+                    error: function (jqXHR) {
+                        log(`Error: Failed to get notification count - ${jqXHR.status} ${jqXHR.statusText}`);
+                    }
+                }).then(function (result) {
+                    log("API call successful, updating widget");
+                    var $result = $(result);
+                    for (const randomId of toolbarNotificationsWidgetAreaRandomIds) {
+                        let $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
+                        let $widgets = $wrapper.find('.abp-widget-wrapper');
+                        for (const $widget of $widgets) {
+                            $widget.replaceWith($result[0].cloneNode(true));
                         }
-                    }).then(function (result) {
-                        log("API call successful, updating widget");
-                        var $result = $(result);
-                        $widget.replaceWith($result);
-                    });
+                    }
                 });
             })(jQuery);
         }
@@ -193,4 +200,5 @@
             ensureIntervalRunning(); // Start initial refresh cycle
         });
     })();
+
 </script>
