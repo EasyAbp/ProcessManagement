@@ -12,6 +12,14 @@
                 dismissed: false,
                 maxResultCount: 10
             }).then(function (res) {
+                if (res.items && res.items.length > 0) {
+                    const latestNotification = res.items.reduce((latest, current) => {
+                        return new Date(latest.creationTime) > new Date(current.creationTime) ? latest : current;
+                    });
+
+                    maxNotificationTime = latestNotification.creationTime;
+                }
+
                 var alertPlaceholder = $('#alert-placeholder');
                 var existingAlerts = alertPlaceholder.find('.alert');
 
@@ -27,12 +35,8 @@
                     }
                 });
 
-                maxNotificationTime = null;
                 res.items.reverse().forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
-                        if (maxNotificationTime == null || maxNotificationTime < item.creationTime) {
-                            maxNotificationTime = item.creationTime;
-                        }
                         var newAlert = createAlert(item);
                         alertPlaceholder.prepend(newAlert)
                         var newAlertNode = document.getElementById(item.id);
