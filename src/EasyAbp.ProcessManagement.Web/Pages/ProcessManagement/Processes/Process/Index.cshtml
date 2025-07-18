@@ -1,5 +1,4 @@
 @page
-@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using EasyAbp.ProcessManagement.Web.Pages.ProcessManagement.Processes.Process
@@ -7,10 +6,8 @@
 @model IndexModel
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<ProcessManagementResource> L
-@inject IAuthorizationService Authorization
 @{
     PageLayout.Content.Title = L["Process"].Value;
-    PageLayout.Content.BreadCrumb.Add(L["Menu:Process"].Value);
 }
 
 @section scripts
@@ -27,13 +24,6 @@
 </script>
 
 <abp-card>
-    <abp-card-header>
-        <abp-row>
-            <abp-column size-md="_6">
-                <abp-card-title>@L["Process"]</abp-card-title>
-            </abp-column>
-        </abp-row>
-    </abp-card-header>
     <abp-card-body>
         <abp-row class="mb-3">
             <a abp-collapse-id="ProcessCollapse" class="text-secondary">@L["TableFilter"] </a>
