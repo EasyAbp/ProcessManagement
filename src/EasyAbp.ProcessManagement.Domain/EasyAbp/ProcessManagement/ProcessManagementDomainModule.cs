@@ -27,7 +27,7 @@ public class ProcessManagementDomainModule : AbpModule
         Configure<AbpDistributedEntityEventOptions>(options =>
         {
             options.AutoEventSelectors.Add<Process>();
-            options.EtoMappings.Add<Process, ProcessEto>();
+            options.EtoMappings.Add<Process, ProcessEto>(typeof(ProcessManagementDomainModule));
         });
 
         Configure<ProcessManagementOptions>(options =>

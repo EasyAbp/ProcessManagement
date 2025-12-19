@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyAbp.ProcessManagement.Localization;
 using EasyAbp.ProcessManagement.Notifications.Dtos;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Permissions;
@@ -25,6 +26,9 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
     public NotificationAppService(INotificationRepository repository) : base(repository)
     {
         _repository = repository;
+
+        LocalizationResource = typeof(ProcessManagementResource);
+        ObjectMapperContext = typeof(ProcessManagementApplicationModule);
     }
 
     protected override async Task<IQueryable<Notification>> CreateFilteredQueryAsync(NotificationGetListInput input)

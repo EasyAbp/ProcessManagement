@@ -77,8 +77,9 @@ $(function () {
     }));
 
     function toTimeAgo(time) {
-        var timeTag = `<time class="timeago" datetime="` + time + `">` + time + `</time>`;
-        return `<span data-bs-toggle="popover" data-bs-content="` + time + `" data-bs-trigger="hover focus">`
+        var normalizedTime = abp.clock.normalizeToLocaleString(time);
+        var timeTag = `<time class="timeago" datetime="` + time + `">` + normalizedTime + `</time>`;
+        return `<span data-bs-toggle="popover" data-bs-content="` + normalizedTime + `" data-bs-trigger="hover focus">`
             + timeTag
             + `</span>`
     }

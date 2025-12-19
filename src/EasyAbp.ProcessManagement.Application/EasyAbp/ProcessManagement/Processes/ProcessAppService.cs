@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyAbp.ProcessManagement.Localization;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Permissions;
 using EasyAbp.ProcessManagement.Processes.Dtos;
@@ -25,6 +26,8 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
 
     public ProcessAppService(IProcessRepository repository) : base(repository)
     {
+        LocalizationResource = typeof(ProcessManagementResource);
+        ObjectMapperContext = typeof(ProcessManagementApplicationModule);
     }
 
     public override async Task<ProcessDto> GetAsync(Guid id)

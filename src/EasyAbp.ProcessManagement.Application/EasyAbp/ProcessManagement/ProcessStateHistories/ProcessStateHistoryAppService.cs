@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyAbp.ProcessManagement.Localization;
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Permissions;
 using EasyAbp.ProcessManagement.Processes;
@@ -27,6 +28,8 @@ public class ProcessStateHistoryAppService : ReadOnlyAppService<ProcessStateHist
 
     public ProcessStateHistoryAppService(IProcessStateHistoryRepository repository) : base(repository)
     {
+        LocalizationResource = typeof(ProcessManagementResource);
+        ObjectMapperContext = typeof(ProcessManagementApplicationModule);
     }
 
     public override async Task<ProcessStateHistoryDto> GetAsync(Guid id)
