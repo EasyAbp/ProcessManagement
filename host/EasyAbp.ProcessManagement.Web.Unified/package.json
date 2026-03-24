@@ -4,6 +4,6 @@
   "private": true,
   "dependencies": {
     "@abp/aspnetcore.mvc.ui.theme.leptonxlite": "~5.0.1",
-    "@abp/signalr": "~5.0.1"
+    "@abp/signalr": "~10.0.1"
   }
 }
