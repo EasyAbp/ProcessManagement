@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Web.Caches;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.Widgets;
@@ -21,7 +22,17 @@ public class NotificationsToolbarItemWidgetViewComponent : AbpViewComponent
 
     public virtual async Task<IViewComponentResult> InvokeAsync()
     {
-        var notificationCount = await _notificationCountCache.GetOrAddAsync();
+        int notificationCount;
+
+        if (HttpContext.Request.Query.TryGetValue("count", out var countValue) &&
+            int.TryParse(countValue, out var parsedCount))
+        {
+            notificationCount = parsedCount;
+        }
+        else
+        {
+            notificationCount = await _notificationCountCache.GetOrAddAsync();
+        }
 
         return View("~/Components/NotificationsToolbarItemWidget/Default.cshtml",
             new NotificationsToolbarItemWidgetViewModel(notificationCount));

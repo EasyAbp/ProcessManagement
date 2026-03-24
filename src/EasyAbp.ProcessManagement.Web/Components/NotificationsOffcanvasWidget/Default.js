@@ -41,7 +41,8 @@
                     }
                 });
                 refreshBaseUiElements();
-                refreshToolbarWidget();
+                currentBadgeCount = res.totalCount;
+                refreshToolbarWidget(res.totalCount);
             }).catch(function () {
                 // Silently ignore network errors for background notification fetch
             });
@@ -106,7 +107,7 @@
             });
             newAlertNode.addEventListener('closed.bs.alert', function () {
                 refreshBaseUiElements();
-                updateToolbarBadgeCount(Math.max(0, getToolbarBadgeCount() - 1));
+                refreshToolbarWidget(Math.max(0, getToolbarBadgeCount() - 1));
             });
         }
 
@@ -146,7 +147,7 @@
                 }
 
                 // Update the toolbar badge count directly to avoid stale server cache
-                updateToolbarBadgeCount(getToolbarBadgeCount() + 1);
+                refreshToolbarWidget(getToolbarBadgeCount() + 1);
             });
 
             connection.onreconnected(function () {
@@ -185,21 +186,29 @@
             }
         }
 
-        function updateToolbarBadgeCount(count) {
-            $('.notifications-toolbar-item').each(function () {
-                var $icon = $(this).find('i');
-                $(this).text(' ' + count).prepend($icon);
-            });
+        // Track the current badge count client-side
+        var currentBadgeCount = null;
+
+        function readBadgeCountFromDom($context) {
+            var $el = ($context || $(document)).find('.notifications-toolbar-item[data-notification-count]').first();
+            if (!$el.length) return null;
+            var val = parseInt($el.attr('data-notification-count'));
+            return isNaN(val) ? null : val;
         }
 
         function getToolbarBadgeCount() {
-            var $first = $('.notifications-toolbar-item').first();
-            if (!$first.length) return 0;
-            var text = $first.text().trim();
-            return parseInt(text) || 0;
+            if (currentBadgeCount === null) {
+                currentBadgeCount = readBadgeCountFromDom() || 0;
+            }
+            return currentBadgeCount;
         }
 
-        function refreshToolbarWidget() {
+        function refreshToolbarWidget(count) {
+            if (typeof count === 'number') {
+                count = Math.min(99, Math.max(0, count));
+                currentBadgeCount = count;
+            }
+
             for (const randomId of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
                 var $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
                 var $widgets = $wrapper.find('.abp-widget-wrapper');
@@ -215,13 +224,21 @@
                 var refreshUrl = $firstWidget.attr('data-refresh-url');
                 if (!refreshUrl) continue;
 
+                var url = typeof count === 'number'
+                    ? refreshUrl + (refreshUrl.indexOf('?') >= 0 ? '&' : '?') + 'count=' + count
+                    : refreshUrl;
+
                 $.ajax({
-                    url: refreshUrl,
+                    url: url,
                     type: 'GET',
                     dataType: 'html',
                     global: false
                 }).then(function (result) {
                     var $result = $(result);
+                    var serverCount = readBadgeCountFromDom($result);
+                    if (serverCount !== null) {
+                        currentBadgeCount = serverCount;
+                    }
                     for (const rid of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
                         var $w = $('#ToolbarNotificationsWidgetArea-' + rid);
                         var $ww = $w.find('.abp-widget-wrapper');
@@ -288,9 +305,9 @@
                                 removeAlert(alert)
                             });
                             if (dismiss === 'DismissAll') {
-                                updateToolbarBadgeCount(0);
+                                refreshToolbarWidget(0);
                             } else {
-                                updateToolbarBadgeCount(Math.max(0, getToolbarBadgeCount() - dismissedCount));
+                                refreshToolbarWidget(Math.max(0, getToolbarBadgeCount() - dismissedCount));
                             }
                         });
                     }
