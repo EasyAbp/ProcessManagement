@@ -41,7 +41,7 @@
                     }
                 });
                 refreshBaseUiElements();
-                setToolbarBadgeCount(res.totalCount);
+                refreshToolbarWidget();
             }).catch(function () {
                 // Silently ignore network errors for background notification fetch
             });
@@ -106,7 +106,7 @@
             });
             newAlertNode.addEventListener('closed.bs.alert', function () {
                 refreshBaseUiElements();
-                updateToolbarBadge(-1);
+                updateToolbarBadgeCount(Math.max(0, getToolbarBadgeCount() - 1));
             });
         }
 
@@ -145,8 +145,8 @@
                     refreshBaseUiElements();
                 }
 
-                // Update the toolbar badge count
-                updateToolbarBadge(1);
+                // Update the toolbar badge count directly to avoid stale server cache
+                updateToolbarBadgeCount(getToolbarBadgeCount() + 1);
             });
 
             connection.onreconnected(function () {
@@ -185,28 +185,18 @@
             }
         }
 
-        function setToolbarBadgeCount(count) {
-            var newCount = Math.min(99, Math.max(0, count));
-            for (const randomId of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
-                var $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
-                var $link = $wrapper.find('.notifications-toolbar-item');
-                if ($link.length) {
-                    $link.html('<i class="fas fa-bell"></i> ' + newCount);
-                }
-            }
+        function updateToolbarBadgeCount(count) {
+            $('.notifications-toolbar-item').each(function () {
+                var $icon = $(this).find('i');
+                $(this).text(' ' + count).prepend($icon);
+            });
         }
 
-        function updateToolbarBadge(delta) {
-            for (const randomId of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
-                var $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
-                var $link = $wrapper.find('.notifications-toolbar-item');
-                if ($link.length) {
-                    var currentText = $link.text().trim();
-                    var currentCount = parseInt(currentText) || 0;
-                    setToolbarBadgeCount(currentCount + delta);
-                    break;
-                }
-            }
+        function getToolbarBadgeCount() {
+            var $first = $('.notifications-toolbar-item').first();
+            if (!$first.length) return 0;
+            var text = $first.text().trim();
+            return parseInt(text) || 0;
         }
 
         function refreshToolbarWidget() {
@@ -293,11 +283,14 @@
                                 maxCreationTime: maxNotificationTime
                             };
                         easyAbp.processManagement.notifications.notification.dismiss(dismissOpts).then(function () {
+                            var dismissedCount = existingAlertIds.size;
                             existingAlertIds.forEach(function (alert, id) {
                                 removeAlert(alert)
                             });
                             if (dismiss === 'DismissAll') {
-                                setToolbarBadgeCount(0);
+                                updateToolbarBadgeCount(0);
+                            } else {
+                                updateToolbarBadgeCount(Math.max(0, getToolbarBadgeCount() - dismissedCount));
                             }
                         });
                     }
