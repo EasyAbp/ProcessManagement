@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="$(AbpVersion)" />
     <ProjectReference Include="..\EasyAbp.ProcessManagement.Application.Contracts\EasyAbp.ProcessManagement.Application.Contracts.csproj" />
   </ItemGroup>
 

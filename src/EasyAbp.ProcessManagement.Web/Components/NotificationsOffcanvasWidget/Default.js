@@ -2,8 +2,8 @@
 
     abp.widgets.NotificationsOffcanvasWidget = function ($widget) {
 
-        var intervalId;
         var maxNotificationTime = null;
+        var connection = null;
 
         function fetchAndShowAlerts() {
             easyAbp.processManagement.notifications.notification.getList({
@@ -37,23 +37,13 @@
 
                 res.items.reverse().forEach(function (item) {
                     if (!existingAlertIds.has(item.id)) {
-                        var newAlert = createAlert(item);
-                        alertPlaceholder.prepend(newAlert)
-                        var newAlertNode = document.getElementById(item.id);
-                        newAlertNode.addEventListener('close.bs.alert', function () {
-                            tryClearInterval();
-                            easyAbp.processManagement.notifications.notification.dismiss({
-                                notificationIds: [$(this).attr('id')]
-                            }).always(function () {
-                                tryCreateInterval();
-                            });
-                        });
-                        newAlertNode.addEventListener('closed.bs.alert', function () {
-                            refreshBaseUiElements()
-                        });
+                        addNotificationToOffcanvas(item);
                     }
                 });
-                refreshBaseUiElements()
+                refreshBaseUiElements();
+                setToolbarBadgeCount(res.totalCount);
+            }).catch(function () {
+                // Silently ignore network errors for background notification fetch
             });
         }
 
@@ -104,12 +94,20 @@
             `).attr('id', item.id);
         }
 
-        function tryCreateInterval() {
-            intervalId = setInterval(fetchAndShowAlerts, 5000);
-        }
-
-        function tryClearInterval() {
-            if (intervalId) clearInterval(intervalId);
+        function addNotificationToOffcanvas(item) {
+            var alertPlaceholder = $('#alert-placeholder');
+            var newAlert = createAlert(item);
+            alertPlaceholder.prepend(newAlert);
+            var newAlertNode = document.getElementById(item.id);
+            newAlertNode.addEventListener('close.bs.alert', function () {
+                easyAbp.processManagement.notifications.notification.dismiss({
+                    notificationIds: [$(this).attr('id')]
+                });
+            });
+            newAlertNode.addEventListener('closed.bs.alert', function () {
+                refreshBaseUiElements();
+                updateToolbarBadge(-1);
+            });
         }
 
         function removeAlert(alert) {
@@ -128,17 +126,133 @@
             }
         }
 
+        function startSignalRConnection() {
+            if (connection) {
+                return;
+            }
+
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/signalr-hubs/process-management/notification")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNotification", function (notification) {
+                // Add to offcanvas if it is currently open
+                var offcanvasElement = document.getElementById('notificationsOffcanvas');
+                var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                if (offcanvas && offcanvasElement.classList.contains('show')) {
+                    addNotificationToOffcanvas(notification);
+                    refreshBaseUiElements();
+                }
+
+                // Update the toolbar badge count
+                updateToolbarBadge(1);
+            });
+
+            connection.onreconnected(function () {
+                // Refresh the full list after reconnection to catch missed notifications
+                var offcanvasElement = document.getElementById('notificationsOffcanvas');
+                if (offcanvasElement.classList.contains('show')) {
+                    fetchAndShowAlerts();
+                }
+                refreshToolbarWidget();
+            });
+
+            connection.start().catch(function (err) {
+                console.error('[ProcessManagement] SignalR connection failed:', err);
+                startPollingFallback();
+            });
+        }
+
+        // Fallback polling when SignalR is unavailable
+        var pollingIntervalId = null;
+
+        function startPollingFallback() {
+            if (pollingIntervalId) return;
+            pollingIntervalId = setInterval(function () {
+                var offcanvasElement = document.getElementById('notificationsOffcanvas');
+                if (offcanvasElement.classList.contains('show')) {
+                    fetchAndShowAlerts();
+                }
+                refreshToolbarWidget();
+            }, 5000);
+        }
+
+        function stopPollingFallback() {
+            if (pollingIntervalId) {
+                clearInterval(pollingIntervalId);
+                pollingIntervalId = null;
+            }
+        }
+
+        function setToolbarBadgeCount(count) {
+            var newCount = Math.min(99, Math.max(0, count));
+            for (const randomId of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
+                var $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
+                var $link = $wrapper.find('.notifications-toolbar-item');
+                if ($link.length) {
+                    $link.html('<i class="fas fa-bell"></i> ' + newCount);
+                }
+            }
+        }
+
+        function updateToolbarBadge(delta) {
+            for (const randomId of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
+                var $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
+                var $link = $wrapper.find('.notifications-toolbar-item');
+                if ($link.length) {
+                    var currentText = $link.text().trim();
+                    var currentCount = parseInt(currentText) || 0;
+                    setToolbarBadgeCount(currentCount + delta);
+                    break;
+                }
+            }
+        }
+
+        function refreshToolbarWidget() {
+            for (const randomId of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
+                var $wrapper = $('#ToolbarNotificationsWidgetArea-' + randomId);
+                var $widgets = $wrapper.find('.abp-widget-wrapper');
+                if (!$widgets.length) {
+                    if ($wrapper.hasClass('abp-widget-wrapper')) {
+                        $widgets = $wrapper;
+                    } else {
+                        $widgets = $wrapper.findWithSelf('.abp-widget-wrapper');
+                    }
+                }
+
+                var $firstWidget = $widgets.first();
+                var refreshUrl = $firstWidget.attr('data-refresh-url');
+                if (!refreshUrl) continue;
+
+                $.ajax({
+                    url: refreshUrl,
+                    type: 'GET',
+                    dataType: 'html',
+                    global: false
+                }).then(function (result) {
+                    var $result = $(result);
+                    for (const rid of (window.toolbarNotificationsWidgetAreaRandomIds || [])) {
+                        var $w = $('#ToolbarNotificationsWidgetArea-' + rid);
+                        var $ww = $w.find('.abp-widget-wrapper');
+                        for (const widget of $ww) {
+                            widget.replaceWith($result[0].cloneNode(true));
+                        }
+                    }
+                }).catch(function () {
+                    // Silently ignore network errors for background toolbar refresh
+                });
+
+                break; // Only need one AJAX call
+            }
+        }
+
         function init() {
             var offcanvasElement = document.getElementById('notificationsOffcanvas');
             var l = abp.localization.getResource('EasyAbpProcessManagement');
 
             offcanvasElement.addEventListener('show.bs.offcanvas', function () {
                 fetchAndShowAlerts();
-                tryCreateInterval();
-            });
-
-            offcanvasElement.addEventListener('hide.bs.offcanvas', function () {
-                tryClearInterval();
             });
 
             var moreProcessesBtn = document.getElementById('notification-offcanvas-more-processes-btn');
@@ -150,7 +264,6 @@
             });
 
             dismissAllBtn.addEventListener('click', function () {
-                tryClearInterval();
                 var alertPlaceholder = $('#alert-placeholder');
                 var existingAlerts = alertPlaceholder.find('.alert');
 
@@ -183,12 +296,18 @@
                             existingAlertIds.forEach(function (alert, id) {
                                 removeAlert(alert)
                             });
+                            if (dismiss === 'DismissAll') {
+                                setToolbarBadgeCount(0);
+                            }
                         });
                     }
-                }).finally(function () {
-                    tryCreateInterval();
                 });
             });
+
+            // Start SignalR connection for real-time updates
+            if (abp.currentUser.isAuthenticated) {
+                startSignalRConnection();
+            }
         }
 
         return {

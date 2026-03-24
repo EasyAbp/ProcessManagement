@@ -3,6 +3,7 @@ using EasyAbp.ProcessManagement.Web.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR;
 using Volo.Abp.AspNetCore.Mvc.UI.Widgets;
 
 namespace EasyAbp.ProcessManagement.Web.Components.NotificationsOffcanvasWidget;
@@ -10,6 +11,7 @@ namespace EasyAbp.ProcessManagement.Web.Components.NotificationsOffcanvasWidget;
 [Widget(
     AutoInitialize = true,
     RefreshUrl = "/Widgets/ProcessManagement/NotificationsOffcanvas",
+    ScriptTypes = [typeof(SignalRBrowserScriptContributor)],
     ScriptFiles = ["/Components/NotificationsOffcanvasWidget/Default.js"]
 )]
 public class NotificationsOffcanvasWidgetViewComponent : AbpViewComponent
