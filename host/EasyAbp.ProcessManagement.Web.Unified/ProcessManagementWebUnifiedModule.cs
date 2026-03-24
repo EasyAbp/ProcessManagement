@@ -235,6 +235,7 @@ public class ProcessManagementWebUnifiedModule : AbpModule
         app.UseHttpsRedirection();
         app.UseRouting();
         app.MapAbpStaticAssets();
+        app.UseWebSockets();
         app.UseAuthentication();
 
         if (MultiTenancyConsts.IsEnabled)

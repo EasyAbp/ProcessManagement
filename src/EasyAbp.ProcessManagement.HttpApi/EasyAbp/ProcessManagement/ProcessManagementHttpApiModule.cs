@@ -1,6 +1,7 @@
 ﻿using Localization.Resources.AbpUi;
 using EasyAbp.ProcessManagement.Localization;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,8 @@ namespace EasyAbp.ProcessManagement;
 
 [DependsOn(
     typeof(ProcessManagementApplicationContractsModule),
-    typeof(AbpAspNetCoreMvcModule))]
+    typeof(AbpAspNetCoreMvcModule),
+    typeof(AbpAspNetCoreSignalRModule))]
 public class ProcessManagementHttpApiModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

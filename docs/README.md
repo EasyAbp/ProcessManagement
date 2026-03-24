@@ -27,6 +27,10 @@ An ABP module that helps define and track business processes.
 
 2. Add `DependsOn(typeof(Abp.ProcessManagementXxxModule))` attribute to configure the module dependencies. ([see how](https://github.com/EasyAbp/EasyAbpGuide/blob/master/docs/How-To.md#add-module-dependencies))
 
+3. Install the `@abp/signalr` npm package.
+
+4. Add `app.UseWebSockets();` before `app.UseAuthentication();` in your middleware pipeline to enable WebSocket transport for SignalR.
+
 ## Usage
 
 1. Define a process and states. For idempotency, stages can only transition from their father state.
