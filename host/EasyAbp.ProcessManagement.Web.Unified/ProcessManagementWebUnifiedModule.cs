@@ -11,7 +11,7 @@ using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Processes;
 using EasyAbp.ProcessManagement.Web;
 using EasyAbp.ProcessManagement.Web.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
