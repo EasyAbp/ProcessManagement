@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.ProcessManagement.Processes;
 using EasyAbp.ProcessManagement.UserGroups;
@@ -36,11 +37,11 @@ public class ProcessChangedEventHandler : ITransientDependency,
     {
         var userIds = await _userGroupManager.GetUserIdsAsync(eventData.Entity.GroupKey);
 
-        foreach (var userId in userIds)
-        {
-            await _notificationRepository.InsertAsync(
-                new Notification(_guidGenerator.Create(), eventData.Entity, userId), true);
-        }
+        var notifications = userIds
+            .Select(userId => new Notification(_guidGenerator.Create(), eventData.Entity, userId))
+            .ToList();
+
+        await _notificationRepository.InsertManyAsync(notifications, true);
     }
 
     [UnitOfWork]
@@ -49,23 +50,15 @@ public class ProcessChangedEventHandler : ITransientDependency,
         var now = _clock.Now;
         var userIds = await _userGroupManager.GetUserIdsAsync(eventData.Entity.GroupKey);
 
-        var oldNotifications = await _notificationRepository.GetListAsync(x => x.ProcessId == eventData.Entity.Id);
+        // Dismiss all existing notifications of this process in a single set-based update,
+        // without loading them into memory.
+        await _notificationRepository.DismissByProcessIdAsync(eventData.Entity.Id, now);
 
-        foreach (var oldNotification in oldNotifications)
-        {
-            if (oldNotification.DismissedTime.HasValue)
-            {
-                continue;
-            }
+        // Insert the notifications for the current group members in a single batch.
+        var notifications = userIds
+            .Select(userId => new Notification(_guidGenerator.Create(), eventData.Entity, userId))
+            .ToList();
 
-            oldNotification.SetDismissed(now);
-            await _notificationRepository.UpdateAsync(oldNotification);
-        }
-
-        foreach (var userId in userIds)
-        {
-            await _notificationRepository.InsertAsync(
-                new Notification(_guidGenerator.Create(), eventData.Entity, userId), true);
-        }
+        await _notificationRepository.InsertManyAsync(notifications, true);
     }
 }

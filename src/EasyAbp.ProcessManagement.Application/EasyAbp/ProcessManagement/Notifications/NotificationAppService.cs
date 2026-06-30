@@ -142,38 +142,31 @@ public class NotificationAppService : ReadOnlyAppService<Notification, Notificat
         var now = Clock.Now;
         var userId = CurrentUser.GetId();
 
-        List<Notification> notifications = [];
+        // Fast path: dismiss every not-yet-dismissed notification of the current user up to the
+        // given time in a single set-based database update, without loading entities into memory.
+        // This keeps "dismiss all" responsive even when the user has a large number of notifications.
         if (input.MaxCreationTime.HasValue)
         {
-            notifications =
-                await Repository.GetListAsync(x => x.CreationTime <= input.MaxCreationTime && x.UserId == userId);
+            await _repository.DismissAllAsync(userId, input.MaxCreationTime.Value, now);
         }
 
-        if (input.NotificationIds != null)
+        // Dismiss an explicit (client-bounded) list of notifications by id.
+        if (input.NotificationIds is { Count: > 0 })
         {
-            foreach (var notificationId in input.NotificationIds.Where(notificationId =>
-                         notifications.All(x => x.Id != notificationId)))
+            var notificationIds = input.NotificationIds;
+            var notifications = await _repository.GetListAsync(x => notificationIds.Contains(x.Id));
+
+            if (notifications.Any(x => x.UserId != userId))
             {
-                var notification = await Repository.FindAsync(notificationId);
-                if (notification is null)
-                {
-                    continue;
-                }
-
-                if (notification.UserId != userId)
-                {
-                    await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
-                }
-
-                notifications.Add(notification);
+                await CheckPolicyAsync(ProcessManagementPermissions.Process.Manage);
             }
-        }
 
-        foreach (var notification in notifications)
-        {
-            notification.SetDismissed(now);
+            foreach (var notification in notifications)
+            {
+                notification.SetDismissed(now);
+            }
 
-            await _repository.UpdateAsync(notification);
+            await _repository.UpdateManyAsync(notifications);
         }
 
         if (UnitOfWorkManager.Current != null)
