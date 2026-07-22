@@ -6,6 +6,7 @@ using EasyAbp.ProcessManagement.Notifications.Dtos;
 using EasyAbp.ProcessManagement.Processes;
 using Shouldly;
 using Volo.Abp.Guids;
+using Volo.Abp.ObjectMapping;
 using Volo.Abp.Users;
 using Xunit;
 
@@ -17,6 +18,7 @@ public class NotificationAppServiceTests : ProcessManagementApplicationTestBase
     private readonly INotificationRepository _notificationRepository;
     private readonly ICurrentUser _currentUser;
     private readonly IGuidGenerator _guidGenerator;
+    private readonly IObjectMapper _objectMapper;
 
     public NotificationAppServiceTests()
     {
@@ -24,6 +26,47 @@ public class NotificationAppServiceTests : ProcessManagementApplicationTestBase
         _notificationRepository = GetRequiredService<INotificationRepository>();
         _currentUser = GetRequiredService<ICurrentUser>();
         _guidGenerator = GetRequiredService<IGuidGenerator>();
+        _objectMapper = GetRequiredService<IObjectMapper>();
+    }
+
+    [Fact]
+    public void Should_Map_Notification_To_NotificationDto()
+    {
+        // Arrange
+        var process = new ProcessEto
+        {
+            Id = _guidGenerator.Create(),
+            ProcessName = "FakeExport",
+            CorrelationId = _guidGenerator.Create().ToString(),
+            GroupKey = "test",
+            StateName = "Ready",
+            ActionName = "Start",
+            StateFlag = ProcessStateFlag.Success,
+            StateSummaryText = "All good",
+            StateUpdateTime = DateTime.Now
+        };
+        var userId = _guidGenerator.Create();
+        var notification = new Notification(_guidGenerator.Create(), process, userId);
+
+        // Act
+        var dto = _objectMapper.Map<Notification, NotificationDto>(notification);
+
+        // Assert
+        dto.Id.ShouldBe(notification.Id);
+        dto.UserId.ShouldBe(userId);
+        dto.ProcessId.ShouldBe(process.Id);
+        dto.ProcessName.ShouldBe(process.ProcessName);
+        dto.CorrelationId.ShouldBe(process.CorrelationId);
+        dto.GroupKey.ShouldBe(process.GroupKey);
+        dto.StateName.ShouldBe(process.StateName);
+        dto.ActionName.ShouldBe(process.ActionName);
+        dto.StateFlag.ShouldBe(process.StateFlag);
+        dto.StateSummaryText.ShouldBe(process.StateSummaryText);
+        dto.StateUpdateTime.ShouldBe(process.StateUpdateTime);
+
+        // Ignored, populated outside the map.
+        dto.ProcessDisplayName.ShouldBeNull();
+        dto.StateDisplayName.ShouldBeNull();
     }
 
     [Fact]

@@ -2,7 +2,7 @@
 using EasyAbp.ProcessManagement.Options;
 using EasyAbp.ProcessManagement.Processes;
 using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.AutoMapper;
+using Volo.Abp.Mapperly;
 using Volo.Abp.Domain;
 using Volo.Abp.Domain.Entities.Events.Distributed;
 using Volo.Abp.Localization;
@@ -12,7 +12,7 @@ using Volo.Abp.Users;
 namespace EasyAbp.ProcessManagement;
 
 [DependsOn(
-    typeof(AbpAutoMapperModule),
+    typeof(AbpMapperlyModule),
     typeof(AbpDddDomainModule),
     typeof(AbpUsersAbstractionModule),
     typeof(ProcessManagementDomainSharedModule)
@@ -21,8 +21,7 @@ public class ProcessManagementDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddAutoMapperObjectMapper<ProcessManagementDomainModule>();
-        Configure<AbpAutoMapperOptions>(options => { options.AddMaps<ProcessManagementDomainModule>(validate: true); });
+        context.Services.AddMapperlyObjectMapper<ProcessManagementDomainModule>();
 
         Configure<AbpDistributedEntityEventOptions>(options =>
         {
