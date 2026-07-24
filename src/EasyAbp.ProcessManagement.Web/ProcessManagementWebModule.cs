@@ -7,7 +7,7 @@ using EasyAbp.ProcessManagement.Web.Toolbars;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
-using Volo.Abp.AutoMapper;
+using Volo.Abp.Mapperly;
 using Volo.Abp.Modularity;
 using Volo.Abp.Ui.LayoutHooks;
 using Volo.Abp.UI.Navigation;
@@ -18,7 +18,7 @@ namespace EasyAbp.ProcessManagement.Web;
 [DependsOn(
     typeof(ProcessManagementApplicationContractsModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
-    typeof(AbpAutoMapperModule)
+    typeof(AbpMapperlyModule)
 )]
 public class ProcessManagementWebModule : AbpModule
 {
@@ -48,8 +48,7 @@ public class ProcessManagementWebModule : AbpModule
             options.FileSets.AddEmbedded<ProcessManagementWebModule>();
         });
 
-        context.Services.AddAutoMapperObjectMapper<ProcessManagementWebModule>();
-        Configure<AbpAutoMapperOptions>(options => { options.AddMaps<ProcessManagementWebModule>(validate: true); });
+        context.Services.AddMapperlyObjectMapper<ProcessManagementWebModule>();
 
         Configure<RazorPagesOptions>(options =>
         {

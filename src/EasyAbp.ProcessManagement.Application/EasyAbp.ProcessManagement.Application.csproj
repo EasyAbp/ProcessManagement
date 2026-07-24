@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AutoMapper" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.Mapperly" Version="$(AbpVersion)" />
     <PackageReference Include="Volo.Abp.Ddd.Application" Version="$(AbpVersion)" />
     <ProjectReference Include="..\EasyAbp.ProcessManagement.Application.Contracts\EasyAbp.ProcessManagement.Application.Contracts.csproj" />
     <ProjectReference Include="..\EasyAbp.ProcessManagement.Domain\EasyAbp.ProcessManagement.Domain.csproj" />
