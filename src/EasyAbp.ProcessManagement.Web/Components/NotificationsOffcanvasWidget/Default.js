@@ -256,6 +256,13 @@
 
         function init() {
             var offcanvasElement = document.getElementById('notificationsOffcanvas');
+
+            // The server renders no offcanvas for users without the process permission: nothing to wire up,
+            // and no SignalR connection to open.
+            if (!offcanvasElement) {
+                return;
+            }
+
             var l = abp.localization.getResource('EasyAbpProcessManagement');
 
             offcanvasElement.addEventListener('show.bs.offcanvas', function () {

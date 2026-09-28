@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using EasyAbp.ProcessManagement.Permissions;
 using EasyAbp.ProcessManagement.Web.Caches;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
@@ -13,6 +15,9 @@ namespace EasyAbp.ProcessManagement.Web.Components.NotificationsToolbarItemWidge
 )]
 public class NotificationsToolbarItemWidgetViewComponent : AbpViewComponent
 {
+    protected IAuthorizationService AuthorizationService =>
+        LazyServiceProvider.LazyGetRequiredService<IAuthorizationService>();
+
     private readonly NotificationCountCache _notificationCountCache;
 
     public NotificationsToolbarItemWidgetViewComponent(NotificationCountCache notificationCountCache)
@@ -22,6 +27,13 @@ public class NotificationsToolbarItemWidgetViewComponent : AbpViewComponent
 
     public virtual async Task<IViewComponentResult> InvokeAsync()
     {
+        // The refresh endpoint can be called by anyone signed in; without the permission the notification
+        // list query would throw, so render nothing instead.
+        if (!await AuthorizationService.IsGrantedAsync(ProcessManagementPermissions.Process.Default))
+        {
+            return Content(string.Empty);
+        }
+
         int notificationCount;
 
         if (HttpContext.Request.Query.TryGetValue("count", out var countValue) &&
