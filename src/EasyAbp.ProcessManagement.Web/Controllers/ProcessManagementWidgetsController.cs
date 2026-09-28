@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 
 namespace EasyAbp.ProcessManagement.Web.Controllers;
 
+[Authorize]
 [Route("Widgets/ProcessManagement")]
 public class ProcessManagementWidgetsController : AbpController
 {
