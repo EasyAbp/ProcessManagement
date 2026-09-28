@@ -54,13 +54,16 @@ public class ProcessAppService : ReadOnlyAppService<Process, ProcessDto, Guid, P
         var queryable = await base.CreateFilteredQueryAsync(input);
 
         var hasUserNameInput = !input.UserName.IsNullOrWhiteSpace();
+        var hasManagementPermission = await HasManagementPermissionAsync();
 
-        if (hasUserNameInput && input.UserName != CurrentUser.UserName && !await HasManagementPermissionAsync())
+        if (hasUserNameInput && input.UserName != CurrentUser.UserName && !hasManagementPermission)
         {
             throw new AbpAuthorizationException();
         }
 
-        if (hasUserNameInput)
+        // Without the management permission, a caller only ever sees the processes of their own groups,
+        // whether or not a user name is supplied.
+        if (hasUserNameInput || !hasManagementPermission)
         {
             var groupKeys = await GetUserGroupKeys(CurrentUser.GetId());
             queryable = queryable.Where(x => groupKeys.Contains(x.GroupKey));
