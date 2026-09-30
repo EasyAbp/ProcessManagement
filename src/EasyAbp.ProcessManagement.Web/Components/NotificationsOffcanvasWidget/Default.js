@@ -67,6 +67,12 @@
             }
         }
 
+        // Every text below comes from the process itself, and a summary may be written by an external system:
+        // it goes into the page as text, never as markup.
+        function escapeHtml(text) {
+            return $('<div>').text(text ?? '').html();
+        }
+
         function createAlert(item) {
             var actionBtns = "";
             for (var i in notificationOffcanvasAlertActions) {
@@ -79,12 +85,11 @@
                 <div class="alert ${getAlertColorClassName(item.stateFlag)} alert-dismissible fade-in" role="alert">
                     <div class="alert-content-title d-flex align-items-center mb-1">
                         <img src="/images/process-management/icons/${item.stateFlag}.svg" class="svg-icon" alt=""/>
-                        <h6><strong>${item.actionName ? item.actionName : item.stateDisplayName}</strong></h6>
+                        <h6><strong>${escapeHtml(item.actionName ? item.actionName : item.stateDisplayName)}</strong></h6>
                     </div>
                     <div class="alert-content-area mb-4">
-                        <p class="small mb-0">
-                            ${item.stateSummaryText}
-                        </p>
+                        <p class="small mb-0 opacity-75">${escapeHtml(item.processDisplayName)}</p>
+                        ${item.stateSummaryText ? `<p class="small mb-0">${escapeHtml(item.stateSummaryText)}</p>` : ''}
                         ${actionBtns}
                     </div>
                     <div class="state-update-time">

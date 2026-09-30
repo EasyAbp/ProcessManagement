@@ -52,12 +52,13 @@ $(function () {
                 title: l('ProcessStateName'),
                 data: "stateName",
                 render: function (data, type, row, meta) {
-                    return `<div class="stage-flag-name-container">` + getStateFlagIcon(row) + ' ' + (row.actionName ? row.actionName : row.stateDisplayName) + `</div>`;
+                    return `<div class="stage-flag-name-container">` + getStateFlagIcon(row) + ' ' + $('<div>').text(row.actionName ? row.actionName : row.stateDisplayName).html() + `</div>`;
                 }
             },
             {
                 title: l('ProcessStateSummaryText'),
-                data: "stateSummaryText"
+                data: "stateSummaryText",
+                render: $.fn.dataTable.render.text()
             },
             {
                 title: l('ProcessCreationTime'),
@@ -70,7 +71,7 @@ $(function () {
                 title: l('ProcessProcessName'),
                 data: "processName",
                 render: function (data, type, row, meta) {
-                    return row.processDisplayName;
+                    return $('<div>').text(row.processDisplayName).html();
                 }
             },
         ]
